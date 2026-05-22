@@ -36,6 +36,7 @@ export type SysUnlocks =
   | 'HubExploration'
   | 'HubOutpost'
   | 'HubIndustrial'
+  | 'HubExtraction'
 
   | 'ShipyardT1'
   | 'OutfittingNonMilOutpost'
@@ -82,6 +83,10 @@ export const mapSysUnlocks: Record<SysUnlocks, { icon: string, title: string, ne
   'HubIndustrial': {
     icon: 'Manufacturing', title: 'Industrial Hub', needTypes: ["euthenia", "phorcys"], // mining/industrial installation
     needs: 'A mining/industrial installation',
+  },
+  'HubExtraction': {
+    icon: 'Diamond', title: 'Extraction Hub', needTypes: ["ourea", "mantus", "orcus", "aerecura", "erebus"], // extraction settlement
+    needs: 'An extraction settlement',
   },
 
   'ShipyardT1': {
@@ -787,6 +792,7 @@ export const getPreReqNeeded = (type: SiteType): string[] => {
     case 'settlementBio': return ["pheobe", "asteria", "caerus", "chronos"];
     case 'settlementTourist': return ["aergia", "comus", "gelos", "fufluns"];
     case 'settlementMilitary': return ["ioke", "bellona", "enyo", "polemos", "minerva"];
+    case 'settlementExtraction': return ["ourea", "mantus", "orcus", "aerecura", "erebus"];
     default:
       console.error(`Unexpected preReq: ${type.preReq}`)
       return [];

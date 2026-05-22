@@ -34,7 +34,7 @@ export type PadSize =
   | 'large'
   ;
 
-export type PreReq = 'satellite' | 'comms' | 'settlementAgr' | 'installationAgr' | 'installationMil' | 'outpostMining' | 'relay' | 'settlementBio' | 'settlementTourist' | 'settlementMilitary';
+export type PreReq = 'satellite' | 'comms' | 'settlementAgr' | 'installationAgr' | 'installationMil' | 'outpostMining' | 'relay' | 'settlementBio' | 'settlementTourist' | 'settlementMilitary' | 'settlementExtraction';
 
 export interface SiteType {
   /** Display name for group */
@@ -137,6 +137,7 @@ export const mapName: Record<string, string> = {
   settlementBio: 'a bio research settlement',
   settlementTourist: 'a tourism settlement',
   settlementMilitary: 'a military settlement',
+  settlementExtraction: 'an extraction settlement',
 
   // body and system feature names
   bio: 'Bio signals',
@@ -847,7 +848,8 @@ export const siteTypes: SiteType[] = [
     "gives": { tier: 2, count: 1 },
     "inf": "extraction",
     "score": 1,
-    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 3, tech: 0, sol: 0, dev: 0 }
+    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 3, tech: 0, sol: 0, dev: 0 },
+    "unlocks": ['System unlock: Extraction Hub']
   },
   {
     "displayName": "Medium Mining",
@@ -863,7 +865,8 @@ export const siteTypes: SiteType[] = [
     "gives": { tier: 2, count: 1 },
     "inf": "extraction",
     "score": 2,
-    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 5, tech: 0, sol: 0, dev: 0 }
+    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 5, tech: 0, sol: 0, dev: 0 },
+    "unlocks": ['System unlock: Extraction Hub']
   },
   {
     "displayName": "Large Mining",
@@ -878,7 +881,8 @@ export const siteTypes: SiteType[] = [
     "gives": { tier: 3, count: 2 },
     "inf": "extraction",
     "score": 4,
-    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 8, tech: 2, sol: -2, dev: 0 }
+    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 8, tech: 2, sol: -2, dev: 0 },
+    "unlocks": ['System unlock: Extraction Hub']
   },
   {
     "displayName": "Small Industrial",
@@ -1088,7 +1092,8 @@ export const siteTypes: SiteType[] = [
     "gives": { tier: 3, count: 1 },
     "inf": "extraction",
     "score": 5,
-    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 10, tech: 0, sol: -4, dev: 3 }
+    "effects": { pop: 1, mpop: 1, sec: 0, wealth: 10, tech: 0, sol: -4, dev: 3 },
+    "preReq": 'settlementExtraction'
   },
   {
     "displayName": "Civilian",
