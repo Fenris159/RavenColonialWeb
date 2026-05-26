@@ -36,6 +36,7 @@ const supportedTypes: Record<string, ImageData> = {
   'apate': { cmdr: 'Abe Andet', location: `Hamuy's Pride - Col 285 Sector LK-D b13-8` },
   'aphrodite': { cmdr: 'Freyera', location: `HIP 83498`, more: [{ n: 'aphrodite-at-night.jpg' }] },
   'apollo': { cmdr: 'Kai Thoreau', location: `Ore Depot - HIP 87968, 5 A` },
+  'ares': { cmdr: 'Kekosummer', location: `Gludgoea GI-B d13-126`, more: [{ n: 'ares-plan.jpg', c: 'Cmdr Kekosummer' }] },
   'artemis': { cmdr: 'Alora Anophis', location: `Besonders Reach - Pru Euq XO-Z d13-11, 2 a` },
   'asclepius': { cmdr: 'AeroMech91', location: `Casper's Folly - Col 285 Sector VZ-P c5-10, CD 4 A` },
   'asteria': { cmdr: 'Kekosummer', location: `Enju genetics laboratory - Col 285 Sector GL-X c1-11, B 4` },
