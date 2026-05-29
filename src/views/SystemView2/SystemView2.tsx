@@ -15,7 +15,7 @@ import { ViewSite } from './ViewSite';
 import { SitesTableView } from './SitesTableView';
 import { Bod, BT, NamedSave, Pop, Site, SiteGraphType, Sys } from '../../types2';
 import { GetRealEconomies, SitesPut } from '../../api/v2-system';
-import { SitesBodyView } from './SitesBodyView';
+import { mapBodyFeatureIcon, SitesBodyView } from './SitesBodyView';
 import { store } from '../../local-storage';
 import { SystemCard } from './SystemCard';
 import { FindSystemName, ProjectCreate } from '../../components';
@@ -65,6 +65,7 @@ interface SystemView2State {
   fssNeeded?: boolean;
   canEditAsArchitect: boolean;
   buffNerf: boolean;
+  terraformableAgriBonus: boolean;
   showEditNotes?: boolean;
   showSaveAs?: boolean;
   importSitesComplete?: boolean;
@@ -96,6 +97,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       useIncomplete: store.useIncomplete,
       viewType: store.sysViewView,
       buffNerf: !App.cmdrSettings?.noBuffNerf,
+      terraformableAgriBonus: store.terraformableAgriBonus,
     };
   }
 
@@ -185,7 +187,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       showEditNotes: false,
       showSaveAs: false,
       importSitesComplete: false,
-    } as Omit<SystemView2State, 'useIncomplete' | 'viewType' | 'systemName' | 'buffNerf'>;
+    } as Omit<SystemView2State, 'useIncomplete' | 'viewType' | 'systemName' | 'buffNerf' | 'terraformableAgriBonus'>;
   }
 
   doSystemSearch() {
@@ -252,7 +254,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       // default to ALL sites if no value is set
       newSys.idxCalcLimit = newSys.sites.length;
     }
-    const newSysMap = buildSystemModel2(newSys, this.state.useIncomplete, this.state.buffNerf);
+    const newSysMap = buildSystemModel2(newSys, this.state.useIncomplete, this.state.buffNerf, this.getEconomyModelOptions());
     const orderIDs = newSysMap.sites.map(s => s.id);
 
     const dirties: Record<string, Site> = {};
@@ -504,7 +506,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
 
   recalc = () => {
     // console.log(this.state.sysMap);
-    const sysMap = buildSystemModel2(this.state.sysMap, this.state.useIncomplete, this.state.buffNerf);
+    const sysMap = buildSystemModel2(this.state.sysMap, this.state.useIncomplete, this.state.buffNerf, this.getEconomyModelOptions());
     this.setState({
       sysMap: sysMap,
     });
@@ -512,12 +514,30 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
 
   toggleUseIncomplete = () => {
     const newValue = !this.state.useIncomplete;
-    const sysMap = buildSystemModel2(this.state.sysMap, newValue, this.state.buffNerf);
+    const sysMap = buildSystemModel2(this.state.sysMap, newValue, this.state.buffNerf, this.getEconomyModelOptions());
     this.setState({
       sysMap: sysMap,
       useIncomplete: newValue,
     });
     store.useIncomplete = newValue;
+  };
+
+  getEconomyModelOptions = () => {
+    return {
+      enableTerraformableAgricultureBonus: this.state.terraformableAgriBonus,
+    };
+  };
+
+  toggleTerraformableAgriBonus = () => {
+    const terraformableAgriBonus = !this.state.terraformableAgriBonus;
+    const sysMap = buildSystemModel2(this.state.sysMap, this.state.useIncomplete, this.state.buffNerf, {
+      enableTerraformableAgricultureBonus: terraformableAgriBonus,
+    });
+    this.setState({
+      sysMap,
+      terraformableAgriBonus,
+    });
+    store.terraformableAgriBonus = terraformableAgriBonus;
   };
 
   doOnScrollEnd(action: () => void) {
@@ -892,7 +912,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
   }
 
   renderTitleAndCommands() {
-    const { systemName, processingMsg, sysMap, useIncomplete, showEditSys, showConfirmAction, showConfirmMessage, auditWholeSystem, siteGraphType, bodySlots, canEditAsArchitect, showEditNotes, showSaveAs } = this.state;
+    const { systemName, processingMsg, sysMap, useIncomplete, showEditSys, showConfirmAction, showConfirmMessage, auditWholeSystem, siteGraphType, bodySlots, canEditAsArchitect, showEditNotes, showSaveAs, terraformableAgriBonus } = this.state;
 
     // prepare rich copy link
     const pageLink = `${window.location.origin}/#sys=${encodeURIComponent(systemName)}`;
@@ -1381,6 +1401,18 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
                 }
               ]
             }
+          },
+
+          {
+            key: 'toggle-terraformable-agri-bonus',
+            title: `${terraformableAgriBonus ? 'Disable' : 'Enable'} Terraformable Agri Bonuses`,
+            className: cn.bBox,
+            iconProps: {
+              iconName: mapBodyFeatureIcon.bio,
+              style: { color: terraformableAgriBonus ? appTheme.palette.greenLight : undefined },
+            },
+            disabled: !!processingMsg || !sysMap,
+            onClick: () => this.toggleTerraformableAgriBonus(),
           },
 
           {

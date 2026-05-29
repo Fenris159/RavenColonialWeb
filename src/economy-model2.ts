@@ -7,11 +7,16 @@ import { asPosNegTxt2 } from "./util";
 let showConsoleAudit = Date.now() < 0;
 
 const useNewModel = true;
+const strongLinkContributionFloor = 0.1;
+
+export interface EconomyModelOptions {
+  enableTerraformableAgricultureBonus?: boolean;
+}
 
 /** Black hole, Neutron star or White Dwarf */
 export const stellarRemnants = [BT.bh, BT.ns, BT.wd];
 
-export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[]): Economy => {
+export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], options?: EconomyModelOptions): Economy => {
   // use pre-computed data?
   if (site.economies && site.primaryEconomy) {
     return site.primaryEconomy;
@@ -66,6 +71,8 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[]): Ec
     if (useNewModel) {
       applyBuffs(map, site, false);
     }
+
+    applyObservedPresetEconomies(map, site);
   }
 
   if (site.type.fixed && !useNewModel) {
@@ -74,7 +81,7 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[]): Ec
 
   // these apply for fixed and economy ports
   if (site.links) {
-    applyStrongLinks2(map, site.links!.strongSites, site, calcIds);
+    applyStrongLinks2(map, site.links!.strongSites, site, calcIds, undefined, options);
 
     if (!site.type.fixed) {
       if (!useNewModel) {
@@ -133,7 +140,7 @@ const finishUp = (map: EconomyMap, site: SiteMap2) => {
 const adjust = (inf: Economy, delta: number, reason: string, map: EconomyMap, site: SiteMap2, source?: 'body' | 'sys') => {
   const before = map[inf as keyof EconomyMap];
   let newValue = map[inf as keyof EconomyMap] + delta;
-  if (newValue <= 0) { newValue = 0.1; }
+  if (newValue < 0) { newValue = 0; }
   // round values (why do we get values of "2.2499999999999996"?)
   map[inf as keyof EconomyMap] = Math.round(newValue * 100) / 100;
   const after = map[inf as keyof EconomyMap];
@@ -173,6 +180,19 @@ const applySpecializedPort = (map: EconomyMap, site: SiteMap2) => {
   if (useNewModel) {
     applyBuffs(map, site, false);
   }
+};
+
+const applyObservedPresetEconomies = (map: EconomyMap, site: SiteMap2) => {
+  if (site.buildType !== 'atropos' || site.body?.type !== BT.ib || site.body?.features.includes(BodyFeature.bio)) {
+    return;
+  }
+
+  adjust('extraction', +0.65, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
+  adjust('agriculture', +0.55, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
+  adjust('refinery', +0.35, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
+  adjust('military', +0.30, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
+  adjust('industrial', +0.25, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
+  adjust('hightech', +0.15, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
 };
 
 export const applyBodyType = (map: EconomyMap, site: SiteMap2) => {
@@ -267,7 +287,7 @@ export const applyBodyType = (map: EconomyMap, site: SiteMap2) => {
   site.intrinsic = Array.from(intrinsic);
 };
 
-export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site: SiteMap2, calcIds: string[], subLink?: Economy | '*') => {
+export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site: SiteMap2, calcIds: string[], subLink?: Economy | '*', options?: EconomyModelOptions) => {
   // For Every Tier2 facility that effects a given Economy on/orbiting the same Body as the Port (+0.80 to that Economy) - These are Tier2 Strong Links​
   // For Every Tier1 facility that effects a given Economy on/orbiting the same Body as the Port (+0.40 to that Economy) - These are Tier1 Strong Links​
   for (let s of strongSites) {
@@ -286,16 +306,20 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
     if (s.type.inf !== 'colony') {
       // apply single fixed economy influences
       if (s.type.inf in map) {
-        adjust(s.type.inf, infSize, `Apply ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
+        if (s.type.inf === 'agriculture') {
+          applyStrongAgricultureContribution(map, site, infSize, prefix, s, options);
+        } else {
+          adjust(s.type.inf, infSize, `Apply ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
 
-        applyStrongLinkBoost(s.type.inf, map, site, prefix);
+          applyStrongLinkBoost(s.type.inf, map, site, prefix);
+        }
       } else {
         console.warn(`Unknown economy '${s.type.inf}' for site ${s.name} - ${s.type.displayName2} (${s.buildType})`);
       }
 
       // also apply sub-strong links from the emitting port
       if (useNewModel && s.links?.strongSites && !subLink) {
-        applyStrongLinks2(map, s.links?.strongSites, site, calcIds, s.type.inf);
+        applyStrongLinks2(map, s.links?.strongSites, site, calcIds, s.type.inf, options);
       }
       continue;
     }
@@ -314,13 +338,19 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
       if (s.intrinsic?.includes(ee)) {
         if (useNewModel /* && s.type.tier === site.type.tier*/) {
           const infSize = s.type.tier === 1 ? 0.4 : (s.type.tier === 2 ? 0.8 : 1.2)
-          adjust(ee, infSize, `Apply colony ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
+          if (ee === 'agriculture') {
+            applyStrongAgricultureContribution(map, site, infSize, `colony ${prefix}`, s, options);
+          } else {
+            adjust(ee, infSize, `Apply colony ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
+          }
         } else {
           // use the ACTUAL economy strength
           adjust(ee, val, `Apply colony ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
         }
 
-        applyStrongLinkBoost(ee, map, site, `${prefix}s`);
+        if (ee !== 'agriculture') {
+          applyStrongLinkBoost(ee, map, site, `${prefix}s`);
+        }
 
         // Add a special case: terraforming can be boosted by colony-to-colony strong links.
         if (ee === 'terraforming' && !useNewModel) {
@@ -331,9 +361,63 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
 
     // also apply sub-strong links from the emitting port
     if (useNewModel && s.links?.strongSites && !subLink) {
-      applyStrongLinks2(map, s.links?.strongSites, site, calcIds, "*");
+      applyStrongLinks2(map, s.links?.strongSites, site, calcIds, "*", options);
     }
   }
+};
+
+const applyStrongAgricultureContribution = (map: EconomyMap, site: SiteMap2, sourceValue: number, prefix: string, sourceSite: SiteMap2, options?: EconomyModelOptions) => {
+  const contribution = calculateAgricultureStrongLinkContribution(sourceValue, site, options);
+  if (contribution.score <= 0) {
+    return;
+  }
+
+  adjust(
+    'agriculture',
+    contribution.score,
+    `Apply ${prefix} from: ${sourceSite.name} (T${sourceSite.type.tier}): ${contribution.formula}`,
+    map,
+    site,
+  );
+};
+
+export const calculateAgricultureStrongLinkContribution = (sourceValue: number, site: SiteMap2, options?: EconomyModelOptions) => {
+  const parts = [`${sourceValue.toFixed(1)}`];
+  let score = sourceValue;
+
+  if (score <= 0) {
+    return { score: 0, formula: '0.0' };
+  }
+
+  if (matches([BodyFeature.bio], site.body?.features)) {
+    score += 0.4;
+    parts.push('+ BIO 0.4');
+  }
+
+  if (options?.enableTerraformableAgricultureBonus && matches([BodyFeature.terraformable], site.body?.features)) {
+    score += 0.4;
+    parts.push('+ TERRAFORMABLE 0.4');
+  }
+
+  if (matches([BT.ib, BT.ri], site.body?.type)) {
+    score -= 0.4;
+    parts.push('- ICY/ROCKY-ICE 0.4');
+  }
+
+  if (bodyIsTidalToStar(site.sys, site.body)) {
+    score -= 0.4;
+    parts.push('- TIDAL 0.4');
+  }
+
+  if (score <= 0) {
+    parts.push(`=> floor ${strongLinkContributionFloor.toFixed(1)}`);
+    score = strongLinkContributionFloor;
+  }
+
+  return {
+    score: Math.round(score * 100) / 100,
+    formula: `${parts.join(' ')} = ${score.toFixed(1)}`,
+  };
 };
 
 export const applyStrongLinkBoost = (inf: Economy, map: EconomyMap, site: SiteMap2, reason: string) => {
@@ -466,22 +550,15 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
 
   if (map.agriculture > 0) {
     let buffed = false;
-    if (matches([BodyFeature.bio, BodyFeature.terraformable], site.body?.features)) {// && (!isSettlement || !debuff)) {
+    if (matches([BodyFeature.bio], site.body?.features)) {// && (!isSettlement || !debuff)) {
       // If the Body has Organics (also known as Biologicals) (+0.40) for High Tech, Tourism and Agriculture - the type of Organics doesn't matter
-      adjust('agriculture', +0.4, 'Buff: body has BIO or TERRAFORMABLE', map, site, 'body');
+      adjust('agriculture', +0.4, 'Buff: body has BIO', map, site, 'body');
       buffed = true;
     }
-
-    // If the Body is an Earth Like World (+0.40) for High Tech, Tourism and Agriculture
-    // If the Body is a Water World (+0.40) for Tourism and Agriculture
-    else if (matches([BT.elw, BT.ww], site.body?.type)) {
-      adjust('agriculture', +0.4, 'Buff: body is ELW or WW', map, site, 'body');
-    }
-
-    if ((matches([BT.ib], site.body?.type) || bodyIsTidalToStar(site.sys, site.body)) && (!isSettlement || buffed)) {
-      // If the Body is an Icy World (-0.40) for Agriculture - Icy World only, does not include Rocky Ice
+    if ((matches([BT.ib, BT.ri], site.body?.type) || bodyIsTidalToStar(site.sys, site.body)) && (!isSettlement || buffed)) {
+      // If the Body is an Icy or Rocky-Ice World (-0.40) for Agriculture
       // If the Body is Tidally Locked (-0.40) for Agriculture
-      adjust('agriculture', -0.4, 'Buff: body is ICY or has TIDAL', map, site, 'body');
+      adjust('agriculture', -0.4, 'Buff: body is ICY/ROCKY-ICE or has TIDAL', map, site, 'body');
     }
   }
 
@@ -565,7 +642,11 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
       } else {
         // apply one weak link per intrinsic economy
         for (const instrinsicInf of s.intrinsic ?? []) {
-          adjust(instrinsicInf, +0.05, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
+          if (instrinsicInf === 'agriculture') {
+            adjust(instrinsicInf, +0.05, `Apply weak link from: ${s.name} (intrinsic source only)`, map, site);
+          } else {
+            adjust(instrinsicInf, +0.05, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
+          }
         }
         continue;
       }
@@ -573,7 +654,11 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
 
     // For Every Facility that effects a given Economy within the System that hasn't already been counted above (+0.05) - These are Weak Links (the Tier does not matter)​
     if (inf in map) {
-      adjust(inf, +0.05, `Apply weak link from: ${s.name}`, map, site);
+      if (inf === 'agriculture') {
+        adjust(inf, +0.05, `Apply weak link from: ${s.name} (source only)`, map, site);
+      } else {
+        adjust(inf, +0.05, `Apply weak link from: ${s.name}`, map, site);
+      }
     } else {
       console.warn(`Unknown economy '${s.type.inf}' for site '${s.name}', generating for: ${site.name}`);
     }

@@ -1,5 +1,5 @@
 import { SysSnapshot } from './api/v2-system';
-import { calculateColonyEconomies2, stellarRemnants } from './economy-model2';
+import { calculateColonyEconomies2, EconomyModelOptions, stellarRemnants } from './economy-model2';
 import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "./site-data";
 import { BodyFeature } from './types';
 import { Bod, BT, Site, Sys } from './types2';
@@ -201,7 +201,7 @@ export interface EconomyLink {
   weak: number;
 }
 
-export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: boolean): SysMap2 => {
+export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: boolean, economyModelOptions?: EconomyModelOptions): SysMap2 => {
   // const orderIDs = sys.sites.map(s => s.id); // necessary?
   const idxLimit = sys.idxCalcLimit ?? sys.sites.length;
 
@@ -229,12 +229,12 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
 
   // per body, calc strong/weak links
   for (const body of allBodies) {
-    calcBodyLinks(sysMap.bodyMap, body, sys, sysMap.calcIds);
+    calcBodyLinks(sysMap.bodyMap, body, sys, sysMap.calcIds, economyModelOptions);
   }
 
   // calc sum effects from all sites
   const { tierPoints, taxCount } = sumTierPoints(sysMap.siteMaps, sysMap.calcIds, !useIncomplete);
-  const sumEffects = sumSystemEffects(sysMap.siteMaps, sysMap.calcIds, buffNerf);
+  const sumEffects = sumSystemEffects(sysMap.siteMaps, sysMap.calcIds, buffNerf, economyModelOptions);
 
   // calc system unlocks
   const sysUnlocks = {} as Record<SysUnlocks, boolean>;
@@ -465,7 +465,7 @@ export const applyTax = (tier: number, cost: number, taxCount: number) => {
   return cost;
 };
 
-const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: boolean) => {
+const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: boolean, economyModelOptions?: EconomyModelOptions) => {
 
   const mapEconomies: Record<string, number> = {};
   const sumEffects: SysEffects = {};
@@ -479,7 +479,7 @@ const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: bo
 
     // calc total system economic influence
     if (['settlement', 'outpost', 'starport'].includes(site.type.buildClass)) {
-      calculateColonyEconomies2(site, calcIds);
+      calculateColonyEconomies2(site, calcIds, economyModelOptions);
     }
     const inf = site.primaryEconomy ?? site.type.inf;
 
@@ -568,7 +568,7 @@ const getBodyPrimaryPort = (sites: SiteMap2[], calcIds: string[]): SiteMap2 | un
   return undefined;
 }
 
-const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[]) => {
+const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {
 
   // exit early if no primary port for this body
   if (!body.surfacePrimary && !body.orbitalPrimary) { return; }
@@ -595,8 +595,8 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
 
   // then calculate the economies after that
   for (const site of body.sites) {
-    calcSiteEconomies(site, calcIds);
-  }
+    calcSiteEconomies(site, calcIds, economyModelOptions);
+}
 }
 
 const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: BodyMap2, primarySite: SiteMap2, calcIds: string[]) => {
@@ -644,7 +644,7 @@ const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: Bod
   }
 }
 
-const calcSiteEconomies = (site: SiteMap2, calcIds: string[]) => {
+const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {
   if (!site.links) return;
 
   const map: Record<ConcreteEconomy, EconomyLink> = {
@@ -666,7 +666,7 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[]) => {
     const curSiteLinks: Set<ConcreteEconomy> = new Set();
     if (inf === 'colony') {
       // we need to calculate what the economy actually is for these
-      calculateColonyEconomies2(s, calcIds);
+      calculateColonyEconomies2(s, calcIds, economyModelOptions);
       // console.log(`** ${s.buildName}: ${inf}\n`, JSON.stringify(s.economies, null, 2)); // TMP!
       // tally strong links from intrinsic economies
       for (const intrinsicInf of s.intrinsic ?? []) {
@@ -694,7 +694,7 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[]) => {
     if (inf === 'none') continue;
     if (inf === 'colony') {
       // we need to calculate what the economy actually is for these
-      calculateColonyEconomies2(s, calcIds);
+      calculateColonyEconomies2(s, calcIds, economyModelOptions);
       // console.log(`** ${s.buildName}: ${inf}\n`, JSON.stringify(s.economies, null, 2)); // TMP!
       // tally weak links from intrinsic economies
       for (const intrinsicInf of s.intrinsic ?? []) {
