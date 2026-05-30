@@ -334,9 +334,11 @@ describe("HR 4464 economy verification (diagnostic)", () => {
       getColonyEconomyBeforeWeakLinks(marvelous, "agriculture"),
     )).toBe(1.4);
     expect(getMaxAgricultureWeakLinkBudget(rusty, false)).toBe(0.9);
+    expect(getMaxAgricultureWeakLinkBudget(recycles, false)).toBe(1.15);
+    expect(getMaxAgricultureWeakLinkBudget(marvelous, false)).toBe(1.4);
     expect(roundPct(rusty.economies!.agriculture!)).toBe(90);
-    expect(roundPct(recycles.economies!.agriculture!)).toBe(90);
-    expect(roundPct(marvelous.economies!.agriculture!)).toBe(90);
+    expect(roundPct(recycles.economies!.agriculture!)).toBe(115);
+    expect(roundPct(marvelous.economies!.agriculture!)).toBe(140);
 
     // Link graph score (strong×62 + weak×8) is UI bar width only — not used in economy calc.
     // RC counts every weak candidate in weakSites; in-game / Spansh reflect player-linked subset counts.

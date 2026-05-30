@@ -35,6 +35,47 @@ export const AG_WEAK_LINK_BUDGET = {
   TIDAL_HAB: 0.50,
 } as const;
 
+/**
+ * Spansh-regressed weak-link agriculture budgets by colony port buildType (HR 4464 and peers).
+ * Orbital cluster types (plutus / vulcan / prometheus) use subordinate-count tiers instead — see below.
+ */
+export const AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE: Readonly<Record<string, number>> = {
+  hestia: 1.60,
+  poseidon: 1.60,
+  apollo: 1.60,
+  clotho: 1.25,
+  chronos: 1.40,
+};
+
+/** plutus / vulcan / prometheus on orbital colony ports: budget scales with strong subordinate count. */
+export const AG_WEAK_LINK_ORBITAL_CLUSTER_BUILD_TYPES = new Set(["plutus", "vulcan", "prometheus"]);
+
+export const getOrbitalClusterAgWeakLinkBudget = (site: SiteMap2): number => {
+  const subs = site.links?.strongSites?.length ?? 0;
+  if (subs >= 3) {
+    return 1.15;
+  }
+  if (subs >= 1) {
+    return 1.40;
+  }
+  return AG_WEAK_LINK_BUDGET.DEFAULT;
+};
+
+const isColonyPortWithoutSameBodyAgStrong = (site: SiteMap2) =>
+  (site.type.buildClass === "starport" || site.type.buildClass === "outpost") &&
+  site.type.inf === "colony" &&
+  !site.type.fixed &&
+  !site.intrinsic?.includes("agriculture") &&
+  !site.agEconomyCalc?.sameBodyAgFacilityStrongLink &&
+  !site.agEconomyCalc?.sameBodyAgSettlementStrongLink;
+
+const hasObservedBuildTypeWeakLinkBudget = (site: SiteMap2) =>
+  site.buildType in AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE;
+
+const usesOrbitalClusterWeakLinkBudget = (site: SiteMap2) =>
+  AG_WEAK_LINK_ORBITAL_CLUSTER_BUILD_TYPES.has(site.buildType) &&
+  site.type.orbital;
+
 /** @deprecated Use AG_WEAK_LINK_BUDGET + weakLinkBudgetToMaxSources */
 export const AG_WEAK_LINK_CAP_DEFAULT = weakLinkBudgetToMaxSources(AG_WEAK_LINK_BUDGET.DEFAULT);
 
@@ -184,9 +225,12 @@ interface AgWeakLinkBudgetContext {
 
 interface AgWeakLinkBudgetRule {
   label: string;
-  budget: number;
+  budget: number | ((ctx: AgWeakLinkBudgetContext) => number);
   when: (ctx: AgWeakLinkBudgetContext) => boolean;
 }
+
+const resolveAgWeakLinkRuleBudget = (rule: AgWeakLinkBudgetRule, ctx: AgWeakLinkBudgetContext): number =>
+  typeof rule.budget === "function" ? rule.budget(ctx) : rule.budget;
 
 const AG_WEAK_LINK_BUDGET_RULES: AgWeakLinkBudgetRule[] = [
   {
@@ -241,15 +285,26 @@ const AG_WEAK_LINK_BUDGET_RULES: AgWeakLinkBudgetRule[] = [
       !site.agEconomyCalc?.sameBodyAgSettlementStrongLink,
   },
   {
+    label: 'Orbital cluster colony port weak-link budget by subordinate count (plutus / vulcan / prometheus)',
+    budget: ({ site }) => getOrbitalClusterAgWeakLinkBudget(site),
+    when: ({ site }) =>
+      isColonyPortWithoutSameBodyAgStrong(site) &&
+      usesOrbitalClusterWeakLinkBudget(site),
+  },
+  {
+    label: 'Spansh-observed colony port weak-link budget by buildType',
+    budget: ({ site }) => AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE[site.buildType],
+    when: ({ site }) =>
+      isColonyPortWithoutSameBodyAgStrong(site) &&
+      hasObservedBuildTypeWeakLinkBudget(site),
+  },
+  {
     label: 'Colony port without same-body agriculture strong link',
     budget: AG_WEAK_LINK_BUDGET.DEFAULT,
     when: ({ site }) =>
-      (site.type.buildClass === 'starport' || site.type.buildClass === 'outpost') &&
-      site.type.inf === 'colony' &&
-      !site.type.fixed &&
-      !site.intrinsic?.includes('agriculture') &&
-      !site.agEconomyCalc?.sameBodyAgFacilityStrongLink &&
-      !site.agEconomyCalc?.sameBodyAgSettlementStrongLink &&
+      isColonyPortWithoutSameBodyAgStrong(site) &&
+      !hasObservedBuildTypeWeakLinkBudget(site) &&
+      !usesOrbitalClusterWeakLinkBudget(site) &&
       !matches([BT.hmc, BT.mrb], site.body?.type),
   },
   {
@@ -276,9 +331,12 @@ export const getMaxAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWorl
   let budget = Number.POSITIVE_INFINITY;
 
   for (const rule of AG_WEAK_LINK_BUDGET_RULES) {
-    if (rule.when(ctx)) {
-      budget = Math.min(budget, rule.budget);
+    if (!rule.when(ctx)) {
+      continue;
     }
+
+    const ruleBudget = resolveAgWeakLinkRuleBudget(rule, ctx);
+    budget = Math.min(budget, ruleBudget);
   }
 
   return budget;
@@ -301,7 +359,10 @@ export const explainAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWor
   return {
     budget,
     maxSources: getMaxAgricultureWeakLinks(site, agPrimaryHabWorld),
-    matchingRules: matching.map(rule => ({ label: rule.label, budget: rule.budget })),
+    matchingRules: matching.map(rule => ({
+      label: rule.label,
+      budget: resolveAgWeakLinkRuleBudget(rule, ctx),
+    })),
   };
 };
 

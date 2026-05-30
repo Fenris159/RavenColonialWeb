@@ -1027,7 +1027,31 @@ describe("agriculture weak link caps and floors", () => {
     expect(site.economyAudit!.filter(entry => entry.inf === "agriculture")).toHaveLength(2);
   });
 
-  it("caps agriculture weak links at 18 on colony ports without same-body agriculture strong links", () => {
+  it("caps agriculture weak links at 23 for plutus orbital ports with three or more strong subordinates", () => {
+    const site = createCivilianSurfaceOutpost("plutus", BT.rb);
+    site.type = {
+      buildClass: "starport",
+      inf: "colony" as Economy,
+      orbital: true,
+      tier: 1,
+    } as SiteMap2["type"];
+    site.links!.strongSites = [
+      createWeakSite("sub-1", "extraction" as Economy),
+      createWeakSite("sub-2", "industrial" as Economy),
+      createWeakSite("sub-3", "refinery" as Economy),
+    ];
+    site.links!.weakSites = Array.from({ length: 30 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
+
+    expect(site.economies!.agriculture).toBe(1.15);
+    expect(site.economyAudit!.filter(entry => entry.reason.startsWith("Apply weak link"))).toHaveLength(23);
+    expect(site.economyAudit!.filter(entry => entry.reason.startsWith("Skipped weak link"))).toHaveLength(7);
+  });
+
+  it("caps agriculture weak links at 18 on plutus orbital ports with no strong subordinates", () => {
     const site = createCivilianSurfaceOutpost("plutus", BT.rb);
     site.type = {
       buildClass: "starport",

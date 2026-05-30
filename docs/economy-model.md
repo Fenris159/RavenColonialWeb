@@ -156,7 +156,7 @@ Two related concepts that are easy to conflate:
 | **Weak-link budget** | `economy-ag-heuristics.ts` | Percent cap on agriculture weak-link accumulation (+5% steps) |
 | **Applied weak links** | `applyWeakLinks` in `economy-documented.ts` | Sorted candidates until budget exhausted; capped candidates appear in audit as **Skipped weak link** (delta 0) |
 
-**Known gap (HR 4464 B):** Three orbital colony ports on the same body share the same agriculture candidate pool (35 weak sources, UI ag score 280) and the same model budget (90%). Spansh reports 90%, 115%, and 140% — implying 18, 23, and 28 **player-linked** weak sources. Total link graph score varies with subordinate facilities but does **not** correlate with Spansh agriculture. Closing this gap requires per-port linked-facility data from the architect save (not available in RC today), not tuning the 62/8 display weights.
+**Per-port weak-link budgets (2026-05):** Spansh regression on HR 4464 B showed agriculture differs by port **buildType** and **orbital subordinate count**, not exclusive facility assignment. Production applies `AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE` (e.g. hestia → 160%) and `getOrbitalClusterAgWeakLinkBudget` for plutus/vulcan/prometheus (0 subs → 90%, 1–2 subs → 140%, 3+ subs → 115%). The link graph still lists all system candidates; budgets cap how many apply. Remaining gap: surface ports like Roughly (hestia) may still miss Spansh when foreign-star weak-link filtering limits eligible sources.
 
 ### API / save investigation (2026-05)
 
