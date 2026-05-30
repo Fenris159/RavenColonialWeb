@@ -75,7 +75,7 @@ export const assignExclusiveAgSources = (
     if (source.type.inf !== "agriculture" && source.type.buildClass !== "settlement") {
       continue;
     }
-    if (!sysMap.calcIds.includes(source.id)) {
+    if (!sysMap.calcIds?.includes(source.id)) {
       continue;
     }
     if (isPrimaryPort(source)) {
@@ -233,7 +233,7 @@ export const simulatePortAgriculture = (
 
   const eligibleCount = countForeignStarLimited(site, pool);
 
-  let budget = AG_WEAK_LINK_BUDGET.DEFAULT;
+  let budget: number = AG_WEAK_LINK_BUDGET.DEFAULT;
   switch (scenario) {
     case "port-budget-v1":
       budget = getHypothesisPortAgBudget(site);
@@ -363,13 +363,7 @@ export const compareAgHypothesisScenarios = (
   scenarios: readonly AgHypothesisScenario[],
 ) => scenarios.map(s => scoreAgHypothesis(sysMap, spanshMap, s));
 
-export interface HypothesisWinner {
-  scenario: AgHypothesisScenario;
-  matches: number;
-  mae: number;
-}
-
-export const pickBestAgHypothesis = (scores: ScenarioScore[]): HypothesisWinner => {
+export const pickBestAgHypothesis = (scores: ScenarioScore[]): ScenarioScore => {
   return scores.reduce((best, s) =>
     s.matches > best.matches || (s.matches === best.matches && s.mae < best.mae) ? s : best,
   );

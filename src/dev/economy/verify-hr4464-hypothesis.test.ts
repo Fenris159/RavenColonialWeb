@@ -1,10 +1,9 @@
-import { buildSystemModel2 } from "../../system-model2";
+import { buildSystemModel2, EconomyMap } from "../../system-model2";
 import { Sys } from "../../types2";
 import {
   AgHypothesisScenario,
   compareAgHypothesisScenarios,
   pickBestAgHypothesis,
-  scoreAgHypothesis,
 } from "./ag-hypothesis-models";
 import * as fs from "fs";
 import * as os from "os";
@@ -14,6 +13,11 @@ const SYSTEM_ID = "18494801076";
 const API = "https://ravencolonial100-awcbdvabgze4c5cq.canadacentral-01.azurewebsites.net/api/v2";
 const SYSTEM_PATH = path.join(os.tmpdir(), "hr4464-sys.json");
 const SPANSH_PATH = path.join(os.tmpdir(), "hr4464-spansh.json");
+
+interface SpanshEconomy {
+  id: number;
+  economies: Partial<Record<keyof EconomyMap, number>>;
+}
 
 const ALL_SCENARIOS: AgHypothesisScenario[] = [
   "baseline",
@@ -31,7 +35,7 @@ const BUDGET_SCENARIOS = ALL_SCENARIOS.filter(s => s.startsWith("port-budget"));
 
 describe("HR 4464 agriculture hypothesis comparison", () => {
   let sys: Sys;
-  let spanshMap: Record<number, { economies?: { agriculture?: number } }>;
+  let spanshMap: Record<number, SpanshEconomy>;
 
   beforeAll(async () => {
     if (!fs.existsSync(SYSTEM_PATH)) {
@@ -43,9 +47,8 @@ describe("HR 4464 agriculture hypothesis comparison", () => {
       fs.writeFileSync(SPANSH_PATH, await resp.text());
     }
     sys = JSON.parse(fs.readFileSync(SYSTEM_PATH, "utf8")) as Sys;
-    spanshMap = Object.fromEntries(
-      (JSON.parse(fs.readFileSync(SPANSH_PATH, "utf8")) as { id: number }[]).map(e => [e.id, e]),
-    );
+    const spansh = JSON.parse(fs.readFileSync(SPANSH_PATH, "utf8")) as SpanshEconomy[];
+    spanshMap = Object.fromEntries(spansh.map(entry => [entry.id, entry]));
   }, 60000);
 
   it("scores exclusive linking vs port-type budgets against Spansh agriculture", () => {
