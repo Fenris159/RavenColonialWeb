@@ -223,14 +223,16 @@ describe("applyBuffs agriculture", () => {
     ]);
   });
 
-  it("does not apply an extra agriculture body buff for ELW or WW bodies", () => {
+  it("applies the ELW or WW agriculture body buff", () => {
     const map = createEconomyMap();
     const site = createSite([], BT.ww);
 
     applyBuffs(map, site, false);
 
-    expect(map.agriculture).toBe(1);
-    expect(site.economyAudit).toEqual([]);
+    expect(map.agriculture).toBe(1.4);
+    expect(site.economyAudit).toEqual([
+      expect.objectContaining({ delta: 0.4, reason: "Buff: body is ELW or WW" }),
+    ]);
   });
 
   it("applies the agriculture penalty for rocky-ice bodies", () => {
@@ -242,7 +244,35 @@ describe("applyBuffs agriculture", () => {
     expect(map.agriculture).toBe(1);
     expect(site.economyAudit).toEqual([
       expect.objectContaining({ delta: 0.4, reason: "Buff: body has BIO" }),
-      expect.objectContaining({ delta: -0.4, reason: "Buff: body is ICY/ROCKY-ICE or has TIDAL" }),
+      expect.objectContaining({ delta: -0.4, reason: "Buff: body is ICY/ROCKY-ICE" }),
+    ]);
+  });
+
+  it("stacks icy and tidal agriculture penalties separately", () => {
+    const map = createEconomyMap();
+    const site = createTidallyLockedSite(BT.ib);
+    site.body!.features.push(BodyFeature.bio);
+
+    applyBuffs(map, site, false);
+
+    expect(map.agriculture).toBe(0.6);
+    expect(site.economyAudit).toEqual([
+      expect.objectContaining({ delta: 0.4, reason: "Buff: body has BIO" }),
+      expect.objectContaining({ delta: -0.4, reason: "Buff: body is ICY/ROCKY-ICE" }),
+      expect.objectContaining({ delta: -0.4, reason: "Buff: body has TIDAL" }),
+    ]);
+  });
+
+  it("floors tidally locked WW agriculture at 1.0 after body buffs", () => {
+    const map = createEconomyMap();
+    const site = createTidallyLockedSite(BT.ww);
+
+    applyBuffs(map, site, false);
+
+    expect(map.agriculture).toBe(1);
+    expect(site.economyAudit).toEqual([
+      expect.objectContaining({ delta: 0.4, reason: "Buff: body is ELW or WW" }),
+      expect.objectContaining({ delta: -0.4, reason: "Buff: body has TIDAL" }),
     ]);
   });
 
