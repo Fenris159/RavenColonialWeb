@@ -287,16 +287,16 @@ describe("applyBuffs agriculture", () => {
 });
 
 describe("calculateAgricultureStrongLinkContribution", () => {
-  it("adds organics once and ignores terraformable while the feature flag is disabled", () => {
+  it("adds organics once and ignores terraformable when the feature flag is disabled", () => {
     const site = createStrongLinkSite([BodyFeature.bio, BodyFeature.terraformable]);
 
-    expect(calculateAgricultureStrongLinkContribution(1, site).score).toBe(1.4);
+    expect(calculateAgricultureStrongLinkContribution(1, site, { enableTerraformableAgricultureBonus: false }).score).toBe(1.4);
   });
 
-  it("can include terraformable bonus for intended-behavior predictions", () => {
+  it("includes terraformable bonus by default for strong-link agriculture", () => {
     const site = createStrongLinkSite([BodyFeature.bio, BodyFeature.terraformable]);
 
-    expect(calculateAgricultureStrongLinkContribution(1, site, { enableTerraformableAgricultureBonus: true }).score).toBe(1.8);
+    expect(calculateAgricultureStrongLinkContribution(1, site).score).toBe(1.8);
   });
 
   it("applies organics, rocky-ice, and tidal penalties additively", () => {
@@ -690,3 +690,138 @@ describe("calculateAgricultureStrongLinkContribution", () => {
   });
 
 });
+
+describe("agriculture link filters", () => {
+  it("propagates intrinsic surface colony agriculture to a fixed orbital port on the same body", () => {
+    const star = {
+      features: [],
+      name: "Test",
+      num: 0,
+      parents: [],
+      type: BT.st,
+    };
+    const body = {
+      features: [BodyFeature.bio, BodyFeature.tidal, BodyFeature.atmosphere],
+      name: "Test 1",
+      num: 1,
+      parents: [0],
+      type: BT.hmc,
+    };
+    const sys = {
+      bodies: [star, body],
+      reserveLevel: "pristine",
+    } as unknown as SysMap2;
+
+    const surface = {
+      body,
+      buildType: "zeus",
+      economies: { ...createEconomyMap(), agriculture: 1.25, extraction: 1.25 },
+      economyAudit: [],
+      id: "surface-colony",
+      intrinsic: ["agriculture", "extraction", "terraforming"],
+      links: { economies: {}, strongSites: [], weakSites: [] },
+      name: "Surface colony",
+      primaryEconomy: "extraction" as Economy,
+      sys,
+      type: {
+        buildClass: "outpost",
+        inf: "colony" as Economy,
+        orbital: false,
+        tier: 3,
+      },
+    } as unknown as SiteMap2;
+
+    const orbital = {
+      body,
+      economyAudit: [],
+      id: "orbital-military",
+      links: {
+        economies: {},
+        strongSites: [surface],
+        weakSites: [],
+      },
+      name: "Orbital military port",
+      sys,
+      type: {
+        buildClass: "outpost",
+        fixed: "military" as Economy,
+        inf: "military" as Economy,
+        orbital: true,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(orbital, ["surface-colony"]);
+
+    expect(orbital.economies!.agriculture).toBe(1.2);
+    expect(orbital.economyAudit).toContainEqual(
+      expect.objectContaining({
+        inf: "agriculture",
+        reason: expect.stringContaining("Apply colony Strong link from: Surface colony"),
+      }),
+    );
+  });
+
+  it("does not count distant ag-tourism colony hubs as agriculture weak-link sources", () => {
+    const body = {
+      features: [],
+      name: "Test 1",
+      num: 1,
+      parents: [],
+      type: BT.hmc,
+    };
+    const hubBody = {
+      features: [],
+      name: "Test 2",
+      num: 2,
+      parents: [],
+      type: BT.ww,
+    };
+    const sys = {
+      bodies: [body, hubBody],
+      reserveLevel: "pristine",
+    } as unknown as SysMap2;
+
+    const agHub = {
+      body: hubBody,
+      buildType: "dec_truss",
+      economies: { ...createEconomyMap(), agriculture: 1.4, tourism: 1.4 },
+      economyAudit: [],
+      id: "ag-hub",
+      intrinsic: ["agriculture", "tourism"],
+      name: "Ag tourism hub",
+      primaryEconomy: "agriculture" as Economy,
+      sys,
+      type: {
+        buildClass: "starport",
+        inf: "colony" as Economy,
+        orbital: true,
+        tier: 3,
+      },
+    } as unknown as SiteMap2;
+
+    const site = {
+      body,
+      economyAudit: [],
+      id: "target",
+      links: {
+        economies: {},
+        strongSites: [],
+        weakSites: [agHub],
+      },
+      name: "Target port",
+      sys,
+      type: {
+        buildClass: "starport",
+        inf: "colony" as Economy,
+        orbital: true,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(site, ["ag-hub"]);
+
+    expect(site.economies!.agriculture).toBe(0);
+  });
+});
+
