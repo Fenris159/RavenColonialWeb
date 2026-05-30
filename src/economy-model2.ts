@@ -587,10 +587,20 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
       adjust('agriculture', +0.4, 'Buff: body has BIO', map, site, 'body');
       buffed = true;
     }
-    if ((matches([BT.ib, BT.ri], site.body?.type) || bodyIsTidalToStar(site.sys, site.body)) && (!isSettlement || buffed)) {
+    if (matches([BT.elw, BT.ww], site.body?.type)) {
+      // If the Body is an Earth Like World or Water World (+0.40) for Agriculture
+      adjust('agriculture', +0.4, 'Buff: body is ELW or WW', map, site, 'body');
+    }
+    if (matches([BT.ib, BT.ri], site.body?.type) && (!isSettlement || buffed)) {
       // If the Body is an Icy or Rocky-Ice World (-0.40) for Agriculture
+      adjust('agriculture', -0.4, 'Buff: body is ICY/ROCKY-ICE', map, site, 'body');
+    }
+    if (bodyIsTidalToStar(site.sys, site.body) && (!isSettlement || buffed)) {
       // If the Body is Tidally Locked (-0.40) for Agriculture
-      adjust('agriculture', -0.4, 'Buff: body is ICY/ROCKY-ICE or has TIDAL', map, site, 'body');
+      adjust('agriculture', -0.4, 'Buff: body has TIDAL', map, site, 'body');
+    }
+    if (matches([BT.elw, BT.ww], site.body?.type) && map.agriculture < 1) {
+      adjust('agriculture', 1 - map.agriculture, 'Floor: body type agriculture cannot drop below 1.0', map, site, 'body');
     }
   }
 
