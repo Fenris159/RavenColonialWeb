@@ -336,6 +336,11 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
       const val = s.economies[ee];
       // only boost intrinsic economies from initial body influences (not from links)
       if (s.intrinsic?.includes(ee)) {
+        // Specialized ports only inherit colony strong links for their fixed economy type.
+        if (site.type.fixed && ee !== site.type.fixed) {
+          continue;
+        }
+
         if (useNewModel /* && s.type.tier === site.type.tier*/) {
           const infSize = s.type.tier === 1 ? 0.4 : (s.type.tier === 2 ? 0.8 : 1.2)
           if (ee === 'agriculture') {
