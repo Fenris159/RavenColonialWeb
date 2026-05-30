@@ -370,13 +370,11 @@ describe("calculateAgricultureStrongLinkContribution", () => {
   });
 
   it("uses the source port tier value for colony strong Agriculture links", () => {
-    const site = createTidallyLockedSite();
-    site.body!.features.push(BodyFeature.bio);
+    const site = createTidallyLockedSite(BT.hmc);
     site.type = {
       buildClass: "outpost",
-      fixed: "military" as Economy,
-      inf: "military" as Economy,
-      orbital: true,
+      inf: "colony" as Economy,
+      orbital: false,
       tier: 1,
     } as SiteMap2["type"];
     site.links = {
@@ -399,11 +397,52 @@ describe("calculateAgricultureStrongLinkContribution", () => {
 
     calculateColonyEconomies2(site, ["colony-source"]);
 
-    expect(site.economies!.agriculture).toBe(1.2);
+    expect(site.economies!.agriculture).toBe(0.8);
     expect(site.economyAudit).toContainEqual(
       expect.objectContaining({
-        delta: 1.2,
-        reason: expect.stringContaining("1.2 + BIO 0.4 - TIDAL 0.4 = 1.2"),
+        delta: 0.8,
+        reason: expect.stringContaining("1.2 - TIDAL 0.4 = 0.8"),
+      }),
+    );
+  });
+
+  it("does not apply non-matching colony intrinsic economies to specialized fixed ports", () => {
+    const site = createTidallyLockedSite(BT.ib);
+    site.body!.features.push(BodyFeature.bio);
+    site.type = {
+      buildClass: "outpost",
+      fixed: "industrial" as Economy,
+      inf: "industrial" as Economy,
+      orbital: true,
+      tier: 1,
+    } as SiteMap2["type"];
+    site.links = {
+      economies: {},
+      strongSites: [{
+        economies: { ...createEconomyMap(), agriculture: 1, industrial: 1, terraforming: 1 },
+        id: "colony-source",
+        intrinsic: ["agriculture", "industrial", "terraforming"],
+        name: "Surface colony source",
+        primaryEconomy: "industrial",
+        type: {
+          buildClass: "outpost",
+          inf: "colony" as Economy,
+          orbital: false,
+          tier: 1,
+        },
+      } as unknown as SiteMap2],
+      weakSites: [],
+    };
+
+    calculateColonyEconomies2(site, ["colony-source"]);
+
+    expect(site.economies!.agriculture).toBe(0);
+    expect(site.economies!.terraforming).toBe(0);
+    expect(site.economyAudit).toContainEqual(
+      expect.objectContaining({
+        inf: "industrial",
+        delta: 0.4,
+        reason: "Apply colony Strong link from: Surface colony source (T1)",
       }),
     );
   });
