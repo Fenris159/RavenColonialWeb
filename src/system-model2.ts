@@ -1,5 +1,7 @@
 import { SysSnapshot } from './api/v2-system';
 import { calculateColonyEconomies2, EconomyModelOptions, stellarRemnants } from './economy-model2';
+import type { AgEconomyCalcFlags } from './economy-core';
+import { siteContributesWeakLinks } from './economy-weak-links';
 import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "./site-data";
 import { BodyFeature } from './types';
 import { Bod, BT, Site, Sys } from './types2';
@@ -184,6 +186,9 @@ export interface SiteMap2 extends Site {
   bodyBuffed?: Set<Economy>;
   systemBuffed?: Set<Economy>;
 
+  /** Agriculture calculation flags; reset each time economies are calculated. */
+  agEconomyCalc?: AgEconomyCalcFlags;
+
   /** Calculated points needed to start construction */
   calcNeeds?: { tier: number; count: number; }
 }
@@ -225,6 +230,11 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
     body.surfacePrimary = getBodyPrimaryPort(body.surface, sysMap.calcIds);
     const siblingSites = findSiblingSites(sys.bodies, sysMap.bodyMap, body, !!body.surfacePrimary);
     body.orbitalPrimary = getBodyPrimaryPort(siblingSites, sysMap.calcIds);
+  }
+
+  // assign subordinate links before weak-link sources are collected (sheet: tiered stations only weak-link when subordinate)
+  for (const body of allBodies) {
+    assignBodySubordinateLinks(sys.bodies, sysMap.bodyMap, body, sysMap.calcIds);
   }
 
   // per body, calc strong/weak links
@@ -599,41 +609,77 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
 }
 }
 
+/** T1/T2/T3 starports and outposts only contribute weak links when subordinate to another station. */
+export { siteContributesWeakLinks } from './economy-weak-links';
+
+const canBeSubordinateToPrimary = (
+  s: SiteMap2,
+  primarySite: SiteMap2,
+  body: BodyMap2,
+  calcIds: string[],
+): boolean => {
+  if (s.parentLink || s.type.inf === 'none' || s === primarySite || (!calcIds.includes(s.id))) {
+    return false;
+  }
+
+  if (!primarySite.type.orbital && s.type.orbital && (s.type.buildClass === 'outpost' || s.type.buildClass === 'starport')) {
+    // surface sites cannot claim orbital ports
+    return false;
+  }
+
+  if (s.type.orbital && !primarySite.type.orbital && !!body.orbitalPrimary) {
+    // surface sites cannot claim orbital facilities if there's an orbital port
+    return false;
+  }
+
+  return true;
+};
+
+const assignBodySubordinateLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: BodyMap2, calcIds: string[]) => {
+  if (!body.surfacePrimary && !body.orbitalPrimary) { return; }
+
+  if (body.surfacePrimary) {
+    assignSubordinateLinks(bods, bodyMap, body, body.surfacePrimary, calcIds);
+  }
+  if (body.orbitalPrimary) {
+    assignSubordinateLinks(bods, bodyMap, body, body.orbitalPrimary, calcIds);
+  }
+};
+
+const assignSubordinateLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: BodyMap2, primarySite: SiteMap2, calcIds: string[]) => {
+  const siblingSites = findSiblingSites(bods, bodyMap, body, false);
+
+  for (const s of siblingSites) {
+    if (canBeSubordinateToPrimary(s, primarySite, body, calcIds)) {
+      s.parentLink = primarySite;
+    }
+  }
+};
+
 const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: BodyMap2, primarySite: SiteMap2, calcIds: string[]) => {
 
   // start with sites directly on the body
   const siblingSites = findSiblingSites(bods, bodyMap, body, false);
 
-  // strong links are everything else tied to the current body, alpha sort by name
+  // strong links are subordinate sites tied to the current body, alpha sort by name
   const strongSites = siblingSites
-    .filter(s => {
-      if (s.parentLink || s.type.inf === 'none' || s === primarySite || (!calcIds.includes(s.id))) {
-        // skip anything already strong-linked, things without influence, ourself or incompletes
-        return false;
-      }
-
-      if (!primarySite.type.orbital && s.type.orbital && (s.type.buildClass === 'outpost' || s.type.buildClass === 'starport')) {
-        // surface sites cannot claim orbital ports
-        return false;
-      }
-
-      if (s.type.orbital && !primarySite.type.orbital && !!body.orbitalPrimary) {
-        // surface sites cannot claim orbital facilities if there's an orbital port
-        return false;
-      }
-
-      // set the link to the primary
-      s.parentLink = primarySite;
-      return true;
-    })
+    .filter(s => s.parentLink === primarySite)
     .sort((a, b) => a.name.localeCompare(b.name));
 
 
-  // weak links are everything around any other body (and not a sibling), except primary ports
-  const weakSites = Object.values(bodyMap)
+  // Weak links: every qualifying site on other bodies (full link-graph candidate pool).
+  // Economy calc applies +5% steps until the agriculture weak-link budget is exhausted.
+  // When primarySite.original.weakLinkIds is set, only those sources are used (player-configured links).
+  let weakSites = Object.values(bodyMap)
     .filter(b => b !== body)
     .flatMap(b => b.sites)
-    .filter(s => !siblingSites.includes(s) && s.type.inf !== 'none' && (s !== s.body?.orbitalPrimary && s !== s.body?.surfacePrimary) && (calcIds.includes(s.id)));
+    .filter(s => !siblingSites.includes(s) && calcIds.includes(s.id) && siteContributesWeakLinks(s));
+
+  const configuredWeakLinkIds = primarySite.original.weakLinkIds;
+  if (configuredWeakLinkIds?.length) {
+    const allowed = new Set(configuredWeakLinkIds);
+    weakSites = weakSites.filter(s => allowed.has(s.id));
+  }
 
   if (!primarySite.links && (strongSites.length > 0 || weakSites.length > 0)) {
     primarySite.links = {
@@ -690,6 +736,7 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
   }
 
   for (const s of site.links.weakSites) {
+    if (!siteContributesWeakLinks(s)) { continue; }
     const inf = s.type.inf;
     if (inf === 'none') continue;
     if (inf === 'colony') {

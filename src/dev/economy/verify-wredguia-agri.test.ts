@@ -1,6 +1,6 @@
-import { buildSystemModel2 } from "./system-model2";
-import { Sys } from "./types2";
-import { EconomyMap } from "./site-data";
+import { buildSystemModel2 } from "../../system-model2";
+import { Sys } from "../../types2";
+import { EconomyMap } from "../../site-data";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";

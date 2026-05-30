@@ -1,8 +1,9 @@
-import { applyBuffs, calculateAgricultureStrongLinkContribution, calculateColonyEconomies2, getColonyEconomyBeforeWeakLinks, isGroundOrbitColonyPair } from "./economy-model2";
-import { Economy } from "./site-data";
-import { EconomyMap, SiteMap2, SysMap2 } from "./system-model2";
-import { BodyFeature } from "./types";
-import { BT } from "./types2";
+import { applyBuffs, calculateAgricultureStrongLinkContribution, calculateColonyEconomies2, getColonyEconomyBeforeWeakLinks, isGroundOrbitColonyPair } from "../../economy-model2";
+import { applyAgricultureSettlementFloor } from "../../economy-ag-heuristics";
+import { Economy } from "../../site-data";
+import { EconomyMap, SiteMap2, SysMap2 } from "../../system-model2";
+import { BodyFeature } from "../../types";
+import { BT } from "../../types2";
 
 const createEconomyMap = (): EconomyMap => ({
   agriculture: 1,
@@ -285,11 +286,36 @@ describe("applyBuffs agriculture", () => {
     expect(map.agriculture).toBe(0);
   });
 
-  it("applies tidal agriculture penalties to Odyssey agriculture settlements", () => {
+  it("floors medium and small tidal agriculture settlements at 100%", () => {
     const map = createEconomyMap();
     const site = createTidallyLockedSite(BT.hmc);
+    site.buildType = "picumnus";
+    site.type = {
+      buildClass: "settlement",
+      inf: "agriculture" as Economy,
+      orbital: false,
+      tier: 1,
+    } as SiteMap2["type"];
 
     applyBuffs(map, site, true);
+    applyAgricultureSettlementFloor(map, site);
+
+    expect(map.agriculture).toBe(1);
+  });
+
+  it("still applies tidal agriculture penalties to large agriculture settlements", () => {
+    const map = createEconomyMap();
+    const site = createTidallyLockedSite(BT.hmc);
+    site.buildType = "fornax";
+    site.type = {
+      buildClass: "settlement",
+      inf: "agriculture" as Economy,
+      orbital: false,
+      tier: 2,
+    } as SiteMap2["type"];
+
+    applyBuffs(map, site, true);
+    applyAgricultureSettlementFloor(map, site);
 
     expect(map.agriculture).toBe(0.6);
   });
@@ -302,10 +328,11 @@ describe("calculateAgricultureStrongLinkContribution", () => {
     expect(calculateAgricultureStrongLinkContribution(1, site, { enableTerraformableAgricultureBonus: false }).score).toBe(1.4);
   });
 
-  it("includes terraformable bonus by default for strong-link agriculture", () => {
+  it("includes terraformable bonus only when the feature flag is enabled", () => {
     const site = createStrongLinkSite([BodyFeature.bio, BodyFeature.terraformable]);
 
-    expect(calculateAgricultureStrongLinkContribution(1, site).score).toBe(1.8);
+    expect(calculateAgricultureStrongLinkContribution(1, site).score).toBe(1.4);
+    expect(calculateAgricultureStrongLinkContribution(1, site, { enableTerraformableAgricultureBonus: true }).score).toBe(1.8);
   });
 
   it("applies organics, rocky-ice, and tidal penalties additively", () => {
@@ -319,6 +346,16 @@ describe("calculateAgricultureStrongLinkContribution", () => {
     const site = createTidallyLockedSite();
 
     expect(calculateAgricultureStrongLinkContribution(0.4, site).score).toBe(0.1);
+  });
+
+  it("still applies ELW bonus for same-body agriculture facility strong links", () => {
+    const site = createStrongLinkSite([], BT.elw);
+    const source = {
+      body: site.body,
+      type: { inf: "agriculture" as Economy, tier: 1 },
+    } as unknown as SiteMap2;
+
+    expect(calculateAgricultureStrongLinkContribution(0.4, site, undefined, source).score).toBe(0.8);
   });
 
   it("does not apply body modifiers to weak-link source values", () => {
@@ -339,7 +376,7 @@ describe("calculateAgricultureStrongLinkContribution", () => {
     expect(site.economyAudit).toContainEqual(
       expect.objectContaining({
         delta: 0.05,
-        reason: "Apply weak link from: Weak agri source (source only)",
+        reason: expect.stringContaining("Apply weak link from: Weak agri source (source only"),
       }),
     );
     expect(site.economyAudit).not.toContainEqual(
@@ -405,7 +442,7 @@ describe("calculateAgricultureStrongLinkContribution", () => {
       }),
     );
     expect(site.economyAudit!.filter(x => x.reason.includes("=> floor 0.1"))).toHaveLength(3);
-    expect(site.economyAudit!.filter(x => x.reason.includes("(source only)") && x.delta === 0.05)).toHaveLength(2);
+    expect(site.economyAudit!.filter(x => x.reason.includes("(source only") && x.delta === 0.05)).toHaveLength(2);
   });
 
   it("uses the source port tier value for colony strong Agriculture links", () => {
@@ -604,7 +641,7 @@ describe("calculateAgricultureStrongLinkContribution", () => {
     expect(isGroundOrbitColonyPair(surface, {
       body,
       type: { inf: "colony" as Economy, orbital: true },
-    } as SiteMap2)).toBe(true);
+    } as unknown as SiteMap2)).toBe(true);
 
     const orbital = {
       body,
@@ -835,7 +872,7 @@ describe("agriculture link filters", () => {
 });
 
 describe("agriculture weak link caps and floors", () => {
-  it("caps agriculture weak links on HMC colonies without an agriculture intrinsic economy", () => {
+  it("caps agriculture weak links on HMC surface outposts without an agriculture intrinsic economy", () => {
     const site = createCivilianSurfaceOutpost("atropos", BT.hmc, [BodyFeature.landable, BodyFeature.tidal]);
     site.links!.weakSites = Array.from({ length: 12 }, (_, i) =>
       createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
@@ -865,6 +902,42 @@ describe("agriculture weak link caps and floors", () => {
     expect(site.economies!.agriculture).toBe(0.65);
   });
 
+  it("floors linked agriculture for surface industrial ports only after substantial weak-link accumulation", () => {
+    const lowAgSite = createFixedPortWithAgriLinks();
+    lowAgSite.type = {
+      buildClass: "outpost",
+      fixed: "industrial" as Economy,
+      inf: "industrial" as Economy,
+      orbital: false,
+      tier: 1,
+    } as SiteMap2["type"];
+    lowAgSite.body!.type = BT.hmc;
+    lowAgSite.links!.weakSites = Array.from({ length: 4 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(lowAgSite, lowAgSite.links!.weakSites.map(s => s.id));
+
+    expect(lowAgSite.economies!.agriculture).toBe(0.2);
+
+    const highAgSite = createFixedPortWithAgriLinks();
+    highAgSite.type = {
+      buildClass: "outpost",
+      fixed: "industrial" as Economy,
+      inf: "industrial" as Economy,
+      orbital: false,
+      tier: 1,
+    } as SiteMap2["type"];
+    highAgSite.body!.type = BT.rb;
+    highAgSite.links!.weakSites = Array.from({ length: 12 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(highAgSite, highAgSite.links!.weakSites.map(s => s.id));
+
+    expect(highAgSite.economies!.agriculture).toBe(1);
+  });
+
   it("still caps icy specialised ports with organics or tidal penalties at five agriculture weak links", () => {
     const site = createFixedPortWithAgriLinks();
     site.type = {
@@ -883,6 +956,142 @@ describe("agriculture weak link caps and floors", () => {
     calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
 
     expect(site.economies!.agriculture).toBe(0.25);
+  });
+
+  it("caps agriculture weak links on surface colonies without an agriculture intrinsic economy", () => {
+    const starA = {
+      features: [],
+      name: "Star A",
+      num: 1,
+      parents: [],
+      type: BT.st,
+    };
+    const starB = {
+      features: [],
+      name: "Star B",
+      num: 2,
+      parents: [],
+      type: BT.st,
+    };
+    const bodyA = {
+      features: [],
+      name: "Moon A",
+      num: 10,
+      parents: [1],
+      type: BT.rb,
+    };
+    const bodyB1 = {
+      features: [],
+      name: "Moon B1",
+      num: 20,
+      parents: [2],
+      type: BT.hmc,
+    };
+    const bodyB2 = {
+      features: [],
+      name: "Moon B2",
+      num: 21,
+      parents: [2],
+      type: BT.hmc,
+    };
+    const sys = {
+      bodies: [starA, starB, bodyA, bodyB1, bodyB2],
+      reserveLevel: "pristine",
+    } as unknown as SysMap2;
+    const site = {
+      body: bodyA,
+      economyAudit: [],
+      id: "surface-colony",
+      links: {
+        economies: {},
+        strongSites: [],
+        weakSites: [
+          { ...createWeakSite("ag-a1", "agriculture" as Economy), body: bodyA },
+          { ...createWeakSite("ag-b1", "agriculture" as Economy), body: bodyB1 },
+          { ...createWeakSite("ag-b2", "agriculture" as Economy), body: bodyB2 },
+        ],
+      },
+      name: "Surface colony",
+      sys,
+      type: {
+        buildClass: "outpost",
+        inf: "colony" as Economy,
+        orbital: false,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
+
+    expect(site.economies!.agriculture).toBe(0.1);
+    expect(site.economyAudit!.filter(entry => entry.inf === "agriculture")).toHaveLength(2);
+  });
+
+  it("caps agriculture weak links at 18 on colony ports without same-body agriculture strong links", () => {
+    const site = createCivilianSurfaceOutpost("plutus", BT.rb);
+    site.type = {
+      buildClass: "starport",
+      inf: "colony" as Economy,
+      orbital: true,
+      tier: 1,
+    } as SiteMap2["type"];
+    site.links!.weakSites = Array.from({ length: 30 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
+
+    expect(site.economies!.agriculture).toBe(0.9);
+    expect(site.economyAudit!.filter(entry => entry.reason.startsWith("Apply weak link"))).toHaveLength(18);
+    expect(site.economyAudit!.filter(entry => entry.reason.startsWith("Skipped weak link"))).toHaveLength(12);
+  });
+
+  it("allows 22 agriculture weak links after same-body agriculture strong links", () => {
+    const body = {
+      features: [],
+      name: "Moon",
+      num: 1,
+      parents: [],
+      type: BT.rb,
+    };
+    const sys = { bodies: [body], reserveLevel: "pristine" } as unknown as SysMap2;
+    const agSettlement = {
+      body,
+      buildType: "ceres",
+      economies: { ...createEconomyMap(), agriculture: 1 },
+      id: "ag-settlement",
+      name: "Ag settlement",
+      type: {
+        buildClass: "settlement",
+        inf: "agriculture" as Economy,
+        orbital: false,
+        tier: 2,
+      },
+    } as unknown as SiteMap2;
+    const site = {
+      body,
+      economyAudit: [],
+      id: "port",
+      links: {
+        economies: {},
+        strongSites: [agSettlement],
+        weakSites: Array.from({ length: 30 }, (_, i) =>
+          createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+        ),
+      },
+      name: "Port",
+      sys,
+      type: {
+        buildClass: "starport",
+        inf: "colony" as Economy,
+        orbital: true,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(site, ["ag-settlement", ...site.links!.weakSites.map(s => s.id)]);
+
+    expect(site.economies!.agriculture).toBe(2.1);
   });
 });
 

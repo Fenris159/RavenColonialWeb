@@ -2,6 +2,7 @@ import './MarketLinks.css';
 import { FunctionComponent } from "react";
 import { appTheme, cn } from "../../theme";
 import { economyColors, mapName } from "../../site-data";
+import { getAppliedWeakLinkCount } from "../../economy-model2";
 import { ProjectLink } from "../ProjectLink/ProjectLink";
 import { SiteMap2 } from '../../system-model2';
 import { SystemView2 } from '../../views/SystemView2/SystemView2';
@@ -23,8 +24,8 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
     </div>;
   }
 
-  const getLinkCountSpan = (num: number) => {
-    if (num === 0) {
+  const getLinkCountSpan = (num: number | string) => {
+    if (num === 0 || num === '0') {
       return <span style={{ color: 'grey' }}>-</span>;
     } else {
       return <span>{num}</span>;
@@ -39,6 +40,8 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
 
     const { strong, weak } = props.site.links.economies[key];
     const color = economyColors[key] ?? '#FFF';
+    const appliedWeak = getAppliedWeakLinkCount(props.site, key as keyof typeof props.site.economies);
+    const weakDisplay = appliedWeak > 0 && appliedWeak < weak ? `${appliedWeak}/${weak}` : `${weak}`;
 
     const strongNames = props.site.links.strongSites.filter(s => s.type.inf === key || s.primaryEconomy === key).map((s: any) => `» ${s.name}`).sort();
     const weakNames = props.site.links.weakSites.filter(s => s.type.inf === key || s.primaryEconomy === key).map((s: any) => `» ${s.name}`).sort();
@@ -49,7 +52,7 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
         {mapName[key]}
       </td>
       <td className={cn.br} style={{ textAlign: 'center', cursor: 'default' }} title={strongNames.join(`\n`)}>{getLinkCountSpan(strong)}</td>
-      <td style={{ textAlign: 'center', cursor: 'default' }} title={weakNames.join(`\n`)}>{getLinkCountSpan(weak)}</td>
+      <td style={{ textAlign: 'center', cursor: 'default' }} title={`${weakNames.length} candidates${appliedWeak > 0 && appliedWeak < weak ? `\n${appliedWeak} applied in economy calc` : ''}\n\n${weakNames.join(`\n`)}`}>{getLinkCountSpan(weakDisplay)}</td>
     </tr>);
   };
 

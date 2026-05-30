@@ -174,6 +174,9 @@ export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: System
         <Icon iconName='FinancialSolid' style={{ marginRight: 4, color: appTheme.palette.themeTertiary }} />
         <EconomyBlocks economies={props.site.economies} width={370} height={14} />
       </Stack>}
+      {!props.noChart && <div className='small' style={{ color: 'grey', marginBottom: 8 }}>
+        Bar width is each economy&apos;s share of the total on this port. Percentages are absolute strengths (may exceed 100%).
+      </div>}
 
       {showAudit && props.site.economyAudit && <Panel
         isLightDismiss
@@ -242,7 +245,7 @@ export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: System
                       </>}
                     </>}
                   </td>
-                  <td className='cl' style={{ paddingBottom: newNext ? 8 : 0 }} >
+                  <td className='cl' style={{ paddingBottom: newNext ? 8 : 0, color: x.reason.startsWith('Skipped weak link') ? 'grey' : undefined }} >
                     {x.reason}
                     {realMatchKnown && !realMatchEqual && <div style={{ color: appTheme.palette.accent, fontWeight: 'bold' }}>According to Spansh</div>}
                   </td>
