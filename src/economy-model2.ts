@@ -8,6 +8,8 @@ let showConsoleAudit = Date.now() < 0;
 
 const useNewModel = true;
 const strongLinkContributionFloor = 0.1;
+const maxAgricultureWeakLinksForAgPrimaryHabWorld = 11;
+const maxAgricultureWeakLinksForFixedNonAgPort = 5;
 
 export interface EconomyModelOptions {
   enableTerraformableAgricultureBonus?: boolean;
@@ -336,9 +338,12 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
       const val = s.economies[ee];
       // only boost intrinsic economies from initial body influences (not from links)
       if (s.intrinsic?.includes(ee)) {
-        // Specialized ports only inherit colony strong links for their fixed economy type.
+        // Specialized ports only inherit colony strong links for their fixed economy type,
+        // except same-body surface colony agriculture propagating to an orbital partner.
         if (site.type.fixed && ee !== site.type.fixed) {
-          continue;
+          if (!(ee === 'agriculture' && canInheritGroundOrbitColonyAgriculture(s, site))) {
+            continue;
+          }
         }
 
         if (useNewModel /* && s.type.tier === site.type.tier*/) {
@@ -384,12 +389,62 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
   }
 };
 
-export const isGroundOrbitColonyPair = (source: SiteMap2, target: SiteMap2) => {
+export const isSameBodySurfaceToOrbitalPair = (source: SiteMap2, target: SiteMap2) => {
   return source.type.inf === 'colony' &&
-    target.type.inf === 'colony' &&
     !source.type.orbital &&
     !!target.type.orbital &&
     source.body === target.body;
+};
+
+export const isGroundOrbitColonyPair = (source: SiteMap2, target: SiteMap2) => {
+  return isSameBodySurfaceToOrbitalPair(source, target) && target.type.inf === 'colony';
+};
+
+export const canInheritGroundOrbitColonyAgriculture = (source: SiteMap2, target: SiteMap2) => {
+  if (!isSameBodySurfaceToOrbitalPair(source, target)) {
+    return false;
+  }
+
+  if (!source.intrinsic?.includes('agriculture')) {
+    return false;
+  }
+
+  if (target.type.fixed && source.primaryEconomy === target.type.fixed) {
+    return false;
+  }
+
+  return true;
+};
+
+const isAgTourismColonyAgricultureWeakSource = (source: SiteMap2, site: SiteMap2) => {
+  return source.type.inf === 'colony' &&
+    source.primaryEconomy === 'agriculture' &&
+    source.intrinsic?.includes('agriculture') &&
+    source.intrinsic?.includes('tourism') &&
+    source.body !== site.body &&
+    site.type.orbital &&
+    site.type.tier === 1;
+};
+
+const shouldApplyAgricultureWeakLink = (source: SiteMap2, site: SiteMap2) => {
+  if (isAgTourismColonyAgricultureWeakSource(source, site)) {
+    return false;
+  }
+
+  return true;
+};
+
+const isAgPrimaryHabWorldColony = (site: SiteMap2, map: EconomyMap) => {
+  const hasTier1ColonyAgricultureStrongLink = (site.economyAudit ?? []).some(entry =>
+    entry.inf === 'agriculture' &&
+    entry.reason.includes('Apply colony Strong link') &&
+    entry.reason.includes('(T1)'),
+  );
+
+  return site.intrinsic?.includes('agriculture') &&
+    matches([BT.elw, BT.ww], site.body?.type) &&
+    map.agriculture >= 1.0 &&
+    hasTier1ColonyAgricultureStrongLink;
 };
 
 export const getColonyEconomyBeforeWeakLinks = (site: SiteMap2, inf: keyof EconomyMap) => {
@@ -426,7 +481,8 @@ export const calculateAgricultureStrongLinkContribution = (sourceValue: number, 
     parts.push('+ BIO 0.4');
   }
 
-  if (options?.enableTerraformableAgricultureBonus && matches([BodyFeature.terraformable], site.body?.features)) {
+  const enableTerraformableBonus = options?.enableTerraformableAgricultureBonus ?? true;
+  if (enableTerraformableBonus && matches([BodyFeature.terraformable], site.body?.features)) {
     score += 0.4;
     parts.push('+ TERRAFORMABLE 0.4');
   }
@@ -671,6 +727,10 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
 const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
   if (!site.links?.weakSites) { return; }
 
+  let agricultureWeakLinksApplied = 0;
+  const agPrimaryHabWorld = isAgPrimaryHabWorldColony(site, map);
+  const fixedNonAg = !!site.type.fixed && site.type.fixed !== 'agriculture';
+
   for (let s of site.links.weakSites) {
     // skip incomplete sites ?
     if (!calcIds.includes(s.id)) { continue; }
@@ -685,7 +745,17 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
         // apply one weak link per intrinsic economy
         for (const instrinsicInf of s.intrinsic ?? []) {
           if (instrinsicInf === 'agriculture') {
+            if (!shouldApplyAgricultureWeakLink(s, site)) {
+              continue;
+            }
+            if (agPrimaryHabWorld && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForAgPrimaryHabWorld) {
+              continue;
+            }
+            if (fixedNonAg && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForFixedNonAgPort) {
+              continue;
+            }
             adjust(instrinsicInf, +0.05, `Apply weak link from: ${s.name} (intrinsic source only)`, map, site);
+            agricultureWeakLinksApplied++;
           } else {
             adjust(instrinsicInf, +0.05, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
           }
@@ -697,7 +767,17 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
     // For Every Facility that effects a given Economy within the System that hasn't already been counted above (+0.05) - These are Weak Links (the Tier does not matter)​
     if (inf in map) {
       if (inf === 'agriculture') {
+        if (!shouldApplyAgricultureWeakLink(s, site)) {
+          continue;
+        }
+        if (agPrimaryHabWorld && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForAgPrimaryHabWorld) {
+          continue;
+        }
+        if (fixedNonAg && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForFixedNonAgPort) {
+          continue;
+        }
         adjust(inf, +0.05, `Apply weak link from: ${s.name} (source only)`, map, site);
+        agricultureWeakLinksApplied++;
       } else {
         adjust(inf, +0.05, `Apply weak link from: ${s.name}`, map, site);
       }
