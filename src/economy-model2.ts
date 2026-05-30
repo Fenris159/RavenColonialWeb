@@ -364,11 +364,38 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
       }
     }
 
+    if (
+      useNewModel &&
+      !subLink &&
+      !site.type.fixed &&
+      isGroundOrbitColonyPair(s, site) &&
+      !s.intrinsic?.includes('agriculture')
+    ) {
+      const sourceAg = getColonyEconomyBeforeWeakLinks(s, 'agriculture');
+      if (sourceAg > 0) {
+        applyStrongAgricultureContribution(map, site, infSize, `colony ${prefix} ground-orbit`, s, options);
+      }
+    }
+
     // also apply sub-strong links from the emitting port
     if (useNewModel && s.links?.strongSites && !subLink) {
       applyStrongLinks2(map, s.links?.strongSites, site, calcIds, "*", options);
     }
   }
+};
+
+export const isGroundOrbitColonyPair = (source: SiteMap2, target: SiteMap2) => {
+  return source.type.inf === 'colony' &&
+    target.type.inf === 'colony' &&
+    !source.type.orbital &&
+    !!target.type.orbital &&
+    source.body === target.body;
+};
+
+export const getColonyEconomyBeforeWeakLinks = (site: SiteMap2, inf: keyof EconomyMap) => {
+  return (site.economyAudit ?? [])
+    .filter(entry => entry.inf === inf && !entry.reason.includes('weak link'))
+    .reduce((sum, entry) => sum + entry.delta, 0);
 };
 
 const applyStrongAgricultureContribution = (map: EconomyMap, site: SiteMap2, sourceValue: number, prefix: string, sourceSite: SiteMap2, options?: EconomyModelOptions) => {

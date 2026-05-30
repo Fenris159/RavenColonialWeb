@@ -1,4 +1,4 @@
-import { applyBuffs, calculateAgricultureStrongLinkContribution, calculateColonyEconomies2 } from "./economy-model2";
+import { applyBuffs, calculateAgricultureStrongLinkContribution, calculateColonyEconomies2, getColonyEconomyBeforeWeakLinks, isGroundOrbitColonyPair } from "./economy-model2";
 import { Economy } from "./site-data";
 import { EconomyMap, SiteMap2, SysMap2 } from "./system-model2";
 import { BodyFeature } from "./types";
@@ -524,4 +524,139 @@ describe("calculateAgricultureStrongLinkContribution", () => {
     expect(site.economies!.hightech).toBe(0);
     expect(site.economyAudit!.some(x => x.reason.includes("Observed preset economy"))).toBe(false);
   });
+  it("propagates ground colony preset agriculture to an orbital colony on the same body", () => {
+    const body = {
+      features: [BodyFeature.atmosphere],
+      name: "Test 1",
+      num: 1,
+      parents: [],
+      type: BT.ib,
+    };
+    const sys = {
+      bodies: [body],
+      reserveLevel: "pristine",
+    } as unknown as SysMap2;
+
+    const surface = {
+      body,
+      economyAudit: [],
+      id: "surface-atropos",
+      buildType: "atropos",
+      links: {
+        economies: {},
+        strongSites: [],
+        weakSites: [],
+      },
+      name: "Surface Atropos",
+      sys,
+      type: {
+        buildClass: "outpost",
+        displayName2: "Civilian Surface Outpost",
+        inf: "colony" as Economy,
+        orbital: false,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(surface, []);
+
+    expect(surface.intrinsic).toEqual(["industrial"]);
+    expect(getColonyEconomyBeforeWeakLinks(surface, "agriculture")).toBe(0.55);
+    expect(isGroundOrbitColonyPair(surface, {
+      body,
+      type: { inf: "colony" as Economy, orbital: true },
+    } as SiteMap2)).toBe(true);
+
+    const orbital = {
+      body,
+      economyAudit: [],
+      id: "orbital-colony",
+      links: {
+        economies: {},
+        strongSites: [surface],
+        weakSites: [],
+      },
+      name: "Orbital colony",
+      sys,
+      type: {
+        buildClass: "starport",
+        inf: "colony" as Economy,
+        orbital: true,
+        tier: 2,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(orbital, ["surface-atropos"]);
+
+    expect(orbital.economies!.agriculture).toBe(0.1);
+    expect(orbital.economyAudit).toContainEqual(
+      expect.objectContaining({
+        delta: 0.1,
+        inf: "agriculture",
+        reason: expect.stringContaining("ground-orbit"),
+      }),
+    );
+  });
+
+  it("does not propagate ground colony preset agriculture to specialized fixed ports", () => {
+    const body = {
+      features: [BodyFeature.atmosphere],
+      name: "Test 1",
+      num: 1,
+      parents: [],
+      type: BT.ib,
+    };
+    const sys = {
+      bodies: [body],
+      reserveLevel: "pristine",
+    } as unknown as SysMap2;
+
+    const surface = {
+      body,
+      economyAudit: [],
+      id: "surface-atropos",
+      buildType: "atropos",
+      links: {
+        economies: {},
+        strongSites: [],
+        weakSites: [],
+      },
+      name: "Surface Atropos",
+      sys,
+      type: {
+        buildClass: "outpost",
+        displayName2: "Civilian Surface Outpost",
+        inf: "colony" as Economy,
+        orbital: false,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(surface, []);
+
+    const orbital = {
+      body,
+      economyAudit: [],
+      id: "orbital-industrial",
+      links: {
+        economies: {},
+        strongSites: [surface],
+        weakSites: [],
+      },
+      name: "Orbital industrial port",
+      sys,
+      type: {
+        buildClass: "outpost",
+        fixed: "industrial" as Economy,
+        inf: "industrial" as Economy,
+        orbital: true,
+        tier: 1,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(orbital, ["surface-atropos"]);
+
+    expect(orbital.economies!.agriculture).toBe(0);
+  });
+
 });
