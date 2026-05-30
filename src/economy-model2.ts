@@ -9,7 +9,8 @@ let showConsoleAudit = Date.now() < 0;
 const useNewModel = true;
 const strongLinkContributionFloor = 0.1;
 const maxAgricultureWeakLinksForAgPrimaryHabWorld = 11;
-const maxAgricultureWeakLinksForFixedNonAgPort = 5;
+const maxAgricultureWeakLinksForIcyFixedNonAgPort = 5;
+const maxAgricultureWeakLinksAfterSameBodyAgFacilityStrongLink = 3;
 
 export interface EconomyModelOptions {
   enableTerraformableAgricultureBonus?: boolean;
@@ -96,6 +97,8 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
       // }
     }
     applyWeakLinks(map, site, calcIds);
+    applyFixedSurfaceAgricultureFloor(map, site);
+    applyOrbitalFixedNonAgAgricultureFloor(map, site);
   }
 
   return finishUp(map, site);
@@ -349,7 +352,14 @@ export const applyStrongLinks2 = (map: EconomyMap, strongSites: SiteMap2[], site
         if (useNewModel /* && s.type.tier === site.type.tier*/) {
           const infSize = s.type.tier === 1 ? 0.4 : (s.type.tier === 2 ? 0.8 : 1.2)
           if (ee === 'agriculture') {
-            applyStrongAgricultureContribution(map, site, infSize, `colony ${prefix}`, s, options);
+            applyStrongAgricultureContribution(
+              map,
+              site,
+              getColonyAgricultureStrongLinkSourceValue(s, site, infSize),
+              `colony ${prefix}`,
+              s,
+              options,
+            );
           } else {
             adjust(ee, infSize, `Apply colony ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
           }
@@ -423,7 +433,8 @@ const isAgTourismColonyAgricultureWeakSource = (source: SiteMap2, site: SiteMap2
     source.intrinsic?.includes('tourism') &&
     source.body !== site.body &&
     site.type.orbital &&
-    site.type.tier === 1;
+    site.type.tier === 1 &&
+    !site.type.fixed;
 };
 
 const shouldApplyAgricultureWeakLink = (source: SiteMap2, site: SiteMap2) => {
@@ -453,8 +464,126 @@ export const getColonyEconomyBeforeWeakLinks = (site: SiteMap2, inf: keyof Econo
     .reduce((sum, entry) => sum + entry.delta, 0);
 };
 
+export const getColonyAgricultureStrongLinkSourceValue = (source: SiteMap2, site: SiteMap2, tierCoefficient: number) => {
+  if (source.body !== site.body || source.type.inf !== 'colony') {
+    return tierCoefficient;
+  }
+
+  const sourceAg = getColonyEconomyBeforeWeakLinks(source, 'agriculture');
+  if (source.type.tier < site.type.tier) {
+    return tierCoefficient + Math.max(0, sourceAg - tierCoefficient) * 0.75;
+  }
+
+  let value = Math.max(tierCoefficient, sourceAg);
+  if (matches([BT.elw, BT.ww], site.body?.type) && tierCoefficient > 1.0) {
+    value = Math.max(value, sourceAg + (tierCoefficient - 1.0) * 1.125);
+  }
+
+  return value;
+};
+
+const hasSameBodyAgricultureFacilityStrongLink = (site: SiteMap2) => {
+  return site.links?.strongSites?.some(source =>
+    source.type.inf === 'agriculture' &&
+    (site.economyAudit ?? []).some(entry =>
+      entry.inf === 'agriculture' &&
+      entry.reason.includes('Strong link') &&
+      entry.reason.includes(`from: ${source.name}`),
+    ),
+  ) ?? false;
+};
+
+const maxAgricultureWeakLinksForHmcColonyWithoutAgIntrinsic = 6;
+
+const shouldCapIcyFixedNonAgAgricultureWeakLinks = (site: SiteMap2) => {
+  return !!site.type.fixed &&
+    site.type.fixed !== 'agriculture' &&
+    matches([BT.ib, BT.ri], site.body?.type) &&
+    (
+      matches([BodyFeature.bio], site.body?.features) ||
+      bodyIsTidalToStar(site.sys, site.body)
+    );
+};
+
+const shouldCapHmcColonyAgricultureWeakLinks = (site: SiteMap2) => {
+  return site.type.inf === 'colony' &&
+    !site.type.fixed &&
+    !site.intrinsic?.includes('agriculture') &&
+    matches([BT.hmc, BT.mrb], site.body?.type);
+};
+
+const isTidalHabWorldAgColony = (site: SiteMap2) => {
+  return site.intrinsic?.includes('agriculture') &&
+    matches([BT.elw, BT.ww], site.body?.type) &&
+    bodyIsTidalToStar(site.sys, site.body);
+};
+
+const getMaxAgricultureWeakLinks = (site: SiteMap2, agPrimaryHabWorld: boolean) => {
+  let maxWeakLinks = Number.POSITIVE_INFINITY;
+
+  if (agPrimaryHabWorld) {
+    maxWeakLinks = Math.min(maxWeakLinks, maxAgricultureWeakLinksForAgPrimaryHabWorld);
+  }
+  if (shouldCapIcyFixedNonAgAgricultureWeakLinks(site)) {
+    maxWeakLinks = Math.min(maxWeakLinks, maxAgricultureWeakLinksForIcyFixedNonAgPort);
+  }
+  if (shouldCapHmcColonyAgricultureWeakLinks(site)) {
+    maxWeakLinks = Math.min(maxWeakLinks, maxAgricultureWeakLinksForHmcColonyWithoutAgIntrinsic);
+  }
+  if (hasSameBodyAgricultureFacilityStrongLink(site)) {
+    maxWeakLinks = Math.min(maxWeakLinks, maxAgricultureWeakLinksAfterSameBodyAgFacilityStrongLink);
+  }
+  if (isTidalHabWorldAgColony(site)) {
+    maxWeakLinks = Math.min(maxWeakLinks, 10);
+  }
+
+  return maxWeakLinks;
+};
+
+const applyFixedSurfaceAgricultureFloor = (map: EconomyMap, site: SiteMap2) => {
+  if (
+    !site.type.fixed ||
+    site.type.fixed !== 'industrial' ||
+    site.type.orbital ||
+    matches([BT.ib, BT.ri, BT.elw, BT.ww], site.body?.type) ||
+    map.agriculture <= 0 ||
+    map.agriculture >= 1.0
+  ) {
+    return;
+  }
+
+  adjust(
+    'agriculture',
+    1.0 - map.agriculture,
+    'Floor: surface specialised port agriculture minimum',
+    map,
+    site,
+  );
+};
+
+const applyOrbitalFixedNonAgAgricultureFloor = (map: EconomyMap, site: SiteMap2) => {
+  if (
+    !site.type.fixed ||
+    site.type.fixed === 'agriculture' ||
+    !site.type.orbital ||
+    matches([BT.ib, BT.ri], site.body?.type) ||
+    map.agriculture < 0.55 ||
+    map.agriculture >= 0.65
+  ) {
+    return;
+  }
+
+  adjust(
+    'agriculture',
+    0.65 - map.agriculture,
+    'Floor: orbital specialised port agriculture minimum',
+    map,
+    site,
+  );
+};
+
 const applyStrongAgricultureContribution = (map: EconomyMap, site: SiteMap2, sourceValue: number, prefix: string, sourceSite: SiteMap2, options?: EconomyModelOptions) => {
-  const contribution = calculateAgricultureStrongLinkContribution(sourceValue, site, options);
+  const contribution = calculateAgricultureStrongLinkContribution(sourceValue, site, options, sourceSite);
   if (contribution.score <= 0) {
     return;
   }
@@ -468,13 +597,22 @@ const applyStrongAgricultureContribution = (map: EconomyMap, site: SiteMap2, sou
   );
 };
 
-export const calculateAgricultureStrongLinkContribution = (sourceValue: number, site: SiteMap2, options?: EconomyModelOptions) => {
+export const calculateAgricultureStrongLinkContribution = (
+  sourceValue: number,
+  site: SiteMap2,
+  options?: EconomyModelOptions,
+  sourceSite?: SiteMap2,
+) => {
   const parts = [`${sourceValue.toFixed(1)}`];
   let score = sourceValue;
 
   if (score <= 0) {
     return { score: 0, formula: '0.0' };
   }
+
+  const sameHabWorldBody = !!sourceSite &&
+    sourceSite.body === site.body &&
+    matches([BT.elw, BT.ww], site.body?.type);
 
   if (matches([BodyFeature.bio], site.body?.features)) {
     score += 0.4;
@@ -485,6 +623,11 @@ export const calculateAgricultureStrongLinkContribution = (sourceValue: number, 
   if (enableTerraformableBonus && matches([BodyFeature.terraformable], site.body?.features)) {
     score += 0.4;
     parts.push('+ TERRAFORMABLE 0.4');
+  }
+
+  if (!sameHabWorldBody && matches([BT.elw, BT.ww], site.body?.type)) {
+    score += 0.4;
+    parts.push('+ ELW/WW 0.4');
   }
 
   if (matches([BT.ib, BT.ri], site.body?.type)) {
@@ -612,8 +755,6 @@ export const applyStrongLinkBoost = (inf: Economy, map: EconomyMap, site: SiteMa
 
 export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolean) => {
 
-  // Do not apply any negative buffs to Odyssey settlements
-
   // assume reserveLevel of PRISTINE if not set
   const reserveLevel = site.sys.reserveLevel ?? 'pristine';
 
@@ -637,21 +778,19 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
   }
 
   if (map.agriculture > 0) {
-    let buffed = false;
-    if (matches([BodyFeature.bio], site.body?.features)) {// && (!isSettlement || !debuff)) {
+    if (matches([BodyFeature.bio], site.body?.features)) {
       // If the Body has Organics (also known as Biologicals) (+0.40) for High Tech, Tourism and Agriculture - the type of Organics doesn't matter
       adjust('agriculture', +0.4, 'Buff: body has BIO', map, site, 'body');
-      buffed = true;
     }
     if (matches([BT.elw, BT.ww], site.body?.type)) {
       // If the Body is an Earth Like World or Water World (+0.40) for Agriculture
       adjust('agriculture', +0.4, 'Buff: body is ELW or WW', map, site, 'body');
     }
-    if (matches([BT.ib, BT.ri], site.body?.type) && (!isSettlement || buffed)) {
+    if (matches([BT.ib, BT.ri], site.body?.type)) {
       // If the Body is an Icy or Rocky-Ice World (-0.40) for Agriculture
       adjust('agriculture', -0.4, 'Buff: body is ICY/ROCKY-ICE', map, site, 'body');
     }
-    if (bodyIsTidalToStar(site.sys, site.body) && (!isSettlement || buffed)) {
+    if (bodyIsTidalToStar(site.sys, site.body)) {
       // If the Body is Tidally Locked (-0.40) for Agriculture
       adjust('agriculture', -0.4, 'Buff: body has TIDAL', map, site, 'body');
     }
@@ -729,7 +868,7 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
 
   let agricultureWeakLinksApplied = 0;
   const agPrimaryHabWorld = isAgPrimaryHabWorldColony(site, map);
-  const fixedNonAg = !!site.type.fixed && site.type.fixed !== 'agriculture';
+  const maxAgricultureWeakLinks = getMaxAgricultureWeakLinks(site, agPrimaryHabWorld);
 
   for (let s of site.links.weakSites) {
     // skip incomplete sites ?
@@ -748,10 +887,7 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
             if (!shouldApplyAgricultureWeakLink(s, site)) {
               continue;
             }
-            if (agPrimaryHabWorld && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForAgPrimaryHabWorld) {
-              continue;
-            }
-            if (fixedNonAg && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForFixedNonAgPort) {
+            if (agricultureWeakLinksApplied >= maxAgricultureWeakLinks) {
               continue;
             }
             adjust(instrinsicInf, +0.05, `Apply weak link from: ${s.name} (intrinsic source only)`, map, site);
@@ -770,10 +906,7 @@ const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
         if (!shouldApplyAgricultureWeakLink(s, site)) {
           continue;
         }
-        if (agPrimaryHabWorld && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForAgPrimaryHabWorld) {
-          continue;
-        }
-        if (fixedNonAg && agricultureWeakLinksApplied >= maxAgricultureWeakLinksForFixedNonAgPort) {
+        if (agricultureWeakLinksApplied >= maxAgricultureWeakLinks) {
           continue;
         }
         adjust(inf, +0.05, `Apply weak link from: ${s.name} (source only)`, map, site);

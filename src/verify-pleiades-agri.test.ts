@@ -2,9 +2,11 @@ import { buildSystemModel2 } from "./system-model2";
 import { Sys } from "./types2";
 import { EconomyMap } from "./site-data";
 import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
-const SYSTEM_PATH = "/tmp/pleiades-sys.json";
-const SPANSH_PATH = "/tmp/pleiades-spansh.json";
+const SYSTEM_PATH = path.join(os.tmpdir(), "pleiades-sys.json");
+const SPANSH_PATH = path.join(os.tmpdir(), "pleiades-spansh.json");
 
 interface SpanshEconomy {
   id: number;

@@ -284,6 +284,15 @@ describe("applyBuffs agriculture", () => {
 
     expect(map.agriculture).toBe(0);
   });
+
+  it("applies tidal agriculture penalties to Odyssey agriculture settlements", () => {
+    const map = createEconomyMap();
+    const site = createTidallyLockedSite(BT.hmc);
+
+    applyBuffs(map, site, true);
+
+    expect(map.agriculture).toBe(0.6);
+  });
 });
 
 describe("calculateAgricultureStrongLinkContribution", () => {
@@ -822,6 +831,58 @@ describe("agriculture link filters", () => {
     calculateColonyEconomies2(site, ["ag-hub"]);
 
     expect(site.economies!.agriculture).toBe(0);
+  });
+});
+
+describe("agriculture weak link caps and floors", () => {
+  it("caps agriculture weak links on HMC colonies without an agriculture intrinsic economy", () => {
+    const site = createCivilianSurfaceOutpost("atropos", BT.hmc, [BodyFeature.landable, BodyFeature.tidal]);
+    site.links!.weakSites = Array.from({ length: 12 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
+
+    expect(site.economies!.agriculture).toBe(0.3);
+  });
+
+  it("floors linked agriculture for orbital specialised ports below the common minimum", () => {
+    const site = createFixedPortWithAgriLinks();
+    site.type = {
+      buildClass: "outpost",
+      fixed: "industrial" as Economy,
+      inf: "industrial" as Economy,
+      orbital: true,
+      tier: 1,
+    } as SiteMap2["type"];
+    site.body!.type = BT.rb;
+    site.links!.weakSites = Array.from({ length: 12 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
+
+    expect(site.economies!.agriculture).toBe(0.65);
+  });
+
+  it("still caps icy specialised ports with organics or tidal penalties at five agriculture weak links", () => {
+    const site = createFixedPortWithAgriLinks();
+    site.type = {
+      buildClass: "outpost",
+      fixed: "industrial" as Economy,
+      inf: "industrial" as Economy,
+      orbital: true,
+      tier: 1,
+    } as SiteMap2["type"];
+    site.body!.type = BT.ib;
+    site.body!.features.push(BodyFeature.bio, BodyFeature.tidal);
+    site.links!.weakSites = Array.from({ length: 12 }, (_, i) =>
+      createWeakSite(`agriculture-${i}`, "agriculture" as Economy),
+    );
+
+    calculateColonyEconomies2(site, site.links!.weakSites.map(s => s.id));
+
+    expect(site.economies!.agriculture).toBe(0.25);
   });
 });
 

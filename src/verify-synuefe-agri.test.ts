@@ -2,8 +2,10 @@ import { buildSystemModel2 } from "./system-model2";
 import { Sys } from "./types2";
 import { EconomyMap } from "./site-data";
 import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
-const SYSTEM_PATH = "/tmp/synuefe-sys.json";
+const SYSTEM_PATH = path.join(os.tmpdir(), "synuefe-sys.json");
 const SPANSH_URL =
   "https://ravencolonial100-awcbdvabgze4c5cq.canadacentral-01.azurewebsites.net/api/v2/system/1183431070442/spanshEconomies";
 
