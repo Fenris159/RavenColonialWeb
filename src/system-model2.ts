@@ -1,5 +1,5 @@
 import { SysSnapshot } from './api/v2-system';
-import { calculateColonyEconomies2, EconomyModelOptions, stellarRemnants } from './economy-model2';
+import { calculateColonyEconomies2, calculateFacilityEconomies2, EconomyModelOptions, isFacilityWithEconomy, stellarRemnants } from './economy-model2';
 import type { AgEconomyCalcFlags } from './economy-core';
 import { siteContributesWeakLinks } from './economy-weak-links';
 import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "./site-data";
@@ -487,9 +487,10 @@ const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: bo
     // skip incomplete sites, unless ...
     if (!calcIds.includes(site.id)) continue;
 
-    // calc total system economic influence
     if (['settlement', 'outpost', 'starport'].includes(site.type.buildClass)) {
       calculateColonyEconomies2(site, calcIds, economyModelOptions);
+    } else if (isFacilityWithEconomy(site)) {
+      calculateFacilityEconomies2(site, calcIds, economyModelOptions);
     }
     const inf = site.primaryEconomy ?? site.type.inf;
 
@@ -548,35 +549,64 @@ const adjustAfflictedStarPortSumEffect = (key: keyof SysEffects, effect: number,
   }
 }
 
+const canActAsBodyLinkPrimary = (s: SiteMap2): boolean =>
+  canReceiveLinks(s.type) || isFacilityWithEconomy(s);
+
+const pickPrimaryByTier = (sites: SiteMap2[], tier: number): SiteMap2 | undefined => {
+  const matches = sites.filter(s => s.type.tier === tier && canActAsBodyLinkPrimary(s));
+  return matches.length > 0 ? matches[0] : undefined;
+};
+
 const getBodyPrimaryPort = (sites: SiteMap2[], calcIds: string[]): SiteMap2 | undefined => {
   if (sites.length === 0) return undefined;
 
-  // skip incomplete sites?
   if (calcIds.length) {
     sites = sites.filter(s => calcIds.includes(s.id));
   }
 
-  // do we have any Tier 3's ?
-  const t3s = sites.filter(s => s.type.tier === 3 && canReceiveLinks(s.type));
-  if (t3s.length > 0) {
-    return t3s[0];
+  for (const tier of [3, 2, 1] as const) {
+    const primary = pickPrimaryByTier(sites, tier);
+    if (primary) {
+      return primary;
+    }
   }
 
-  // do we have any Tier 2's ?
-  const t2s = sites.filter(s => s.type.tier === 2 && canReceiveLinks(s.type));
-  if (t2s.length > 0) {
-    return t2s[0];
-  }
-
-  // do we have any Tier 1's ?
-  const t1s = sites.filter(s => s.type.tier === 1 && canReceiveLinks(s.type));
-  if (t1s.length > 0) {
-    return t1s[0];
-  }
-
-  // there is no primary to receive links on this body
   return undefined;
 }
+
+/** Non-primary colony ports on a body use the same link candidate pool as the body primary (Spansh: IC 1805 atropos cluster). */
+const shareColonyLinkPoolFromPrimary = (
+  body: BodyMap2,
+  primarySite: SiteMap2 | undefined,
+  calcIds: string[],
+) => {
+  if (!primarySite?.links) {
+    return;
+  }
+
+  const { strongSites, weakSites } = primarySite.links;
+  for (const site of body.sites) {
+    if (site === primarySite || site.links) {
+      continue;
+    }
+    if (!calcIds.includes(site.id) || site.status === "demolish") {
+      continue;
+    }
+    if (!["starport", "outpost"].includes(site.type.buildClass)) {
+      continue;
+    }
+    if (site.type.inf !== "colony" || site.type.fixed) {
+      continue;
+    }
+
+    const strongSitesForSite = body.sites.filter(s => s.parentLink === site);
+    site.links = {
+      economies: {},
+      strongSites: strongSitesForSite,
+      weakSites: [...weakSites],
+    };
+  }
+};
 
 const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {
 
@@ -586,9 +616,11 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
   // calc strong/weaks links, for surface sites, then orbital
   if (body.surfacePrimary) {
     calcSiteLinks(sys.bodies, bodyMap, body, body.surfacePrimary, calcIds);
+    shareColonyLinkPoolFromPrimary(body, body.surfacePrimary, calcIds);
   }
   if (body.orbitalPrimary) {
     calcSiteLinks(sys.bodies, bodyMap, body, body.orbitalPrimary, calcIds);
+    shareColonyLinkPoolFromPrimary(body, body.orbitalPrimary, calcIds);
   }
 
   // // order by surface, then tier
@@ -630,6 +662,23 @@ const canBeSubordinateToPrimary = (
   if (s.type.orbital && !primarySite.type.orbital && !!body.orbitalPrimary) {
     // surface sites cannot claim orbital facilities if there's an orbital port
     return false;
+  }
+
+  if (s.type.buildClass === "installation") {
+    if (canReceiveLinks(primarySite.type)) {
+      return true;
+    }
+    if (primarySite.type.buildClass === "hub") {
+      return true;
+    }
+  }
+
+  if (primarySite.type.buildClass === "hub" && s.type.buildClass === "hub") {
+    return false;
+  }
+
+  if (primarySite.type.buildClass === "installation" && s.type.buildClass === "installation") {
+    return s.type.orbital && !primarySite.type.orbital;
   }
 
   return true;
@@ -690,6 +739,18 @@ const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: Bod
   }
 }
 
+const precalcLinkSourceEconomies = (
+  s: SiteMap2,
+  calcIds: string[],
+  economyModelOptions?: EconomyModelOptions,
+) => {
+  if (s.type.inf === "colony") {
+    calculateColonyEconomies2(s, calcIds, economyModelOptions);
+  } else if (isFacilityWithEconomy(s)) {
+    calculateFacilityEconomies2(s, calcIds, economyModelOptions);
+  }
+};
+
 const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {
   if (!site.links) return;
 
@@ -711,15 +772,13 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
     // this mimicks the in-game UI behavior
     const curSiteLinks: Set<ConcreteEconomy> = new Set();
     if (inf === 'colony') {
-      // we need to calculate what the economy actually is for these
-      calculateColonyEconomies2(s, calcIds, economyModelOptions);
-      // console.log(`** ${s.buildName}: ${inf}\n`, JSON.stringify(s.economies, null, 2)); // TMP!
-      // tally strong links from intrinsic economies
+      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
       for (const intrinsicInf of s.intrinsic ?? []) {
         if (intrinsicInf === 'none' || intrinsicInf === 'colony') continue;
         curSiteLinks.add(intrinsicInf);
       }
     } else {
+      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
       curSiteLinks.add(inf);
     }
 
@@ -740,15 +799,13 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
     const inf = s.type.inf;
     if (inf === 'none') continue;
     if (inf === 'colony') {
-      // we need to calculate what the economy actually is for these
-      calculateColonyEconomies2(s, calcIds, economyModelOptions);
-      // console.log(`** ${s.buildName}: ${inf}\n`, JSON.stringify(s.economies, null, 2)); // TMP!
-      // tally weak links from intrinsic economies
+      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
       for (const intrinsicInf of s.intrinsic ?? []) {
         if (intrinsicInf === 'none' || intrinsicInf === 'colony') continue;
         map[intrinsicInf].weak++;
       }
     } else {
+      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
       if (!map[inf]) { map[inf] = { strong: 0, weak: 0 }; }
       map[inf].weak++;
     }

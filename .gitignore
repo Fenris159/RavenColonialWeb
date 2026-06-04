@@ -8,11 +8,12 @@
 # testing
 /coverage
 
-# production
+# production build output
 /build
 
 # misc
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -23,5 +24,37 @@ yarn-debug.log*
 yarn-error.log*
 .eslintcache
 
-# local editor/agent configuration
+# Local editor / agent (never ship)
 .cursor/
+.vs/
+AGENT-HANDOFF.md
+
+# Tests (local only — not shipped in PR)
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/setupTests.ts
+
+# Dev-only economy verification, galaxy scripts, and Spansh regression tests.
+# Production model lives in src/economy-*.ts, src/system-model2.ts, src/site-data.ts.
+# Run locally with: npm run test:economy (requires src/dev present on your machine).
+/src/dev/
+
+# Dev workflow doc (architecture stays in docs/economy-model.md)
+/docs/facility-economy-registry.md
+
+# Local Spansh galaxy dumps and harvest caches (multi-GB; keep outside repo)
+galaxy_stations.json
+**/galaxy_stations.json
+GALAXY_STATIONS_PATH
+
+# Common local verify caches (written to %TEMP% or Downloads; ignore if copied into repo)
+ic1805-sys.json
+ic1805-galaxy-stations.json
+hip52675-sys.json
+hip52675-galaxy-stations.json
+hr4464-sys.json
+hr4464-galaxy-stations.json
+hr4464-spansh.json
+facility-economy-registry-report.json

@@ -45,7 +45,25 @@ export const AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE: Readonly<Record<string, number>>
   apollo: 1.60,
   clotho: 1.25,
   chronos: 1.40,
+  /** Civilian surface outpost near agriculture cluster (IC 1805 Spansh). */
+  atropos: 1.40,
 };
+
+/** Small/medium agriculture settlements (Spansh intrinsic 60%). */
+export const TIER1_AGRICULTURE_SETTLEMENT_BUILD_TYPES = new Set(["picumnus", "annona", "consus"]);
+
+export const getSettlementFixedEconomyValue = (site: SiteMap2): number => {
+  if (
+    site.type.inf === "agriculture" &&
+    TIER1_AGRICULTURE_SETTLEMENT_BUILD_TYPES.has(site.buildType)
+  ) {
+    return 0.6;
+  }
+  return 1.0;
+};
+
+export const getAgricultureSettlementFloorValue = (site: SiteMap2): number =>
+  getSettlementFixedEconomyValue(site);
 
 /** plutus / vulcan / prometheus on orbital colony ports: budget scales with strong subordinate count. */
 export const AG_WEAK_LINK_ORBITAL_CLUSTER_BUILD_TYPES = new Set(["plutus", "vulcan", "prometheus"]);
@@ -61,11 +79,11 @@ export const getOrbitalClusterAgWeakLinkBudget = (site: SiteMap2): number => {
   return AG_WEAK_LINK_BUDGET.DEFAULT;
 };
 
+/** Non-ag-specialized colony port (body BIO/ELW may still add agriculture to intrinsic). */
 const isColonyPortWithoutSameBodyAgStrong = (site: SiteMap2) =>
   (site.type.buildClass === "starport" || site.type.buildClass === "outpost") &&
   site.type.inf === "colony" &&
-  !site.type.fixed &&
-  !site.intrinsic?.includes("agriculture") &&
+  site.type.fixed !== "agriculture" &&
   !site.agEconomyCalc?.sameBodyAgFacilityStrongLink &&
   !site.agEconomyCalc?.sameBodyAgSettlementStrongLink;
 
@@ -193,6 +211,11 @@ export const shouldApplyForeignStarAgricultureWeakLink = (
   foreignStarAgWeakLinksUsed: Set<number>,
 ) => {
   if (homeStarRoot === undefined || !shouldLimitForeignStarAgricultureWeakLinks(site)) {
+    return true;
+  }
+
+  // Odyssey agriculture settlements stack weak links from their host star (IC 1805 Spansh).
+  if (source.type.buildClass === "settlement" && source.type.inf === "agriculture") {
     return true;
   }
 
@@ -422,19 +445,23 @@ export const getForeignStarAgricultureWeakLinkRoot = (site: SiteMap2) => {
 
 export const applyAgricultureSettlementFloor = (map: EconomyMap, site: SiteMap2) => {
   if (
-    site.type.buildClass !== 'settlement' ||
-    site.type.inf !== 'agriculture' ||
-    !['picumnus', 'annona', 'consus'].includes(site.buildType) ||
-    map.agriculture <= 0 ||
-    map.agriculture >= 1.0
+    site.type.buildClass !== "settlement" ||
+    site.type.inf !== "agriculture" ||
+    !TIER1_AGRICULTURE_SETTLEMENT_BUILD_TYPES.has(site.buildType) ||
+    map.agriculture <= 0
   ) {
     return;
   }
 
+  const floor = getAgricultureSettlementFloorValue(site);
+  if (map.agriculture >= floor) {
+    return;
+  }
+
   adjust(
-    'agriculture',
-    1.0 - map.agriculture,
-    'Floor: agriculture settlement minimum',
+    "agriculture",
+    floor - map.agriculture,
+    "Floor: agriculture settlement minimum",
     map,
     site,
   );

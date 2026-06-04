@@ -1,7 +1,13 @@
 import { Economy, EconomyMap } from "./site-data";
 import { SiteMap2 } from "./system-model2";
 import { asPosNegTxt2 } from "./util";
-import { applyObservedPresetEconomies, applyAgricultureSettlementFloor, applyFixedSurfaceAgricultureFloor, applyOrbitalFixedNonAgAgricultureFloor } from "./economy-ag-heuristics";
+import {
+  applyObservedPresetEconomies,
+  applyAgricultureSettlementFloor,
+  applyFixedSurfaceAgricultureFloor,
+  applyOrbitalFixedNonAgAgricultureFloor,
+  getSettlementFixedEconomyValue,
+} from "./economy-ag-heuristics";
 import {
   EconomyModelOptions,
   USE_NEW_MODEL,
@@ -15,6 +21,9 @@ import {
   applyStrongLinks2,
   applyWeakLinks,
 } from "./economy-documented";
+import { calculateFacilityEconomies2 } from "./economy-facilities";
+
+export { calculateFacilityEconomies2, getFacilityFixedIntrinsic, isFacilityWithEconomy } from "./economy-facilities";
 
 let showConsoleAudit = Date.now() < 0;
 
@@ -35,10 +44,6 @@ export { bodyIsTidalToStar } from "./economy-core";
 export { calculateAgricultureStrongLinkContribution } from "./economy-ag-modifiers";
 
 export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], options?: EconomyModelOptions): Economy => {
-  if (site.economies && site.primaryEconomy) {
-    return site.primaryEconomy;
-  }
-
   site.economyAudit = [];
   resetAgEconomyCalc(site);
 
@@ -61,15 +66,19 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
 
     case 'hub':
     case 'installation':
+      return calculateFacilityEconomies2(site, calcIds, options);
+
     case 'unknown':
       console.warn('Why are we here?');
       return 'none';
 
-    case 'settlement':
-      adjust(site.type.inf, +1.0, 'Odyssey settlement fixed economy', map, site);
+    case 'settlement': {
+      const intrinsic = getSettlementFixedEconomyValue(site);
+      adjust(site.type.inf, intrinsic, "Odyssey settlement fixed economy", map, site);
       applyBuffs(map, site, true);
       applyAgricultureSettlementFloor(map, site);
       return finishUp(map, site);
+    }
 
     case 'outpost':
     case 'starport':

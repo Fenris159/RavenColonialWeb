@@ -4,7 +4,20 @@ This document describes how colonization economy calculation is organized in `sr
 
 **Public entry point:** import from `economy-model2.ts` (re-exports are kept for backward compatibility).
 
-**System integration:** `system-model2.ts` builds link graphs, then calls `calculateColonyEconomies2` for each port.
+**System integration:** `system-model2.ts` builds link graphs, then calls `calculateColonyEconomies2` for ports/settlements and `calculateFacilityEconomies2` for hubs/installations with a fixed `type.inf`.
+
+---
+
+## Hubs and installations
+
+| Role | Behavior |
+|------|----------|
+| **Economy-bearing hub** (`type.inf` set, e.g. athena → hightech) | Fixed intrinsic via [`economy-facilities.ts`](../src/economy-facilities.ts); no strong/weak link math on the hub itself (Spansh treats these as fixed facility economies). |
+| **athena (scientific hub)** | 100% hightech by default; **140%** when the same body has an **operational** comms installation (`aletheia` with journal `marketId` ≥ 4_200_000_001). Body BIO/GEO hightech buffs do not apply to facility hubs. |
+| **Link-only installation** (`type.inf === none`, e.g. aletheia) | No own economy row; subordinates under the body primary (port or hub) and can unlock hub intrinsics / strong links for ports. |
+| **Weak-link sources** | Ports, settlements, and subordinate hubs — not installations (installations use **strong** links only when subordinate to a port/hub). |
+
+Planning: once a hub and its prerequisites are in `calcIds` as complete sites, the model shows the same percentages Spansh will report after construction.
 
 ---
 
@@ -12,6 +25,8 @@ This document describes how colonization economy calculation is organized in `sr
 
 | File | Layer | Purpose |
 |------|-------|---------|
+| [`economy-facility-registry.ts`](../src/economy-facility-registry.ts) | Facilities | Spansh registry: per–build-type intrinsics and link-only rows |
+| [`economy-facilities.ts`](../src/economy-facilities.ts) | Facilities | Applies registry intrinsics in `calculateFacilityEconomies2` |
 | [`economy-model2.ts`](../src/economy-model2.ts) | Pipeline | Orchestrates calculation order; re-exports the public API |
 | [`economy-core.ts`](../src/economy-core.ts) | Shared | `adjust`, `matches`, `bodyIsTidalToStar`, constants, agriculture calc flags |
 | [`economy-documented.ts`](../src/economy-documented.ts) | Documented rules | Body intrinsics, buffs, strong/weak links, specialized ports |
@@ -19,8 +34,6 @@ This document describes how colonization economy calculation is organized in `sr
 | [`economy-ag-heuristics.ts`](../src/economy-ag-heuristics.ts) | Spansh alignment | Agriculture caps, floors, filters, presets — not in community sheet |
 | [`economy-weak-links.ts`](../src/economy-weak-links.ts) | Documented (links) | Which sites count as weak-link sources (subordinate tiered stations) |
 | [`system-model2.ts`](../src/system-model2.ts) | Link graph | Primary ports, strong/weak site lists, `buildSystemModel2` |
-| [`economy-model2.test.ts`](../src/dev/economy/economy-model2.test.ts) | Tests | Unit tests for documented rules and agriculture edge cases |
-| [`verify-*.test.ts`](../src/dev/economy/) | Tests | Regression tests against cached Spansh snapshots (per system) |
 
 ---
 
@@ -172,37 +185,13 @@ Two related concepts that are easy to conflate:
 
 **Backend ask:** persist player-configured weak link source ids per port (Colonial Architect export or RC schema v7+) so agriculture estimates can match Spansh without reverse-engineering each port individually.
 
-Diagnostic: `verify-hr4464.test.ts` → `"investigates link graph scope..."` and `"surveys save/API data..."`. Use `explainAgricultureWeakLinkBudget()` and `getImpliedAgricultureWeakLinkBudget()` for debugging.
+Use `explainAgricultureWeakLinkBudget()` and `getImpliedAgricultureWeakLinkBudget()` for debugging in the app or devtools.
 
 ---
 
-## Tests
+## Local verification (not in git)
 
-| Test file | Scope |
-|-----------|-------|
-| `economy-model2.test.ts` | Unit tests: buffs, strong links, weak links, caps, floors, ground-orbit propagation |
-| `verify-wredguia-three.test.ts` | Emit, Spatula City, Keller Junction (exact match) |
-| `verify-wredguia-agri.test.ts` | Full Wredguia agriculture vs Spansh |
-| `verify-praea-agri.test.ts` | Hololive City, Sul Point |
-| `verify-col359.test.ts` | Penfold Exploration (all economies) |
-| `verify-hip52675.test.ts` | Escobar Gateway |
-| `verify-synuefe-agri.test.ts` | Synuefe (partial — known gaps) |
-| `verify-pleiades-agri.test.ts` | Pleiades (exploratory logging) |
-| `verify-lupus.test.ts` | Lupus (exploratory, grouped by Spansh freshness) |
-| `verify-spansh-agri.test.ts` | Multi-system cache (requires local JSON snapshots) |
-| `verify-hr4464.test.ts` | HR 4464 regression + link graph scope diagnostics |
-
-Run regression suite:
-
-```bash
-npm run test:economy
-```
-
-Or:
-
-```bash
-npx react-scripts test --watchAll=false --testPathPattern=src/dev/economy
-```
+Spansh regression and unit tests live under `src/dev/economy/` on your machine only (gitignored). Run with `npm run test:economy` when that folder is present.
 
 ---
 

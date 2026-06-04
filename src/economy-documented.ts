@@ -350,7 +350,9 @@ export const applyStrongLinkBoost = (inf: Economy, map: EconomyMap, site: SiteMa
   }
 };
 
-export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolean) => {
+export type ApplyBuffsOptions = { /** Scientific/medical hubs: Spansh ignores BIO/GEO hightech body buffs */ skipHightechBodyBuffs?: boolean };
+
+export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolean, options?: ApplyBuffsOptions) => {
   const reserveLevel = site.sys.reserveLevel ?? 'pristine';
 
   const reserveSensitiveEconomies = ['industrial', 'extraction', 'refinery'] as (keyof EconomyMap)[];
@@ -366,7 +368,7 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
 
   applyAgricultureBodyBuffs(map, site, adjust);
 
-  if (map.hightech > 0) {
+  if (map.hightech > 0 && !options?.skipHightechBodyBuffs) {
     if (isSettlement && USE_NEW_MODEL) {
       if (matches([BodyFeature.bio], site.body?.features)) {
         adjust('hightech', +0.4, 'Buff: body has BIO', map, site, 'body');
