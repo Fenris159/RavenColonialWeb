@@ -32,9 +32,6 @@ AGENT-HANDOFF.md
 # ─── Local-only (outside src/ so dev server does not compile it) ───
 /local/
 
-# Dev workflow doc (optional local copy; architecture in docs/economy-model.md)
-/docs/facility-economy-registry.md
-
 # Local Spansh galaxy dumps and harvest caches (multi-GB; keep outside repo)
 galaxy_stations.json
 **/galaxy_stations.json

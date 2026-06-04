@@ -69,7 +69,7 @@ const entryForBuildType = (buildType: string): FacilityRegistryEntry | undefined
 
 /**
  * Spansh-aligned facility economy registry.
- * Update via `npm test -- --testPathPattern=build-facility-economy-registry` (see dev test).
+ * Spansh harvest: see local/docs/facility-economy-registry.md (not in git).
  */
 export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = {
   // --- Installations: link-only (inf none) ---

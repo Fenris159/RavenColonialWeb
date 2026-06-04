@@ -5,12 +5,14 @@
 | Path | In PR | Purpose |
 |------|-------|---------|
 | `src/` | Yes | Production app + economy model |
-| `local/` | No | Local tests, Spansh verification, galaxy scripts ([readme](local/README.md)) |
-| `docs/` | Yes | Architecture notes |
+| `docs/` | Yes | Production architecture ([economy model](docs/economy-model.md)) |
+| `local/` | No | Local tests, Spansh tools, and dev-only docs (gitignored) |
 
 ```bash
-npm start              # site
-npm run test:economy   # local Spansh/regression tests only
+npm start              # site (src/ only)
+npm run build
 ```
 
-See [docs/local-development.md](docs/local-development.md).
+Local verification (not in git): clone keeps a `local/` folder on disk — see `local/README.md` if present, then `npm run test:economy`.
+
+Economy architecture for reviewers: **[docs/economy-model.md](docs/economy-model.md)**.
