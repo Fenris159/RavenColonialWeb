@@ -3,16 +3,31 @@ import { SiteMap2 } from "./system-model2";
 
 export const OPERATIONAL_MARKET_ID_MIN = 4_200_000_001;
 
+const aletheiaUnlocksAthenaHightech = (s: SiteMap2, calcIds?: string[]): boolean => {
+  if (s.buildType !== "aletheia" || s.status === "demolish") {
+    return false;
+  }
+  if (calcIds?.length && !calcIds.includes(s.id)) {
+    return false;
+  }
+
+  // Live / Spansh: complete comms with operational market id
+  if (s.status === "complete") {
+    return (s.marketId ?? 0) >= OPERATIONAL_MARKET_ID_MIN;
+  }
+
+  // Planning (useIncomplete): plan/build aletheia in the calc set → predict 140% when finished
+  if (s.status === "plan" || s.status === "build") {
+    return !!calcIds?.includes(s.id);
+  }
+
+  return false;
+};
+
 /** Operational comms on the same body unlocks 140% hightech on athena (IC 1805 Spansh). */
 export const bodyHasOperationalCommsForAthena = (site: SiteMap2, calcIds?: string[]): boolean => {
   const onBody = site.body?.sites ?? [];
-  return onBody.some(
-    s =>
-      s.buildType === "aletheia" &&
-      s.status === "complete" &&
-      (s.marketId ?? 0) >= OPERATIONAL_MARKET_ID_MIN &&
-      (!calcIds?.length || calcIds.includes(s.id)),
-  );
+  return onBody.some(s => aletheiaUnlocksAthenaHightech(s, calcIds));
 };
 
 /** How a hub/installation intrinsic is determined (1.0 = 100% Spansh strength). */

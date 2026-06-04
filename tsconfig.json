@@ -22,11 +22,5 @@
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "src/dev",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/setupTests.ts"
   ]
 }

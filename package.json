@@ -23,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:economy": "react-scripts test --watchAll=false --testPathPattern=src/dev/economy",
+    "test:economy": "jest -c local/jest.config.js --watchAll=false --testPathPattern=local/economy/tests",
+    "test:local": "jest -c local/jest.config.js --watchAll=false",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

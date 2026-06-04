@@ -191,7 +191,11 @@ Use `explainAgricultureWeakLinkBudget()` and `getImpliedAgricultureWeakLinkBudge
 
 ## Local verification (not in git)
 
-Spansh regression and unit tests live under `src/dev/economy/` on your machine only (gitignored). Run with `npm run test:economy` when that folder is present.
+Spansh regression and unit tests live under `local/economy/` (gitignored, outside `src/`). See [`docs/local-development.md`](local-development.md). Run:
+
+```bash
+npm run test:economy
+```
 
 ---
 
