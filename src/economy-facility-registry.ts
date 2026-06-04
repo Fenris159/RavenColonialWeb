@@ -1,33 +1,103 @@
 import { ConcreteEconomy, getSiteType, siteTypes } from "./site-data";
 import { SiteMap2 } from "./system-model2";
+import { BT } from "./types2";
 
 export const OPERATIONAL_MARKET_ID_MIN = 4_200_000_001;
 
-const aletheiaUnlocksAthenaHightech = (s: SiteMap2, calcIds?: string[]): boolean => {
-  if (s.buildType !== "aletheia" || s.status === "demolish") {
+const COMMS_BUILD_TYPES = new Set(["aletheia", "pistis", "soter"]);
+
+/** Player-built station marketIds in Spansh dumps (includes pre-operational 395–397 journal IDs). */
+export const isPlayerMadeMarketId = (marketId: number): boolean => {
+  const s = String(marketId);
+  return (
+    s.startsWith("395") ||
+    s.startsWith("396") ||
+    s.startsWith("397") ||
+    s.startsWith("42") ||
+    s.startsWith("43")
+  );
+};
+
+const commsSiteQualifiesForAthena = (s: SiteMap2, calcIds?: string[]): boolean => {
+  if (!COMMS_BUILD_TYPES.has(s.buildType) || s.status === "demolish") {
     return false;
   }
   if (calcIds?.length && !calcIds.includes(s.id)) {
     return false;
   }
-
-  // Live / Spansh: complete comms with operational market id
   if (s.status === "complete") {
-    return (s.marketId ?? 0) >= OPERATIONAL_MARKET_ID_MIN;
+    const mid = s.marketId ?? 0;
+    return mid >= OPERATIONAL_MARKET_ID_MIN || isPlayerMadeMarketId(mid);
   }
-
-  // Planning (useIncomplete): plan/build aletheia in the calc set → predict 140% when finished
   if (s.status === "plan" || s.status === "build") {
     return !!calcIds?.includes(s.id);
   }
-
   return false;
 };
 
-/** Operational comms on the same body unlocks 140% hightech on athena (IC 1805 Spansh). */
+const allSiteMapsInSystem = (site: SiteMap2): SiteMap2[] => {
+  if (site.sys.siteMaps?.length) {
+    return site.sys.siteMaps;
+  }
+  if (site.sys.bodyMap) {
+    return Object.values(site.sys.bodyMap).flatMap(b => b.sites);
+  }
+  return site.body?.sites ?? [];
+};
+
+/** Body nums to search: host plus ancestors from `body.parents` chains. */
+const collectAthenaCommsSearchBodyNums = (site: SiteMap2): number[] => {
+  const seen = new Set<number>();
+  const out: number[] = [];
+  const queue: number[] = [];
+
+  if (site.body) {
+    queue.push(site.body.num);
+    if (site.body.parents?.length) {
+      queue.push(...site.body.parents);
+    }
+  }
+
+  while (queue.length > 0) {
+    const num = queue.shift()!;
+    if (seen.has(num)) {
+      continue;
+    }
+    seen.add(num);
+    out.push(num);
+    const raw = site.sys.bodies.find(b => b.num === num);
+    if (raw?.parents?.length) {
+      queue.push(...raw.parents);
+    }
+  }
+
+  return out;
+};
+
+/**
+ * True when completed (or planned) comms exists on the athena host or an ancestor body.
+ * IC 1805: comms often uses 396* marketIds; moons inherit from parent gas giant / star bodies.
+ */
 export const bodyHasOperationalCommsForAthena = (site: SiteMap2, calcIds?: string[]): boolean => {
-  const onBody = site.body?.sites ?? [];
-  return onBody.some(s => aletheiaUnlocksAthenaHightech(s, calcIds));
+  const siteMaps = allSiteMapsInSystem(site);
+  return collectAthenaCommsSearchBodyNums(site).some(bodyNum =>
+    siteMaps
+      .filter(s => s.bodyNum === bodyNum)
+      .some(s => commsSiteQualifiesForAthena(s, calcIds)),
+  );
+};
+
+/** 140% hightech when comms qualifies; star-primary HMC athena sites stay 100% (Diophantus et al.). */
+export const getAthenaHightechIntrinsic = (site: SiteMap2, calcIds?: string[]): number => {
+  if (!bodyHasOperationalCommsForAthena(site, calcIds)) {
+    return 1.0;
+  }
+  const parentNum = site.body?.parents?.[0];
+  const parent = parentNum != null ? site.sys.bodies.find(b => b.num === parentNum) : undefined;
+  if (site.body?.type === BT.hmc && parent?.type === BT.st) {
+    return 1.0;
+  }
+  return 1.4;
 };
 
 /** How a hub/installation intrinsic is determined (1.0 = 100% Spansh strength). */
@@ -262,9 +332,7 @@ export const resolveFacilityIntrinsicFromRegistry = (
       }
       return entry.intrinsic;
     case "athenaComms":
-      return bodyHasOperationalCommsForAthena(site, calcIds)
-        ? entry.withOperationalComms
-        : entry.withoutComms;
+      return getAthenaHightechIntrinsic(site, calcIds);
     default:
       return 1.0;
   }

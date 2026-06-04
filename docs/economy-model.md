@@ -26,7 +26,7 @@ Economy, link graph, tier gives, and system unlocks all respect `calcIds`. Incom
 | Role | Behavior |
 |------|----------|
 | **Economy-bearing hub** (`type.inf` set) | Fixed intrinsic via [`economy-facility-registry.ts`](../src/economy-facility-registry.ts) + [`economy-facilities.ts`](../src/economy-facilities.ts). No strong/weak math on the hub row itself. Body BIO/GEO hightech buffs do not apply (`skipHightechBodyBuffs`). |
-| **athena** | 100% hightech default; **140%** when same body has qualifying `aletheia`: operational when **complete** (`marketId` ≥ 4_200_000_001), or **plan/build** when that comms site is in `calcIds` (incomplete preview). |
+| **athena** | 100% hightech default; **140%** when **comms** (`aletheia` / `pistis` / `soter`) is complete on the host body or any **ancestor** body (walk `body.parents`, e.g. gas giant or star). Qualifying `marketId`: journal operational (≥ 4_200_000_001) or player-made prefix (395–397, 42, 43). **Exception:** athena on **HMC** whose parent is a **star** stays 100% even with comms. Plan/build comms in `calcIds` counts for incomplete preview. |
 | **Link-only** (`type.inf === none`, e.g. `aletheia`) | No economy row; subordinate under body primary; unlocks hub intrinsics / port strong links. |
 | **Weak-link sources** | Ports, settlements, subordinate hubs — not installations. |
 
@@ -61,13 +61,16 @@ Registry table: `FACILITY_ECONOMY_REGISTRY` in `economy-facility-registry.ts` (`
 5. **Links** (if `site.links`): `applyStrongLinks2` → `applyWeakLinks` → agriculture floors (heuristic)
 6. Finish — `primaryEconomy`, sorted `economies`
 
-Link lists are built earlier: `calcBodyLinks`, `assignBodySubordinateLinks`, optional `shareColonyLinkPoolFromPrimary` for non-primary colony ports on a body.
+Link lists are built earlier: `calcBodyLinks`, `assignBodySubordinateLinks`, then `shareColonyLinkPoolFromPrimary` for non-primary ports on a body:
+
+- **Colony ports** (non-fixed intrinsic) — shared weak-link pool from the body primary.
+- **Fixed specialized outposts** (`bia`, `fauna`, `vulcan`, …) — same weak pool **and** strong-link sources from surface + orbital primaries (after both link graphs exist), so linked economies appear in `site.economies` instead of staying at 0%.
 
 ---
 
 ## Documented vs heuristic
 
-**Documented** (`economy-documented.ts`, `economy-ag-modifiers.ts`, `economy-weak-links.ts`): community sheet rules — body intrinsics, buffs, strong tiers (0.4 / 0.8 / 1.2), weak +0.05 steps, subordinate-only weak links for tiered starports.
+**Documented** (`economy-documented.ts`, `economy-ag-modifiers.ts`, `economy-weak-links.ts`): community sheet rules — body intrinsics, buffs, strong tiers (0.4 / 0.8 / 1.2), weak +0.05 steps, subordinate-only weak links for tiered starports. **Sub-strong** passes use the parent link economy (`subLink`), not the subordinate’s `type.inf`, and never apply a site to itself. **Parent hub sub-strong:** fixed/shared-pool ports subordinate to an economy-bearing hub (e.g. `bia` under athena) receive a tier-sized sub-strong from `parentLink` after top-level strong links (mirror of the subordinate→orbital sub-strong in the hub’s `strongSites` tree).
 
 **Heuristic** (`economy-ag-heuristics.ts`): empirical Spansh fit — weak-link **budgets** (percent → max +5% steps), agriculture floors, preset colonies, foreign-star filters. Prefer documented modules unless regression requires a heuristic.
 
@@ -109,6 +112,8 @@ From `SystemView2` → `buildSystemModel2`. Persisted as `terraformableAgriBonus
 | Optional filter | `Site.weakLinkIds` — when set on a port, `calcSiteLinks` restricts weak candidates before calc |
 
 Debug helpers in production code: `explainAgricultureWeakLinkBudget()`, `getImpliedAgricultureWeakLinkBudget()`.
+
+**Spansh compare (UI only):** `spansh-economy-resolve.ts` loads `spanshEconomies` plus an EDSM station name index. Completed sites compare by journal `marketId` first; if that row is missing or colony-only (construction placeholder), compare falls back to EDSM `normalizeStationName(site.name) → marketId`. Does not affect economy calculation.
 
 ---
 

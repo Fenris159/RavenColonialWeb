@@ -9,12 +9,14 @@ import { App } from "../../App";
 
 export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onClose: () => void }> = (props) => {
   const [onlyProblems, setOnlyProblems] = useState(window.location.hostname.includes('localhost'));
-  const loadingRealEconomies = props.sysView.state.realEconomies?.length === undefined;
+  const loadingRealEconomies =
+    props.sysView.state.spanshCompareLoading ||
+    props.sysView.state.realEconomies === undefined;
 
   const sites = props.sysView.state.sysMap.siteMaps
-    .filter(s => !!s.economies && s.marketId > 4_200_000_000)
+    .filter(s => !!s.economies && s.status === 'complete' && (s.marketId ?? 0) > 0)
     .sort((a, b) => a.bodyNum - b.bodyNum);
-  const validSites = sites.filter(s => s.status === 'complete' && s.marketId > 0);
+  const validSites = sites;
 
   const colorYellow = appTheme.isInverted ? appTheme.palette.yellow : 'goldenrod';
   const { sysMap, realEconomies } = props.sysView.state;
@@ -24,8 +26,8 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
     // skip sites without economies
     if (!site.economies) { return false; }
 
-    // skip sites without matching Spansh data
-    const realEconomy = realEconomies?.find(r => r.id === site?.marketId)?.economies;
+    const resolved = props.sysView.resolveSpanshEconomyForSite(site);
+    const realEconomy = resolved?.row.economies;
     if (!realEconomy) { return false; }
 
     // does any economy not match?
@@ -85,7 +87,7 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
         <Spinner
           size={SpinnerSize.large}
           labelPosition='right'
-          label='Loading Spansh data...'
+          label='Loading Spansh and EDSM station index...'
         />
       </Stack>}
 

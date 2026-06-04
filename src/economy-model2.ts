@@ -17,6 +17,7 @@ import {
 import {
   applyBodyType,
   applyBuffs,
+  applyParentHubSubStrongLink,
   applySpecializedPort,
   applyStrongLinks2,
   applyWeakLinks,
@@ -33,6 +34,7 @@ export {
   applyBodyType,
   applyBuffs,
   applyStrongLinkBoost,
+  applyParentHubSubStrongLink,
   applyStrongLinks2,
   canInheritGroundOrbitColonyAgriculture,
   getColonyEconomyBeforeWeakLinks,
@@ -101,6 +103,7 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
 
   if (site.links) {
     applyStrongLinks2(map, site.links.strongSites, site, calcIds, undefined, options);
+    applyParentHubSubStrongLink(map, site, calcIds);
     applyWeakLinks(map, site, calcIds);
     applyFixedSurfaceAgricultureFloor(map, site);
     applyOrbitalFixedNonAgAgricultureFloor(map, site);

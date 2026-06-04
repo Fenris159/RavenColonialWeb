@@ -12,15 +12,22 @@ import { mapBodyTypeNames } from "../../types2";
 import { EconomyBlocks } from "../../components/MarketLinks/MarketLinks";
 import { stellarRemnants } from "../../economy-model2";
 import { App } from "../../App";
+import { findRealEconomiesRow, isConstructionSpanshPlaceholder } from "../../spansh-economy-resolve";
 
 export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: SystemView2; noTableHeader?: boolean; noDisclaimer?: boolean; noChart?: boolean }> = (props) => {
-  const realMatch = props.sysView?.state.realEconomies?.find(r => typeof r.id === 'number' ? r.id === props.site?.marketId : r.id.substring(1) === props.site?.marketId.toString());
+  const resolvedSpansh = props.sysView?.resolveSpanshEconomyForSite(props.site);
+  const realMatch = resolvedSpansh?.row;
   const realEconomy = realMatch?.economies;
+  const spanshMarketId = resolvedSpansh?.spanshMarketId ?? props.site.marketId;
+  const spanshMatchNote = resolvedSpansh?.note;
+  const journalRow = findRealEconomiesRow(props.sysView?.state.realEconomies, props.site.marketId ?? 0);
+  const journalIsConstructionPlaceholder = isConstructionSpanshPlaceholder(journalRow?.economies);
   const systemName = props.site.sys.name;
 
   const [showAudit, setShowAudit] = useState(false);
   const [bodyOverride, setBodyOverride] = useState(false);
-  const [loadingCompare, setLoadingCompare] = useState(!!realEconomy);
+  const compareLoaded = props.sysView?.state.realEconomies !== undefined;
+  const loadingCompare = !!props.sysView?.state.spanshCompareLoading;
 
   // exit early if the site is not complete it cannot be landed at
   if (!props.site || props.site.type.padSize === 'none') return null;
@@ -102,9 +109,12 @@ export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: System
       if (realMatch) {
         spanshHeader = <>
           {!!props.sysView.state.useIncomplete && <Icon iconName='Warning' style={{ color: colorYellow }} />}
+          {resolvedSpansh?.kind === 'edsmName' && (
+            <Icon iconName='Switch' title={spanshMatchNote ?? 'Matched by station name via EDSM'} style={{ marginRight: 4, color: colorYellow }} />
+          )}
           From&nbsp;
           <Link
-            href={`https://spansh.co.uk/station/${props.site.marketId}`}
+            href={`https://spansh.co.uk/station/${spanshMarketId}`}
             target='spansh'
           >
             Spansh <Icon className='icon-inline' iconName='OpenInNewWindow' style={{ textDecoration: 'none' }} />
@@ -122,23 +132,23 @@ export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: System
               &nbsp;As of: {new Date(realMatch.updated).toLocaleString()}
             </span>
           </>}
+          {spanshMatchNote && <span style={{ display: 'block', color: colorYellow, fontWeight: 'normal', fontSize: 11 }}>{spanshMatchNote}</span>}
         </>;
-      } else if (!realMatch && props.sysView.state.realEconomies) {
-        spanshHeader = <span style={{ color: 'grey' }}>No data from <Link
-          href={`https://spansh.co.uk/station/${props.site.marketId}`}
-          target='spansh'
-        >
-          Spansh <Icon className='icon-inline' iconName='OpenInNewWindow' style={{ textDecoration: 'none' }} />
-        </Link></span>;
+      } else if (compareLoaded) {
+        const noDataMsg = journalIsConstructionPlaceholder
+          ? 'Journal marketId is a construction placeholder (Colony only on Spansh). No operational match via EDSM name.'
+          : 'No operational Spansh data for this station';
+        spanshHeader = <span style={{ color: 'grey' }}>{noDataMsg}&nbsp;
+          <Link href={`https://spansh.co.uk/station/${props.site.marketId}`} target='spansh'>
+            journal id <Icon className='icon-inline' iconName='OpenInNewWindow' style={{ textDecoration: 'none' }} />
+          </Link>
+        </span>;
       } else if (loadingCompare) {
-        spanshHeader = <span style={{ color: 'grey' }}>Loading ...</span>;
+        spanshHeader = <span style={{ color: 'grey' }}>Loading Spansh and EDSM…</span>;
       } else {
         spanshHeader = <Link
-          title={`Compare estimated values with real values from Spansh.\n\nNOTE: Comparisons are only valid when everything in the system is known to Raven Colonial.`}
-          onClick={() => {
-            props.sysView?.doGetRealEconomies();
-            setLoadingCompare(true);
-          }}
+          title={`Compare estimated values with real values from Spansh.\n\nUses EDSM station names when the journal marketId is stale or a construction placeholder.`}
+          onClick={() => props.sysView?.doGetRealEconomies()}
         >
           Compare with Spansh?
         </Link>;

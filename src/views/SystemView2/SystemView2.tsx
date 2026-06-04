@@ -27,6 +27,7 @@ import { ArchitectSummary } from './ArchitectSummary';
 import { getSiteType, mapName } from '../../site-data';
 import { BodyPill, SitePill } from './SitePill';
 import { App } from '../../App';
+import { buildEdsmMarketIdByNormalizedName, resolveSpanshEconomyForSite } from '../../spansh-economy-resolve';
 
 interface SystemView2Props {
   systemName: string;
@@ -59,6 +60,9 @@ interface SystemView2State {
   showConfirmMessage?: string;
   activeProjects: Record<string, Project | null>
   realEconomies?: GetRealEconomies[];
+  /** normalizeStationName → EDSM marketId for Spansh compare fallback */
+  edsmMarketIdByName?: Record<string, number>;
+  spanshCompareLoading?: boolean;
   auditWholeSystem?: boolean;
   showCreateBuildProject?: boolean;
   siteGraphType: SiteGraphType;
@@ -180,6 +184,8 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       showConfirmAction: undefined,
       activeProjects: {},
       realEconomies: undefined,
+      edsmMarketIdByName: undefined,
+      spanshCompareLoading: false,
       auditWholeSystem: false,
       showCreateBuildProject: false,
       siteGraphType: store.siteGraphType,
@@ -362,14 +368,37 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       });
   };
 
-  doGetRealEconomies = () => {
-    if (this.state.sysMap?.id64) {
-      api.systemV2.getRealEconomies(this.state.sysMap.id64.toString())
-        .then(realEconomies => {
-          this.setState({ realEconomies });
-        });
+  doGetRealEconomies = (force?: boolean) => {
+    const nameOrNum = this.state.sysMap?.id64?.toString() ?? this.state.systemName;
+    const systemName = this.state.sysMap?.name ?? this.state.systemName;
+    if (!nameOrNum || !systemName) {
+      return;
     }
+
+    this.setState({ spanshCompareLoading: true });
+
+    Promise.all([
+      api.systemV2.getRealEconomies(nameOrNum, force),
+      api.edsm.findStationsInSystem(systemName).catch(() => null),
+    ])
+      .then(([realEconomies, edsm]) => {
+        this.setState({
+          realEconomies,
+          edsmMarketIdByName: edsm?.stations ? buildEdsmMarketIdByNormalizedName(edsm.stations) : undefined,
+          spanshCompareLoading: false,
+        });
+      })
+      .catch(() => {
+        this.setState({ spanshCompareLoading: false });
+      });
   };
+
+  resolveSpanshEconomyForSite = (site: SiteMap2) =>
+    resolveSpanshEconomyForSite(
+      { name: site.name, marketId: site.marketId, status: site.status },
+      this.state.realEconomies,
+      this.state.edsmMarketIdByName,
+    );
 
   doImport = (type?: string, force?: boolean) => {
     if (!store.cmdrName && this.state.sysOriginal !== undefined) {

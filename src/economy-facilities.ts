@@ -7,7 +7,12 @@ import {
   resolveFacilityIntrinsicFromRegistry,
 } from "./economy-facility-registry";
 
-export { bodyHasOperationalCommsForAthena, OPERATIONAL_MARKET_ID_MIN } from "./economy-facility-registry";
+export {
+  bodyHasOperationalCommsForAthena,
+  getAthenaHightechIntrinsic,
+  isPlayerMadeMarketId,
+  OPERATIONAL_MARKET_ID_MIN,
+} from "./economy-facility-registry";
 export {
   assertFacilityRegistryComplete,
   describeFacilityRegistryEntry,

@@ -171,6 +171,64 @@ const applyStrongAgricultureContribution = (
   noteAgricultureStrongLinkApplied(site, sourceSite, prefix);
 };
 
+/** Top-level uses the source inf; nested sub-strong uses the parent link economy (`subLink`). */
+const resolveStrongLinkEconomy = (subLink: Economy | '*' | undefined, sourceInf: Economy): Economy =>
+  subLink !== undefined && subLink !== '*' ? subLink : sourceInf;
+
+const shouldApplyStrongLinkEconomy = (
+  subLink: Economy | '*' | undefined,
+  economy: Economy,
+): boolean => subLink === undefined || subLink === '*' || economy === subLink;
+
+/** Fixed outposts / shared-pool ports subordinate to an economy-bearing hub (athena, enodia, …). */
+const receivesParentHubSubStrong = (site: SiteMap2): boolean => {
+  if (!site.parentLink) {
+    return false;
+  }
+  if (site.type.fixed && site.type.fixed !== "none" && site.type.fixed !== "colony") {
+    return true;
+  }
+  if (site.type.inf === "colony" && !site.type.fixed) {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Subordinates listed under a hub (e.g. Garcia under Rintaro) contribute sub-strong to other
+ * receivers on the body (orbital primary). The subordinate port should receive the same tier-sized
+ * sub-strong from its parent hub once the linked economy exists on the port map.
+ */
+export const applyParentHubSubStrongLink = (
+  map: EconomyMap,
+  site: SiteMap2,
+  calcIds: string[],
+) => {
+  const parent = site.parentLink;
+  if (!parent || !receivesParentHubSubStrong(site) || !calcIds.includes(parent.id)) {
+    return;
+  }
+
+  const parentInf = parent.type.inf;
+  if (parentInf === "none" || parentInf === "colony") {
+    return;
+  }
+
+  const infSize = site.type.tier === 1 ? 0.4 : site.type.tier === 2 ? 0.8 : 1.2;
+  if (!(parentInf in map)) {
+    return;
+  }
+
+  adjust(
+    parentInf,
+    infSize,
+    `Apply sub-strong link from parent: ${parent.name} (T${site.type.tier})`,
+    map,
+    site,
+  );
+  applyStrongLinkBoost(parentInf, map, site, "sub-strong link");
+};
+
 export const applyStrongLinks2 = (
   map: EconomyMap,
   strongSites: SiteMap2[],
@@ -179,16 +237,23 @@ export const applyStrongLinks2 = (
   subLink?: Economy | '*',
   options?: EconomyModelOptions,
 ) => {
+  const isSubStrongPass = subLink !== undefined;
+
   for (let s of strongSites) {
     if (s.type.inf === 'none') { continue; }
     if (!calcIds.includes(s.id)) { continue; }
+    if (isSubStrongPass && s === site) { continue; }
 
     const infSize = s.type.tier === 1 ? 0.4 : (s.type.tier === 2 ? 0.8 : 1.2);
-    const prefix = !!subLink ? 'sub-strong link' : 'Strong link';
+    const prefix = isSubStrongPass ? 'sub-strong link' : 'Strong link';
 
     if (s.type.inf !== 'colony') {
-      if (s.type.inf in map) {
-        if (s.type.inf === 'agriculture') {
+      const infToApply = resolveStrongLinkEconomy(subLink, s.type.inf);
+      if (!shouldApplyStrongLinkEconomy(subLink, infToApply)) {
+        continue;
+      }
+      if (infToApply in map) {
+        if (infToApply === 'agriculture') {
           applyStrongAgricultureContribution(
             map,
             site,
@@ -198,10 +263,10 @@ export const applyStrongLinks2 = (
             options,
           );
         } else {
-          adjust(s.type.inf, infSize, `Apply ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
-          applyStrongLinkBoost(s.type.inf, map, site, prefix);
+          adjust(infToApply, infSize, `Apply ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
+          applyStrongLinkBoost(infToApply, map, site, prefix);
         }
-      } else {
+      } else if (!isSubStrongPass) {
         console.warn(`Unknown economy '${s.type.inf}' for site ${s.name} - ${s.type.displayName2} (${s.buildType})`);
       }
 
@@ -219,6 +284,9 @@ export const applyStrongLinks2 = (
     for (var e in s.economies) {
       const ee = e as keyof EconomyMap;
       if (s.intrinsic?.includes(ee)) {
+        if (!shouldApplyStrongLinkEconomy(subLink, ee)) {
+          continue;
+        }
         if (site.type.fixed && ee !== site.type.fixed) {
           if (!(ee === 'agriculture' && canInheritGroundOrbitColonyAgriculture(s, site))) {
             continue;

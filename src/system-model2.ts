@@ -134,17 +134,21 @@ export const mapSysUnlocks: Record<SysUnlocks, { icon: string, title: string, ne
   },
 };
 
-export interface SysMap2 extends Sys {
-  bodyMap: Record<string, BodyMap2>;
+/** Mid-build system map: bodies/sites grouped; tier totals and economies not computed yet. */
+interface SysMapBuild extends Sys {
   siteMaps: SiteMap2[];
+  bodyMap: Record<string, BodyMap2>;
+  countSites: number;
+  systemScore: number;
+  calcIds: string[];
+}
+
+export interface SysMap2 extends SysMapBuild {
   tierPoints: TierPoints;
   economies: Record<string, number>;
   sumEffects: SysEffects;
-  systemScore: number;
-  sysUnlocks: Record<SysUnlocks, boolean>,
+  sysUnlocks: Record<SysUnlocks, boolean>;
   taxCount: number;
-  /** The set of IDs to use for system/economy calculations */
-  calcIds?: string[];
 }
 
 export interface TierPoints {
@@ -256,18 +260,18 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
   // re-sort bodies by their num value
   // sys.bodies.sort((a, b) => a.num - b.num);
 
-  const finalMap = Object.assign(sys, {
+  const finalMap: SysMap2 = {
     ...sysMap,
     ...sumEffects,
     tierPoints,
     taxCount,
     sysUnlocks,
-  });
+  };
 
-  // // store in the cache
-  // if (!noCache) {
-  //   sysMapCache[finalMap.systemName] = finalMap;
-  // }
+  for (const s of sysMap.siteMaps) {
+    s.sys = finalMap;
+  }
+
   return finalMap;
 };
 
@@ -306,7 +310,7 @@ export const getUnknownBody = (): Bod => {
   };
 }
 
-const initializeSysMap = (sys: Sys, useIncomplete: boolean, idxLimit: number) => {
+const initializeSysMap = (sys: Sys, useIncomplete: boolean, idxLimit: number): SysMapBuild => {
 
   let siteMaps: SiteMap2[] = [];
   let systemScore = 0;
@@ -372,10 +376,18 @@ const initializeSysMap = (sys: Sys, useIncomplete: boolean, idxLimit: number) =>
   // }
 
   const countSites = sys.sites.length;
-  const sysMap = {
+  const sysMap: SysMapBuild = {
     ...sys,
-    siteMaps, bodyMap, countSites, systemScore, calcIds,
+    siteMaps,
+    bodyMap,
+    countSites,
+    systemScore,
+    calcIds,
   };
+
+  for (const s of siteMaps) {
+    s.sys = sysMap as unknown as SysMap2;
+  }
 
   return sysMap;
 };
@@ -574,7 +586,23 @@ const getBodyPrimaryPort = (sites: SiteMap2[], calcIds: string[]): SiteMap2 | un
   return undefined;
 }
 
-/** Non-primary colony ports on a body use the same link candidate pool as the body primary (Spansh: IC 1805 atropos cluster). */
+/** Whether a port/outpost on a body shares the primary's system-wide weak-link pool (Spansh: IC 1805 atropos cluster, Garcia bia). */
+const siteSharesPrimaryLinkPool = (site: SiteMap2): boolean => {
+  if (site.type.inf === "none") {
+    return false;
+  }
+  // Multi-economy colony ports (non-fixed intrinsic)
+  if (site.type.inf === "colony" && !site.type.fixed) {
+    return true;
+  }
+  // Fixed specialized outposts (bia, fauna, vulcan, …) still accumulate linked economies in-game
+  if (site.type.fixed && site.type.fixed !== "none" && site.type.fixed !== "colony") {
+    return true;
+  }
+  return false;
+};
+
+/** Non-primary ports/outposts on a body use the same link candidate pool as the body primary. */
 const shareColonyLinkPoolFromPrimary = (
   body: BodyMap2,
   primarySite: SiteMap2 | undefined,
@@ -595,11 +623,13 @@ const shareColonyLinkPoolFromPrimary = (
     if (!["starport", "outpost"].includes(site.type.buildClass)) {
       continue;
     }
-    if (site.type.inf !== "colony" || site.type.fixed) {
+    if (!siteSharesPrimaryLinkPool(site)) {
       continue;
     }
 
-    const strongSitesForSite = body.sites.filter(s => s.parentLink === site);
+    const strongSitesForSite = site.type.fixed
+      ? buildSharedStrongSitesForPort(body, site, primarySite, body.surfacePrimary, body.orbitalPrimary)
+      : body.sites.filter(s => s.parentLink === site);
     site.links = {
       economies: {},
       strongSites: strongSitesForSite,
@@ -608,19 +638,52 @@ const shareColonyLinkPoolFromPrimary = (
   }
 };
 
+/** Same-body subordinates of this port plus strong-link sources from body primaries (surface + orbital). */
+const buildSharedStrongSitesForPort = (
+  body: BodyMap2,
+  site: SiteMap2,
+  linkPrimary: SiteMap2,
+  surfacePrimary?: SiteMap2,
+  orbitalPrimary?: SiteMap2,
+): SiteMap2[] => {
+  const seen = new Set<string>();
+  const add = (list: SiteMap2[]) => {
+    for (const s of list) {
+      if (s === site || seen.has(s.id)) {
+        continue;
+      }
+      seen.add(s.id);
+      out.push(s);
+    }
+  };
+  const out: SiteMap2[] = [];
+  add(body.sites.filter(s => s.parentLink === site));
+  for (const primary of [surfacePrimary, orbitalPrimary]) {
+    if (primary?.links?.strongSites && primary !== linkPrimary) {
+      add(primary.links.strongSites);
+    }
+  }
+  if (linkPrimary.links?.strongSites) {
+    add(linkPrimary.links.strongSites);
+  }
+  return out;
+};
+
 const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {
 
   // exit early if no primary port for this body
   if (!body.surfacePrimary && !body.orbitalPrimary) { return; }
 
-  // calc strong/weaks links, for surface sites, then orbital
+  // Calc link graphs for surface then orbital; then share pools once both exist.
   if (body.surfacePrimary) {
     calcSiteLinks(sys.bodies, bodyMap, body, body.surfacePrimary, calcIds);
-    shareColonyLinkPoolFromPrimary(body, body.surfacePrimary, calcIds);
   }
   if (body.orbitalPrimary) {
     calcSiteLinks(sys.bodies, bodyMap, body, body.orbitalPrimary, calcIds);
-    shareColonyLinkPoolFromPrimary(body, body.orbitalPrimary, calcIds);
+  }
+  const linkPoolPrimary = body.surfacePrimary ?? body.orbitalPrimary;
+  if (linkPoolPrimary) {
+    shareColonyLinkPoolFromPrimary(body, linkPoolPrimary, calcIds);
   }
 
   // // order by surface, then tier
