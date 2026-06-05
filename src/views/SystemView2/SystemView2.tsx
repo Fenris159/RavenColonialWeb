@@ -27,7 +27,14 @@ import { ArchitectSummary } from './ArchitectSummary';
 import { getSiteType, mapName } from '../../site-data';
 import { BodyPill, SitePill } from './SitePill';
 import { App } from '../../App';
-import { buildEdsmMarketIdByNormalizedName, resolveSpanshEconomyForSite } from '../../spansh-economy-resolve';
+import { isSpanshCompareExcluded } from '../../spansh-compare-reliability';
+import {
+  buildMarketIdByNameFromRcSites,
+  mergeMarketIdByNameIndexes,
+  resolveSpanshEconomyForSite,
+  spanshEconomiesNeedRefresh,
+  type SpanshCompareSite,
+} from '../../spansh-economy-resolve';
 
 interface SystemView2Props {
   systemName: string;
@@ -62,6 +69,8 @@ interface SystemView2State {
   realEconomies?: GetRealEconomies[];
   /** normalizeStationName → EDSM marketId for Spansh compare fallback */
   edsmMarketIdByName?: Record<string, number>;
+  edsmCompareError?: string;
+  edsmStationCount?: number;
   spanshCompareLoading?: boolean;
   auditWholeSystem?: boolean;
   showCreateBuildProject?: boolean;
@@ -111,9 +120,10 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       window.document.title = 'Sys: ' + this.props.systemName;
       const promise = this.loadData(this.props.systemName, true, this.props.savedName);
       if (store.autoCheckSpanshEconomies) {
-        promise.then(() => {
-          this.doGetRealEconomies();
-          this.setState({ auditWholeSystem: true });
+        promise.then(newSys => {
+          if (newSys) {
+            this.setState({ auditWholeSystem: true });
+          }
         });
       }
     } else {
@@ -185,6 +195,8 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       activeProjects: {},
       realEconomies: undefined,
       edsmMarketIdByName: undefined,
+      edsmCompareError: undefined,
+      edsmStationCount: undefined,
       spanshCompareLoading: false,
       auditWholeSystem: false,
       showCreateBuildProject: false,
@@ -248,12 +260,12 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       });
   };
 
-  useLoadedData = (newSys: Sys, updateSnapshot: boolean) => {
+  useLoadedData = (newSys: Sys, updateSnapshot: boolean): Sys | Promise<Sys> => {
 
     // ignore any slow loads if we've since changed systems
     if (!!this.state.sysOriginal && this.state.sysOriginal.id64 !== newSys.id64) {
       console.warn(`Ignoring: ${newSys.name}, for: ${this.state.sysOriginal.name}`);
-      return;
+      return newSys;
     }
 
     if (newSys.idxCalcLimit === undefined) {
@@ -275,6 +287,8 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     const canEditAsArchitect = newSys.open || !newSys.architect || isArchitect; // || !!newSys.editors?.includes(store.cmdrName);
     const lastRev = newSys.revs.reduce((m, r) => Math.max(r.rev, m), 0);
 
+    api.systemV2.clearRealEconomiesCache(newSys.id64.toString(), newSys.name);
+
     this.setState({
       systemName: newSys.name,
       processingMsg: undefined,
@@ -289,6 +303,14 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       originalBodySlots: JSON.stringify(newSys.slots),
       canEditAsArchitect: canEditAsArchitect,
       showEditNotes: false,
+      realEconomies: undefined,
+      edsmMarketIdByName: undefined,
+      edsmCompareError: undefined,
+      edsmStationCount: undefined,
+    }, () => {
+      if (store.autoCheckSpanshEconomies) {
+        this.doGetRealEconomies(true, newSys);
+      }
     });
 
     window.document.title = 'Sys: ' + newSys.name;
@@ -304,7 +326,9 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     }
 
     // Should we create or update the snapshot for this system?
-    if (!newSys.architect || !updateSnapshot || this.isDirty() || !store.cmdrName) { return; }
+    if (!newSys.architect || !updateSnapshot || this.isDirty() || !store.cmdrName) {
+      return newSys;
+    }
 
     let genSnapshot = false;
     let newSnapshot = getSnapshot(newSys, undefined);
@@ -332,7 +356,8 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
           // save a new snapshot 
           return api.systemV2.saveSnapshot(newSys.id64, newSnapshot);
         }
-      });
+      })
+      .then(() => newSys);
   }
 
   doDeleteNamedSave = (saveName: string) => {
@@ -368,34 +393,72 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       });
   };
 
-  doGetRealEconomies = (force?: boolean) => {
-    const nameOrNum = this.state.sysMap?.id64?.toString() ?? this.state.systemName;
-    const systemName = this.state.sysMap?.name ?? this.state.systemName;
+  doGetRealEconomies = (force?: boolean, sys?: Pick<Sys, 'id64' | 'name' | 'sites'>) => {
+    const nameOrNum = sys?.id64?.toString() ?? this.state.sysMap?.id64?.toString() ?? this.state.systemName;
+    const systemName = sys?.name ?? this.state.sysMap?.name ?? this.state.systemName;
+    const rcSites = sys?.sites ?? this.state.sysOriginal?.sites;
     if (!nameOrNum || !systemName) {
       return;
     }
 
-    this.setState({ spanshCompareLoading: true });
+    this.setState({
+      spanshCompareLoading: true,
+      edsmCompareError: undefined,
+    });
 
-    Promise.all([
+    Promise.allSettled([
       api.systemV2.getRealEconomies(nameOrNum, force),
-      api.edsm.findStationsInSystem(systemName).catch(() => null),
+      api.edsm.loadMarketIdByName(systemName),
     ])
-      .then(([realEconomies, edsm]) => {
+      .then(async ([spanshResult, edsmResult]) => {
+        let realEconomies =
+          spanshResult.status === 'fulfilled' ? spanshResult.value : this.state.realEconomies;
+
+        const edsmPayload =
+          edsmResult.status === 'fulfilled'
+            ? edsmResult.value
+            : { byName: {}, stationCount: 0, error: String(edsmResult.reason) };
+
+        const edsmMarketIdByName = mergeMarketIdByNameIndexes(
+          edsmPayload.byName,
+          buildMarketIdByNameFromRcSites(rcSites),
+        );
+
+        const compareSites: SpanshCompareSite[] = (this.state.sysMap?.siteMaps ?? [])
+          .filter(site => !isSpanshCompareExcluded(site.type))
+          .map(site => ({
+            name: site.name,
+            marketId: site.marketId,
+            status: site.status,
+            buildClass: site.type.buildClass,
+          }));
+
+        if (
+          realEconomies &&
+          spanshEconomiesNeedRefresh(compareSites, realEconomies, edsmMarketIdByName)
+        ) {
+          realEconomies = await api.systemV2.getRealEconomies(nameOrNum, true);
+        }
+
         this.setState({
           realEconomies,
-          edsmMarketIdByName: edsm?.stations ? buildEdsmMarketIdByNormalizedName(edsm.stations) : undefined,
+          edsmMarketIdByName: Object.keys(edsmMarketIdByName).length ? edsmMarketIdByName : undefined,
+          edsmCompareError: edsmPayload.error,
+          edsmStationCount: edsmPayload.stationCount,
           spanshCompareLoading: false,
         });
-      })
-      .catch(() => {
-        this.setState({ spanshCompareLoading: false });
       });
   };
 
   resolveSpanshEconomyForSite = (site: SiteMap2) =>
     resolveSpanshEconomyForSite(
-      { name: site.name, marketId: site.marketId, status: site.status },
+      {
+        name: site.name,
+        marketId: site.marketId,
+        status: site.status,
+        buildClass: site.type.buildClass,
+        padSize: site.type.padSize,
+      },
       this.state.realEconomies,
       this.state.edsmMarketIdByName,
     );
@@ -1359,7 +1422,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
             iconProps: { iconName: 'FabricFolderSearch' },
             disabled: !!processingMsg || !sysMap,
             onClick: () => {
-              this.doGetRealEconomies();
+              this.doGetRealEconomies(true);
               this.setState({ auditWholeSystem: true });
             }
           },

@@ -6,6 +6,7 @@ import { isMobile } from '../../util';
 import { EconomyTable2 } from './EconomyTable2';
 import { EconomyMap } from "../../system-model2";
 import { App } from "../../App";
+import { isSpanshCompareExcluded, spanshMismatchIsInformational } from "../../spansh-compare-reliability";
 
 export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onClose: () => void }> = (props) => {
   const [onlyProblems, setOnlyProblems] = useState(window.location.hostname.includes('localhost'));
@@ -14,7 +15,12 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
     props.sysView.state.realEconomies === undefined;
 
   const sites = props.sysView.state.sysMap.siteMaps
-    .filter(s => !!s.economies && s.status === 'complete' && (s.marketId ?? 0) > 0)
+    .filter(
+      s =>
+        !!s.economies &&
+        s.status === 'complete' &&
+        !isSpanshCompareExcluded(s.type),
+    )
     .sort((a, b) => a.bodyNum - b.bodyNum);
   const validSites = sites;
 
@@ -25,6 +31,7 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
   const nonMatchingSites = !loadingRealEconomies && sysMap.siteMaps.filter(site => {
     // skip sites without economies
     if (!site.economies) { return false; }
+    if (isSpanshCompareExcluded(site.type)) { return false; }
 
     const resolved = props.sysView.resolveSpanshEconomyForSite(site);
     const realEconomy = resolved?.row.economies;
@@ -32,6 +39,10 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
 
     // does any economy not match?
     const keys = Array.from(new Set([...Object.keys(site.economies), ...Object.keys(realEconomy)])) as (keyof EconomyMap)[];
+    if (spanshMismatchIsInformational(site.type)) {
+      return false;
+    }
+
     return keys.some(key => {
       const estimate = Math.round((site.economies![key] ?? 0) * 100);
       const real = realEconomy[key] ?? 0
@@ -96,7 +107,7 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
 
           <div>
             <span>
-              <Icon iconName='LightBulb' /> To update Spansh data - dock at stations with a client that uploads to EDDN
+              <Icon iconName='LightBulb' /> Compares dockable ports and settlements only. Hubs and installations use modeled economies and are not included.
             </span>
             <Link onClick={() => setOnlyProblems(!onlyProblems)} style={{ marginLeft: 4, userSelect: 'none', fontSize: 12 }}>
               <Icon
@@ -126,7 +137,7 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
                 {s.status !== 'complete' && <Icon className='icon-inline' iconName={s.status === 'plan' ? 'WebAppBuilderFragment' : 'ConstructionCone'} style={{ marginRight: 8, color: s.status === 'plan' ? appTheme.palette.yellowDark : appTheme.palette.orangeLight }} />}
                 {s.name} <span style={{ color: 'grey' }}>- {s.body?.name}</span>
               </h2>
-              <div style={{ marginLeft: 40, width: 400 }}>
+              <div style={{ marginLeft: 40, width: 480 }}>
                 <EconomyTable2 site={s} sysView={props.sysView} noTableHeader noDisclaimer noChart />
               </div>
             </div>;

@@ -132,6 +132,11 @@ export const applyObservedPresetEconomies = (map: EconomyMap, site: SiteMap2) =>
     return;
   }
 
+  // Preset targets subordinate icy atropos outposts (HR 4464 / IC 1805), not body primaries (e.g. Whelk on 9 c).
+  if (site === site.body?.orbitalPrimary || site === site.body?.surfacePrimary) {
+    return;
+  }
+
   adjust('extraction', +0.65, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
   adjust('agriculture', +0.55, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);
   adjust('refinery', +0.35, 'Observed preset economy: Civilian Surface Outpost (Atropos)', map, site);

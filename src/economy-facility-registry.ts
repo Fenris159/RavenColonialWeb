@@ -1,4 +1,4 @@
-import { ConcreteEconomy, getSiteType, siteTypes } from "./site-data";
+import { ConcreteEconomy, Economy, EconomyMap, getSiteType, siteTypes } from "./site-data";
 import { SiteMap2 } from "./system-model2";
 import { BT } from "./types2";
 
@@ -198,7 +198,7 @@ export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = 
     economy: "hightech",
     withoutComms: 1.0,
     withOperationalComms: 1.4,
-    notes: "Scientific hub; 140% when operational aletheia on same body",
+    notes: "Scientific hub; 140% when operational comms qualifies. Spansh compare often stale (undockable).",
     evidence: {
       samples: 36,
       spanshPercents: [100, 140],
@@ -336,6 +336,82 @@ export const resolveFacilityIntrinsicFromRegistry = (
     default:
       return 1.0;
   }
+};
+
+export type EconomicInfSummary = {
+  percentLabel: string;
+  note?: string;
+};
+
+const noteForAthenaComms = (site: SiteMap2, percent: number): string | undefined => {
+  if (percent >= 140) {
+    return "Operational comms on this body or a parent body";
+  }
+  if (bodyHasOperationalCommsForAthena(site)) {
+    return "Comms present; this hub body type stays at 100% High Tech";
+  }
+  return "Operational comms (aletheia, pistis, or soter) on this body or a parent raises High Tech to 140%";
+};
+
+/** UI copy for BuildEffects “Economic inf” row (hubs, installations, fixed ports). */
+export const summarizeEconomicInfForBuild = (
+  buildType: string,
+  inf: Economy,
+  site?: SiteMap2,
+  fixed?: Economy,
+): EconomicInfSummary => {
+  if (inf === "none" || inf === "colony") {
+    return { percentLabel: "" };
+  }
+
+  const fromCalculated = (): EconomicInfSummary | undefined => {
+    if (!site?.economies) {
+      return undefined;
+    }
+    const raw = site.economies[inf as keyof EconomyMap];
+    if (!(raw > 0)) {
+      return undefined;
+    }
+    const percent = Math.round(raw * 100);
+    const entry = getFacilityRegistryEntry(buildType);
+    let note: string | undefined;
+    if (entry?.kind === "athenaComms") {
+      note = noteForAthenaComms(site, percent);
+    } else if (entry?.kind === "fixed" && entry.notes) {
+      note = entry.notes;
+    } else if (fixed === inf) {
+      note = "Fixed specialized port economy";
+    }
+    return { percentLabel: `${percent}%`, note };
+  };
+
+  const calculated = fromCalculated();
+  if (calculated) {
+    return calculated;
+  }
+
+  const entry = getFacilityRegistryEntry(buildType);
+  if (entry?.kind === "fixed" && entry.economy === inf) {
+    const intrinsic = site ? resolveFacilityIntrinsicFromRegistry(site) : entry.intrinsic;
+    const percent = Math.round(intrinsic * 100);
+    return { percentLabel: `${percent}%`, note: entry.notes };
+  }
+  if (entry?.kind === "athenaComms" && inf === "hightech") {
+    if (site) {
+      const percent = Math.round(resolveFacilityIntrinsicFromRegistry(site) * 100);
+      return { percentLabel: `${percent}%`, note: noteForAthenaComms(site, percent) };
+    }
+    return {
+      percentLabel: `${Math.round(entry.withoutComms * 100)}–${Math.round(entry.withOperationalComms * 100)}%`,
+      note: entry.notes ?? "140% when operational comms on this body or a parent body",
+    };
+  }
+
+  if (fixed === inf) {
+    return { percentLabel: "100%", note: "Fixed specialized port economy" };
+  }
+
+  return { percentLabel: "" };
 };
 
 export const describeFacilityRegistryEntry = (buildType: string): string => {

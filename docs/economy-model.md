@@ -70,7 +70,7 @@ Link lists are built earlier: `calcBodyLinks`, `assignBodySubordinateLinks`, the
 
 ## Documented vs heuristic
 
-**Documented** (`economy-documented.ts`, `economy-ag-modifiers.ts`, `economy-weak-links.ts`): community sheet rules — body intrinsics, buffs, strong tiers (0.4 / 0.8 / 1.2), weak +0.05 steps, subordinate-only weak links for tiered starports. **Sub-strong** passes use the parent link economy (`subLink`), not the subordinate’s `type.inf`, and never apply a site to itself. **Parent hub sub-strong:** fixed/shared-pool ports subordinate to an economy-bearing hub (e.g. `bia` under athena) receive a tier-sized sub-strong from `parentLink` after top-level strong links (mirror of the subordinate→orbital sub-strong in the hub’s `strongSites` tree).
+**Documented** (`economy-documented.ts`, `economy-ag-modifiers.ts`, `economy-weak-links.ts`, `economy-link-sources.ts`): community sheet rules — body intrinsics, buffs, strong tiers (0.4 / 0.8 / 1.2), weak +0.05 steps, subordinate-only weak links for tiered starports. **Sub-strong** passes use the parent link economy (`subLink`), not the subordinate’s `type.inf`, and never apply a site to itself. **Parent hub sub-strong:** fixed/shared-pool ports subordinate to an economy-bearing hub (e.g. `bia` under athena) receive a **parent hub tier** sub-strong (T2 → 0.8) from `parentLink` after top-level strong links — not the subordinate port’s tier. **Link graph extensions** (`economy-link-sources.ts`, `calcSiteLinks`): body primaries list **same-body** subordinate candidates in `sameBodyWeakSites` (agriculture weak links only at apply time); cross-body candidates stay in `weakSites`. **Gas-giant cluster** `demeter` / `picumnus` on sibling moons are **strong** agriculture sources for the **body primary port only** (orbital primary when both orbital and surface primaries exist). **Subordinate** colony ports (e.g. hub outposts) share the primary’s weak pool but do **not** receive cluster farm strong links — agriculture arrives via weak +5% steps only. **Atmosphere** affects build-slot prediction only; agriculture body modifiers use **`bio` (organics)**, not atmosphere (per colonization guides).
 
 **Heuristic** (`economy-ag-heuristics.ts`): empirical Spansh fit — weak-link **budgets** (percent → max +5% steps), agriculture floors, preset colonies, foreign-star filters. Prefer documented modules unless regression requires a heuristic.
 
@@ -113,7 +113,9 @@ From `SystemView2` → `buildSystemModel2`. Persisted as `terraformableAgriBonus
 
 Debug helpers in production code: `explainAgricultureWeakLinkBudget()`, `getImpliedAgricultureWeakLinkBudget()`.
 
-**Spansh compare (UI only):** `spansh-economy-resolve.ts` loads `spanshEconomies` plus an EDSM station name index. Completed sites compare by journal `marketId` first; if that row is missing or colony-only (construction placeholder), compare falls back to EDSM `normalizeStationName(site.name) → marketId`. Does not affect economy calculation.
+**Spansh compare (UI only):** `spansh-economy-resolve.ts` loads `spanshEconomies` plus an EDSM station name index. Completed **ports, outposts, and settlements** compare by journal `marketId` first; if that row is missing or colony-only (construction placeholder), compare falls back to EDSM `normalizeStationName(site.name) → marketId`. Does not affect economy calculation.
+
+**Hubs and installations:** Excluded from Spansh compare (`isSpanshCompareExcluded` in `spansh-compare-reliability.ts`). Their economy ratios come from the RC facility registry and link model, not from journal `marketId` / Spansh snapshots. The economy table still shows RC estimates and audit; whole-system compare audit lists dockable sites only.
 
 ---
 
@@ -122,10 +124,12 @@ Debug helpers in production code: `explainAgricultureWeakLinkBudget()`, `getImpl
 | Goal | File |
 |------|------|
 | Facility intrinsic / athena comms | `economy-facility-registry.ts` |
+| Spansh compare reliability (undockable) | `spansh-compare-reliability.ts` |
 | Facility apply path | `economy-facilities.ts` |
 | Body intrinsic / buffs / links | `economy-documented.ts` |
 | Agriculture modifiers | `economy-ag-modifiers.ts` |
-| Weak-link source rules | `economy-weak-links.ts`, `system-model2.ts` |
+| Weak-link source rules | `economy-weak-links.ts`, `economy-link-sources.ts`, `system-model2.ts` |
+| Gas-giant cluster ag strong links (body primary only) | `economy-link-sources.ts`, `system-model2.ts` |
 | Spansh agriculture caps | `economy-ag-heuristics.ts` |
 | Pipeline order | `economy-model2.ts` |
 

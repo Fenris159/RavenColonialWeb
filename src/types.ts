@@ -315,6 +315,7 @@ export interface StationEDSM {
 }
 
 export interface ResponseEdsmSystem {
+  id?: number;
   name: string;
   coords: {
     x: number;

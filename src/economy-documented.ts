@@ -20,6 +20,10 @@ import {
   stellarRemnants,
 } from "./economy-core";
 import type { EconomyModelOptions } from "./economy-core";
+import {
+  bodiesShareGasGiantParent,
+  isGasGiantClusterAgricultureInstallation,
+} from "./economy-link-sources";
 import { siteContributesWeakLinks } from "./economy-weak-links";
 import type { SiteMap2 } from "./system-model2";
 import { BodyFeature } from "./types";
@@ -171,6 +175,14 @@ const applyStrongAgricultureContribution = (
   noteAgricultureStrongLinkApplied(site, sourceSite, prefix);
 };
 
+/** Sibling-moon demeter/picumnus: agriculture strong link only, no nested sub-strong tree. */
+const isGasGiantClusterAgStrongSourceOnly = (source: SiteMap2, target: SiteMap2): boolean =>
+  isGasGiantClusterAgricultureInstallation(source) &&
+  source.body !== target.body &&
+  !!source.body &&
+  !!target.body &&
+  bodiesShareGasGiantParent(source.body, target.body, source.sys.bodies);
+
 /** Top-level uses the source inf; nested sub-strong uses the parent link economy (`subLink`). */
 const resolveStrongLinkEconomy = (subLink: Economy | '*' | undefined, sourceInf: Economy): Economy =>
   subLink !== undefined && subLink !== '*' ? subLink : sourceInf;
@@ -214,7 +226,8 @@ export const applyParentHubSubStrongLink = (
     return;
   }
 
-  const infSize = site.type.tier === 1 ? 0.4 : site.type.tier === 2 ? 0.8 : 1.2;
+  const parentTier = parent.type.tier;
+  const infSize = parentTier === 1 ? 0.4 : parentTier === 2 ? 0.8 : 1.2;
   if (!(parentInf in map)) {
     return;
   }
@@ -222,7 +235,7 @@ export const applyParentHubSubStrongLink = (
   adjust(
     parentInf,
     infSize,
-    `Apply sub-strong link from parent: ${parent.name} (T${site.type.tier})`,
+    `Apply sub-strong link from parent: ${parent.name} (T${parentTier})`,
     map,
     site,
   );
@@ -248,6 +261,9 @@ export const applyStrongLinks2 = (
     const prefix = isSubStrongPass ? 'sub-strong link' : 'Strong link';
 
     if (s.type.inf !== 'colony') {
+      if (isGasGiantClusterAgStrongSourceOnly(s, site) && isSubStrongPass) {
+        continue;
+      }
       const infToApply = resolveStrongLinkEconomy(subLink, s.type.inf);
       if (!shouldApplyStrongLinkEconomy(subLink, infToApply)) {
         continue;
@@ -270,7 +286,7 @@ export const applyStrongLinks2 = (
         console.warn(`Unknown economy '${s.type.inf}' for site ${s.name} - ${s.type.displayName2} (${s.buildType})`);
       }
 
-      if (s.links?.strongSites && !subLink) {
+      if (s.links?.strongSites && !subLink && !isGasGiantClusterAgStrongSourceOnly(s, site)) {
         applyStrongLinks2(map, s.links?.strongSites, site, calcIds, s.type.inf, options);
       }
       continue;
@@ -322,7 +338,7 @@ export const applyStrongLinks2 = (
       }
     }
 
-    if (s.links?.strongSites && !subLink) {
+    if (s.links?.strongSites && !subLink && !isGasGiantClusterAgStrongSourceOnly(s, site)) {
       applyStrongLinks2(map, s.links?.strongSites, site, calcIds, "*", options);
     }
   }
@@ -482,18 +498,22 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
   }
 };
 
-export const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
-  if (!site.links?.weakSites) { return; }
-
-  let agricultureWeakLinksApplied = 0;
-  const agPrimaryHabWorld = isAgPrimaryHabWorldColony(site, map);
-  const maxAgricultureWeakLinkBudget = getMaxAgricultureWeakLinkBudget(site, agPrimaryHabWorld);
-  const maxAgricultureWeakLinks = getMaxAgricultureWeakLinks(site, agPrimaryHabWorld);
-  const homeStarRoot = getForeignStarAgricultureWeakLinkRoot(site);
-  const foreignStarAgWeakLinksUsed = new Set<number>();
-
-  // Stable source order — link graph lists all candidates; budgets stop accumulation (game: +5% steps).
-  const orderedWeakSites = [...site.links.weakSites].sort((a, b) => a.name.localeCompare(b.name));
+const applyWeakLinksFromSources = (
+  map: EconomyMap,
+  site: SiteMap2,
+  calcIds: string[],
+  sources: SiteMap2[],
+  agricultureOnly: boolean,
+  ctx: WeakLinkApplyCtx,
+) => {
+  const {
+    agricultureWeakLinksApplied,
+    maxAgricultureWeakLinks,
+    maxAgricultureWeakLinkBudget,
+    homeStarRoot,
+    foreignStarAgWeakLinksUsed,
+  } = ctx;
+  const orderedWeakSites = [...sources].sort((a, b) => a.name.localeCompare(b.name));
 
   for (let s of orderedWeakSites) {
     if (!calcIds.includes(s.id)) { continue; }
@@ -503,7 +523,7 @@ export const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[
     if (inf === 'none') { continue; }
 
     const skipAgricultureIfCapped = (sourceName: string, intrinsicSourceOnly = false) => {
-      if (agricultureWeakLinksApplied < maxAgricultureWeakLinks) {
+      if (agricultureWeakLinksApplied.count < maxAgricultureWeakLinks) {
         return false;
       }
       const sourceLabel = intrinsicSourceOnly ? 'intrinsic source only, ' : '';
@@ -534,8 +554,8 @@ export const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[
             map,
             site,
           );
-          agricultureWeakLinksApplied++;
-        } else {
+          agricultureWeakLinksApplied.count++;
+        } else if (!agricultureOnly) {
           adjust(instrinsicInf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
         }
       }
@@ -554,12 +574,40 @@ export const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[
           map,
           site,
         );
-        agricultureWeakLinksApplied++;
-      } else {
+        agricultureWeakLinksApplied.count++;
+      } else if (!agricultureOnly) {
         adjust(inf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name}`, map, site);
       }
-    } else {
+    } else if (!agricultureOnly) {
       console.warn(`Unknown economy '${s.type.inf}' for site '${s.name}', generating for: ${site.name}`);
     }
+  }
+};
+
+type WeakLinkApplyCtx = {
+  agricultureWeakLinksApplied: { count: number };
+  maxAgricultureWeakLinks: number;
+  maxAgricultureWeakLinkBudget: number;
+  homeStarRoot: ReturnType<typeof getForeignStarAgricultureWeakLinkRoot>;
+  foreignStarAgWeakLinksUsed: Set<number>;
+};
+
+export const applyWeakLinks = (map: EconomyMap, site: SiteMap2, calcIds: string[]) => {
+  if (!site.links?.weakSites?.length && !site.links?.sameBodyWeakSites?.length) { return; }
+
+  const ctx: WeakLinkApplyCtx = {
+    agricultureWeakLinksApplied: { count: 0 },
+    maxAgricultureWeakLinks: getMaxAgricultureWeakLinks(site, isAgPrimaryHabWorldColony(site, map)),
+    maxAgricultureWeakLinkBudget: getMaxAgricultureWeakLinkBudget(site, isAgPrimaryHabWorldColony(site, map)),
+    homeStarRoot: getForeignStarAgricultureWeakLinkRoot(site),
+    foreignStarAgWeakLinksUsed: new Set<number>(),
+  };
+
+  if (site.links.sameBodyWeakSites?.length) {
+    applyWeakLinksFromSources(map, site, calcIds, site.links.sameBodyWeakSites, true, ctx);
+  }
+
+  if (site.links.weakSites?.length) {
+    applyWeakLinksFromSources(map, site, calcIds, site.links.weakSites, false, ctx);
   }
 };

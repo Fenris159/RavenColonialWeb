@@ -74,6 +74,15 @@ export const systemV2 = {
     return await callAPI<Sys>(`/api/v2/system/${encodeURIComponent(nameOrNum)}/import/${type ?? ''}`, 'POST');
   },
 
+  clearRealEconomiesCache: (nameOrNum?: string, systemName?: string) => {
+    if (nameOrNum) {
+      delete systemV2.cache.economies[nameOrNum];
+    }
+    if (systemName && systemName !== nameOrNum) {
+      delete systemV2.cache.economies[systemName];
+    }
+  },
+
   getRealEconomies: async (nameOrNum: string, force?: boolean): Promise<GetRealEconomies[]> => {
     if (nameOrNum in systemV2.cache.economies && !force) { return systemV2.cache.economies[nameOrNum]; }
 
