@@ -1,4 +1,6 @@
+import { isAnchoredSpaceFarmInstallation, isDemeterSpaceFarm } from "./economy-link-sources";
 import type { SiteMap2 } from "./system-model2";
+import { BT } from "./types2";
 
 const isTieredStation = (s: SiteMap2): boolean => {
   return (s.type.buildClass === 'starport' || s.type.buildClass === 'outpost')
@@ -8,12 +10,106 @@ const isTieredStation = (s: SiteMap2): boolean => {
 const isHubWeakContributor = (s: SiteMap2): boolean =>
   s.type.buildClass === "hub" && s.type.inf !== "none";
 
-/** T1/T2/T3 ports only contribute weak links when subordinate; hubs when subordinate. Installations use strong links only. */
+/** Relay installations (enodia / ichnaea) weak-link ports system-wide without body subordination. */
+export const isRelayInstallation = (s: SiteMap2): boolean =>
+  s.buildType === "enodia" || s.buildType === "ichnaea";
+
+const isRelayInstallationWeakContributor = (s: SiteMap2): boolean =>
+  s.type.buildClass === "installation" && isRelayInstallation(s);
+
+/**
+ * Security installations (dicaeosyne / eunomia / nomos / poena) — Update 3 supporting
+ * facilities; Mega Guide: non-port facilities weak-link all ports outside their local body.
+ * Distinct from military hub installations (alastor / vacuna), which strong-link locally only.
+ */
+export const SECURITY_INSTALLATION_BUILD_TYPES = new Set([
+  "dicaeosyne",
+  "eunomia",
+  "nomos",
+  "poena",
+]);
+
+export const isSecurityInstallation = (s: SiteMap2): boolean =>
+  s.type.buildClass === "installation" &&
+  SECURITY_INSTALLATION_BUILD_TYPES.has(s.buildType);
+
+const isSecurityInstallationWeakContributor = (s: SiteMap2): boolean =>
+  isSecurityInstallation(s);
+
+/** Military hub installations — strong-link local ports; do not weak-link outward (Synuefai). */
+export const isMilitaryHubInstallation = (s: SiteMap2): boolean =>
+  s.type.buildClass === "installation" &&
+  (s.buildType === "alastor" || s.buildType === "vacuna");
+
+/** Body-primary starport/outpost on the system star — does not emit non-agriculture weak links (forum / Fort Snailing). */
+export const isStarBodyPrimaryTieredPort = (s: SiteMap2): boolean =>
+  (s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary) &&
+  (s.type.buildClass === "starport" || s.type.buildClass === "outpost") &&
+  s.body?.type === BT.st;
+
+/**
+ * Relay weak links appear on all port link graphs. Economy +5% High Tech applies on
+ * outposts (Stafford, Scobee) and on starports that already have hightech from another
+ * weak/strong source (Snail/dodec + chronos). Ornamental T3 starports with no hightech
+ * row (Gold/dec_truss) show the relay in UI only — see map.hightech at apply time.
+ */
+export const relayWeakLinkAppliesEconomyTo = (
+  source: SiteMap2,
+  receiver: SiteMap2,
+  receiverMap?: { hightech?: number },
+): boolean => {
+  if (!isRelayInstallation(source)) {
+    return true;
+  }
+  if (receiver.type.buildClass !== "starport") {
+    return true;
+  }
+  return (receiverMap?.hightech ?? 0) > 0;
+};
+
+/** Security installations weak-link all non-local ports (+5% military each), per Update 3 / Mega Guide. */
+export const securityWeakLinkAppliesEconomyTo = (_source: SiteMap2, _receiver: SiteMap2): boolean => {
+  return true;
+};
+
+/** True when `source` already contributes a strong link to `site` (direct or via a hub subordinate). */
+export const siteAlreadyStrongLinkedTo = (source: SiteMap2, site: SiteMap2): boolean => {
+  const strongSites = site.links?.strongSites ?? [];
+  if (strongSites.includes(source)) {
+    return true;
+  }
+  for (const hub of strongSites) {
+    if (hub.links?.strongSites?.includes(source)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/** T1/T2/T3 ports only contribute weak links when subordinate; hubs when subordinate. Subordinate installations weak-link their economy. */
 export const siteContributesWeakLinks = (s: SiteMap2): boolean => {
   if (s.type.inf === 'none') { return false; }
-  if (s.type.buildClass === 'installation') { return false; }
-  if (s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary) { return false; }
-  if (isTieredStation(s) && s.parentLink === undefined) { return false; }
+  if (s.type.buildClass === 'installation') {
+    if (s.type.inf === 'agriculture') {
+      return isDemeterSpaceFarm(s) && !isAnchoredSpaceFarmInstallation(s);
+    }
+    if (isRelayInstallationWeakContributor(s) || isSecurityInstallationWeakContributor(s)) {
+      return true;
+    }
+    if (s.type.inf === 'military' || isMilitaryHubInstallation(s)) {
+      return false;
+    }
+    return s.parentLink !== undefined;
+  }
+  // Subordinate tiered ports only; body primaries weak-link outward (Stafford → Gold).
+  if (
+    isTieredStation(s) &&
+    s.parentLink === undefined &&
+    s !== s.body?.orbitalPrimary &&
+    s !== s.body?.surfacePrimary
+  ) {
+    return false;
+  }
   if (isHubWeakContributor(s) && s.parentLink === undefined) { return false; }
   return true;
 };

@@ -5,8 +5,9 @@ import {
   bodyPrimaryReceivesGasGiantClusterAgStrongLinks,
   findGasGiantClusterAgricultureInstallations,
   findSameBodyWeakLinkCandidates,
+  flattenHubGrandchildStrongSites,
 } from './economy-link-sources';
-import { siteContributesWeakLinks } from './economy-weak-links';
+import { siteAlreadyStrongLinkedTo, siteContributesWeakLinks } from './economy-weak-links';
 import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "./site-data";
 import { BodyFeature } from './types';
 import { Bod, BT, Site, Sys } from './types2';
@@ -239,9 +240,9 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
   // determine primary ports for each body
   const allBodies = Object.values(sysMap.bodyMap);
   for (const body of allBodies) {
-    body.surfacePrimary = getBodyPrimaryPort(body.surface, sysMap.calcIds);
+    body.surfacePrimary = getBodyPrimaryPort(body.surface, sysMap.calcIds, body.sites);
     const siblingSites = findSiblingSites(sys.bodies, sysMap.bodyMap, body, !!body.surfacePrimary);
-    body.orbitalPrimary = getBodyPrimaryPort(siblingSites, sysMap.calcIds);
+    body.orbitalPrimary = getBodyPrimaryPort(siblingSites, sysMap.calcIds, body.sites);
   }
 
   // assign subordinate links before weak-link sources are collected (sheet: tiered stations only weak-link when subordinate)
@@ -569,23 +570,53 @@ const adjustAfflictedStarPortSumEffect = (key: keyof SysEffects, effect: number,
   }
 }
 
-const canActAsBodyLinkPrimary = (s: SiteMap2): boolean =>
-  canReceiveLinks(s.type) || isFacilityWithEconomy(s);
+/** Dockable ports anchor link graphs; hubs only when the body has no port; installations never. */
+const canActAsBodyLinkPrimary = (s: SiteMap2, bodyHasDockablePort: boolean): boolean => {
+  if (s.type.buildClass === "installation") {
+    return false;
+  }
+  if (canReceiveLinks(s.type)) {
+    return true;
+  }
+  if (s.type.buildClass === "hub" && s.type.inf !== "none") {
+    return !bodyHasDockablePort;
+  }
+  return false;
+};
 
-const pickPrimaryByTier = (sites: SiteMap2[], tier: number): SiteMap2 | undefined => {
-  const matches = sites.filter(s => s.type.tier === tier && canActAsBodyLinkPrimary(s));
+const pickPrimaryByTier = (
+  sites: SiteMap2[],
+  tier: number,
+  bodyHasDockablePort: boolean,
+): SiteMap2 | undefined => {
+  const matches = sites.filter(
+    s => s.type.tier === tier && canActAsBodyLinkPrimary(s, bodyHasDockablePort),
+  );
+  // Dockable ports beat hubs/installations at the same tier (Gold Enterprise vs Aristotle's Folly).
+  const port = matches.find(s => canReceiveLinks(s.type));
+  if (port) {
+    return port;
+  }
   return matches.length > 0 ? matches[0] : undefined;
 };
 
-const getBodyPrimaryPort = (sites: SiteMap2[], calcIds: string[]): SiteMap2 | undefined => {
+const getBodyPrimaryPort = (
+  sites: SiteMap2[],
+  calcIds: string[],
+  allBodySites: SiteMap2[],
+): SiteMap2 | undefined => {
   if (sites.length === 0) return undefined;
 
   if (calcIds.length) {
     sites = sites.filter(s => calcIds.includes(s.id));
   }
 
+  const bodyHasDockablePort = allBodySites.some(
+    s => (!calcIds.length || calcIds.includes(s.id)) && canReceiveLinks(s.type),
+  );
+
   for (const tier of [3, 2, 1] as const) {
-    const primary = pickPrimaryByTier(sites, tier);
+    const primary = pickPrimaryByTier(sites, tier, bodyHasDockablePort);
     if (primary) {
       return primary;
     }
@@ -717,7 +748,7 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
 }
 
 /** T1/T2/T3 starports and outposts only contribute weak links when subordinate to another station. */
-export { siteContributesWeakLinks } from './economy-weak-links';
+export { siteAlreadyStrongLinkedTo, siteContributesWeakLinks } from './economy-weak-links';
 
 const canBeSubordinateToPrimary = (
   s: SiteMap2,
@@ -790,18 +821,24 @@ const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: Bod
     ? findGasGiantClusterAgricultureInstallations(body, bodyMap, bods, calcIds)
     : [];
   const strongSiteIds = new Set<string>();
-  const strongSites = [
-    ...siblingSites.filter(s => s.parentLink === primarySite),
-    ...clusterAgInstallations,
-  ]
-    .filter(s => {
-      if (strongSiteIds.has(s.id)) {
-        return false;
-      }
-      strongSiteIds.add(s.id);
-      return true;
-    })
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const strongSites = flattenHubGrandchildStrongSites(
+    [
+      ...siblingSites.filter(s => s.parentLink === primarySite),
+      ...clusterAgInstallations,
+    ]
+      .filter(s => {
+        if (strongSiteIds.has(s.id)) {
+          return false;
+        }
+        strongSiteIds.add(s.id);
+        return true;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  );
+
+  const strongGraph = { strongSites } as Pick<SiteLinks2, "strongSites">;
+  const excludeStrongLinkedWeak = (list: SiteMap2[]) =>
+    list.filter(s => !siteAlreadyStrongLinkedTo(s, { links: strongGraph } as SiteMap2));
 
   // Weak links: same-body subordinates/hubs, then other bodies (full candidate pool).
   // Economy calc applies +5% steps until the agriculture weak-link budget is exhausted.
@@ -812,10 +849,13 @@ const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: Bod
     calcIds,
     siteContributesWeakLinks,
   );
-  let weakSites = Object.values(bodyMap)
-    .filter(b => b !== body)
-    .flatMap(b => b.sites)
-    .filter(s => !siblingSites.includes(s) && calcIds.includes(s.id) && siteContributesWeakLinks(s));
+  let weakSites = excludeStrongLinkedWeak(
+    Object.values(bodyMap)
+      .filter(b => b !== body)
+      .flatMap(b => b.sites)
+      .filter(s => !siblingSites.includes(s) && calcIds.includes(s.id) && siteContributesWeakLinks(s)),
+  );
+  sameBodyWeakSites = excludeStrongLinkedWeak(sameBodyWeakSites);
 
   const configuredWeakLinkIds = primarySite.original.weakLinkIds;
   if (configuredWeakLinkIds?.length) {
@@ -868,17 +908,20 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
     const curSiteLinks: Set<ConcreteEconomy> = new Set();
     if (inf === 'colony') {
       precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
-      for (const intrinsicInf of s.intrinsic ?? []) {
-        if (intrinsicInf === 'none' || intrinsicInf === 'colony') continue;
-        curSiteLinks.add(intrinsicInf);
+      const pe = s.primaryEconomy;
+      if (pe && pe !== 'none' && pe !== 'colony') {
+        curSiteLinks.add(pe);
       }
     } else {
       precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
       curSiteLinks.add(inf);
     }
 
-    // if the linked site has its own strong links, we treat those as sub-strong links
+    // Hub grandchildren already flattened into strongSites — avoid double-counting.
     for (const strongLink of s.links?.strongSites ?? []) {
+      if (site.links.strongSites.some(top => top.id === strongLink.id)) {
+        continue;
+      }
       const linkInf = strongLink.type.inf;
       if (linkInf === 'none' || linkInf === 'colony') continue;
       curSiteLinks.add(linkInf);
@@ -895,18 +938,26 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
   ];
   for (const s of allWeakCandidates) {
     if (!siteContributesWeakLinks(s)) { continue; }
+    if (siteAlreadyStrongLinkedTo(s, site)) { continue; }
     const inf = s.type.inf;
     if (inf === 'none') continue;
     if (inf === 'colony') {
       precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
-      for (const intrinsicInf of s.intrinsic ?? []) {
-        if (intrinsicInf === 'none' || intrinsicInf === 'colony') continue;
-        map[intrinsicInf].weak++;
+      const pe = s.primaryEconomy;
+      if (pe && pe !== 'none' && pe !== 'colony') {
+        map[pe].weak++;
       }
     } else {
       precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
       if (!map[inf]) { map[inf] = { strong: 0, weak: 0 }; }
       map[inf].weak++;
+    }
+  }
+
+  // In-game link UI shows at most one weak slot per non-agriculture economy.
+  for (const key of Object.keys(map) as ConcreteEconomy[]) {
+    if (key !== 'agriculture' && map[key].weak > 1) {
+      map[key].weak = 1;
     }
   }
 

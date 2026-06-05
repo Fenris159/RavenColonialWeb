@@ -119,6 +119,11 @@ export const getAgricultureStrongLinkSourceValue = (source: SiteMap2, tierCoeffi
     return tierCoefficient;
   }
 
+  // Space farms (demeter / picumnus) strong-link ports by tier coefficient, not full facility strength.
+  if (source.type.buildClass === "installation") {
+    return tierCoefficient;
+  }
+
   const sourceAg = source.economies?.agriculture;
   if (sourceAg !== undefined && sourceAg > 0) {
     return Math.max(tierCoefficient, sourceAg);
@@ -149,13 +154,13 @@ export const getColonyAgricultureStrongLinkSourceValue = (
   source: SiteMap2,
   site: SiteMap2,
   tierCoefficient: number,
-  getColonyEconomyBeforeWeakLinks: (site: SiteMap2, inf: keyof EconomyMap) => number,
+  getColonyAgricultureIntrinsic: (site: SiteMap2) => number,
 ) => {
   if (source.body !== site.body || source.type.inf !== 'colony') {
     return tierCoefficient;
   }
 
-  const sourceAg = getColonyEconomyBeforeWeakLinks(source, 'agriculture');
+  const sourceAg = getColonyAgricultureIntrinsic(source);
   if (source.type.tier < site.type.tier) {
     return tierCoefficient + Math.max(0, sourceAg - tierCoefficient) * 0.75;
   }

@@ -24,7 +24,13 @@ import {
   bodiesShareGasGiantParent,
   isGasGiantClusterAgricultureInstallation,
 } from "./economy-link-sources";
-import { siteContributesWeakLinks } from "./economy-weak-links";
+import {
+  isStarBodyPrimaryTieredPort,
+  relayWeakLinkAppliesEconomyTo,
+  securityWeakLinkAppliesEconomyTo,
+  siteAlreadyStrongLinkedTo,
+  siteContributesWeakLinks,
+} from "./economy-weak-links";
 import type { SiteMap2 } from "./system-model2";
 import { BodyFeature } from "./types";
 import { BT } from "./types2";
@@ -145,11 +151,37 @@ export const getColonyEconomyBeforeWeakLinks = (site: SiteMap2, inf: keyof Econo
     .reduce((sum, entry) => sum + entry.delta, 0);
 };
 
+/** Agriculture from body intrinsics / presets only — excludes body buff rows used for own docked %. */
+export const getColonyIntrinsicAgricultureBeforeWeakLinks = (site: SiteMap2): number => {
+  return (site.economyAudit ?? [])
+    .filter(entry => {
+      if (entry.inf !== 'agriculture' || entry.reason.includes('weak link')) {
+        return false;
+      }
+      return !entry.reason.startsWith('Buff:') &&
+        !entry.reason.startsWith('Floor:') &&
+        !entry.reason.startsWith('Apply ');
+    })
+    .reduce((sum, entry) => sum + entry.delta, 0);
+};
+
 /** Weak links applied during the latest economy calc (from audit trail). */
 export const getAppliedWeakLinkCount = (site: SiteMap2, inf: keyof EconomyMap) => {
   return (site.economyAudit ?? [])
     .filter(entry => entry.inf === inf && entry.reason.startsWith('Apply weak link'))
     .length;
+};
+
+const WEAK_LINK_SOURCE_RE = /Apply weak link from: (.+?)(?: \(|$)/;
+
+/** Source site names for applied weak links (market link UI). */
+export const getAppliedWeakLinkSources = (site: SiteMap2, inf: keyof EconomyMap): string[] => {
+  return (site.economyAudit ?? [])
+    .filter(entry => entry.inf === inf && entry.reason.startsWith('Apply weak link'))
+    .map(entry => {
+      const m = entry.reason.match(WEAK_LINK_SOURCE_RE);
+      return m ? m[1] : entry.reason;
+    });
 };
 
 const applyStrongAgricultureContribution = (
@@ -215,6 +247,7 @@ export const applyParentHubSubStrongLink = (
   map: EconomyMap,
   site: SiteMap2,
   calcIds: string[],
+  strongBoostApplied?: Set<Economy>,
 ) => {
   const parent = site.parentLink;
   if (!parent || !receivesParentHubSubStrong(site) || !calcIds.includes(parent.id)) {
@@ -239,7 +272,7 @@ export const applyParentHubSubStrongLink = (
     map,
     site,
   );
-  applyStrongLinkBoost(parentInf, map, site, "sub-strong link");
+  applyStrongLinkBoost(parentInf, map, site, "sub-strong link", strongBoostApplied);
 };
 
 export const applyStrongLinks2 = (
@@ -249,6 +282,7 @@ export const applyStrongLinks2 = (
   calcIds: string[],
   subLink?: Economy | '*',
   options?: EconomyModelOptions,
+  strongBoostApplied?: Set<Economy>,
 ) => {
   const isSubStrongPass = subLink !== undefined;
 
@@ -257,7 +291,14 @@ export const applyStrongLinks2 = (
     if (!calcIds.includes(s.id)) { continue; }
     if (isSubStrongPass && s === site) { continue; }
 
-    const infSize = s.type.tier === 1 ? 0.4 : (s.type.tier === 2 ? 0.8 : 1.2);
+    const infSize =
+      s.type.buildClass === "installation" && s.type.inf === "agriculture"
+        ? 0.4
+        : s.type.tier === 1
+          ? 0.4
+          : s.type.tier === 2
+            ? 0.8
+            : 1.2;
     const prefix = isSubStrongPass ? 'sub-strong link' : 'Strong link';
 
     if (s.type.inf !== 'colony') {
@@ -280,14 +321,20 @@ export const applyStrongLinks2 = (
           );
         } else {
           adjust(infToApply, infSize, `Apply ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
-          applyStrongLinkBoost(infToApply, map, site, prefix);
+          applyStrongLinkBoost(infToApply, map, site, prefix, strongBoostApplied);
         }
       } else if (!isSubStrongPass) {
         console.warn(`Unknown economy '${s.type.inf}' for site ${s.name} - ${s.type.displayName2} (${s.buildType})`);
       }
 
       if (s.links?.strongSites && !subLink && !isGasGiantClusterAgStrongSourceOnly(s, site)) {
-        applyStrongLinks2(map, s.links?.strongSites, site, calcIds, s.type.inf, options);
+        const hubChildren = s.links.strongSites.filter(
+          c => c.parentLink === s && !strongSites.includes(c),
+        );
+        if (hubChildren.length) {
+          const nestedSubLink = s.type.buildClass === "hub" ? "*" : s.type.inf;
+          applyStrongLinks2(map, hubChildren, site, calcIds, nestedSubLink, options, strongBoostApplied);
+        }
       }
       continue;
     }
@@ -314,14 +361,14 @@ export const applyStrongLinks2 = (
           applyStrongAgricultureContribution(
             map,
             site,
-            getColonyAgricultureStrongLinkSourceValue(s, site, colonyInfSize, getColonyEconomyBeforeWeakLinks),
+            getColonyAgricultureStrongLinkSourceValue(s, site, colonyInfSize, getColonyIntrinsicAgricultureBeforeWeakLinks),
             `colony ${prefix}`,
             s,
             options,
           );
         } else {
           adjust(ee, colonyInfSize, `Apply colony ${prefix} from: ${s.name} (T${s.type.tier})`, map, site);
-          applyStrongLinkBoost(ee, map, site, `${prefix}s`);
+          applyStrongLinkBoost(ee, map, site, `${prefix}s`, strongBoostApplied);
         }
       }
     }
@@ -332,14 +379,14 @@ export const applyStrongLinks2 = (
       isGroundOrbitColonyPair(s, site) &&
       !s.intrinsic?.includes('agriculture')
     ) {
-      const sourceAg = getColonyEconomyBeforeWeakLinks(s, 'agriculture');
+      const sourceAg = getColonyIntrinsicAgricultureBeforeWeakLinks(s);
       if (sourceAg > 0) {
         applyStrongAgricultureContribution(map, site, infSize, `colony ${prefix} ground-orbit`, s, options);
       }
     }
 
     if (s.links?.strongSites && !subLink && !isGasGiantClusterAgStrongSourceOnly(s, site)) {
-      applyStrongLinks2(map, s.links?.strongSites, site, calcIds, "*", options);
+      applyStrongLinks2(map, s.links?.strongSites, site, calcIds, "*", options, strongBoostApplied);
     }
   }
 };
@@ -371,7 +418,23 @@ export const canInheritGroundOrbitColonyAgriculture = (source: SiteMap2, target:
   return true;
 };
 
-export const applyStrongLinkBoost = (inf: Economy, map: EconomyMap, site: SiteMap2, reason: string) => {
+/** Reserve/volcanism strong-link boosts stack per contribution; hightech/tourism boost once per port calc. */
+const STRONG_LINK_BOOST_ONCE_PER_CALC = new Set<Economy>(['hightech', 'tourism']);
+
+export const applyStrongLinkBoost = (
+  inf: Economy,
+  map: EconomyMap,
+  site: SiteMap2,
+  reason: string,
+  appliedOnce?: Set<Economy>,
+) => {
+  if (STRONG_LINK_BOOST_ONCE_PER_CALC.has(inf)) {
+    if (appliedOnce?.has(inf)) {
+      return 0;
+    }
+    appliedOnce?.add(inf);
+  }
+
   const reserveLevel = site.sys.reserveLevel ?? 'pristine';
 
   switch (inf) {
@@ -518,6 +581,9 @@ const applyWeakLinksFromSources = (
   for (let s of orderedWeakSites) {
     if (!calcIds.includes(s.id)) { continue; }
     if (!siteContributesWeakLinks(s)) { continue; }
+    if (siteAlreadyStrongLinkedTo(s, site)) { continue; }
+    if (!relayWeakLinkAppliesEconomyTo(s, site, map)) { continue; }
+    if (!securityWeakLinkAppliesEconomyTo(s, site)) { continue; }
 
     let inf = s.type.inf;
     if (inf === 'none') { continue; }
@@ -542,22 +608,27 @@ const applyWeakLinksFromSources = (
         continue;
       }
 
-      for (const instrinsicInf of s.intrinsic ?? []) {
-        if (instrinsicInf === 'agriculture') {
-          if (!shouldApplyAgricultureWeakLink(s, site)) { continue; }
-          if (!shouldApplyForeignStarAgricultureWeakLink(s, site, homeStarRoot, foreignStarAgWeakLinksUsed)) { continue; }
-          if (skipAgricultureIfCapped(s.name, true)) { continue; }
-          adjust(
-            instrinsicInf,
-            WEAK_LINK_AGRICULTURE_DELTA,
-            `Apply weak link from: ${s.name} (intrinsic source only, budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%)`,
-            map,
-            site,
-          );
-          agricultureWeakLinksApplied.count++;
-        } else if (!agricultureOnly) {
-          adjust(instrinsicInf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
-        }
+      const weakInf = s.primaryEconomy;
+      const isBodyPrimary =
+        s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary;
+      if (isBodyPrimary && !agricultureOnly && weakInf !== 'agriculture') {
+        continue;
+      }
+      if (weakInf === 'agriculture') {
+        if (!shouldApplyAgricultureWeakLink(s, site)) { continue; }
+        if (!shouldApplyForeignStarAgricultureWeakLink(s, site, homeStarRoot, foreignStarAgWeakLinksUsed)) { continue; }
+        if (skipAgricultureIfCapped(s.name, true)) { continue; }
+        adjust(
+          weakInf,
+          WEAK_LINK_AGRICULTURE_DELTA,
+          `Apply weak link from: ${s.name} (intrinsic source only, budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%)`,
+          map,
+          site,
+        );
+        agricultureWeakLinksApplied.count++;
+      } else if (!agricultureOnly && weakInf in map) {
+        if (isStarBodyPrimaryTieredPort(s)) { continue; }
+        adjust(weakInf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
       }
       continue;
     }
@@ -576,6 +647,7 @@ const applyWeakLinksFromSources = (
         );
         agricultureWeakLinksApplied.count++;
       } else if (!agricultureOnly) {
+        if (isStarBodyPrimaryTieredPort(s)) { continue; }
         adjust(inf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name}`, map, site);
       }
     } else if (!agricultureOnly) {

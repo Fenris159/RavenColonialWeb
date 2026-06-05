@@ -2,7 +2,7 @@ import './MarketLinks.css';
 import { FunctionComponent } from "react";
 import { appTheme, cn } from "../../theme";
 import { economyColors, mapName } from "../../site-data";
-import { getAppliedWeakLinkCount } from "../../economy-model2";
+import { getAppliedWeakLinkCount, getAppliedWeakLinkSources } from "../../economy-model2";
 import { ProjectLink } from "../ProjectLink/ProjectLink";
 import { SiteMap2 } from '../../system-model2';
 import { SystemView2 } from '../../views/SystemView2/SystemView2';
@@ -40,11 +40,32 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
 
     const { strong, weak } = props.site.links.economies[key];
     const color = economyColors[key] ?? '#FFF';
-    const appliedWeak = getAppliedWeakLinkCount(props.site, key as keyof typeof props.site.economies);
-    const weakDisplay = appliedWeak > 0 && appliedWeak < weak ? `${appliedWeak}/${weak}` : `${weak}`;
+    const inf = key as keyof typeof props.site.economies;
+    const appliedWeak = getAppliedWeakLinkCount(props.site, inf);
+    const appliedWeakSources = getAppliedWeakLinkSources(props.site, inf);
+    const weakDisplay =
+      appliedWeak > 0
+        ? `${inf === 'agriculture' ? appliedWeak : 1}`
+        : weak > 0
+          ? `${inf === 'agriculture' ? weak : Math.min(weak, 1)}`
+          : '0';
 
-    const strongNames = props.site.links.strongSites.filter(s => s.type.inf === key || s.primaryEconomy === key).map((s: any) => `» ${s.name}`).sort();
-    const weakNames = props.site.links.weakSites.filter(s => s.type.inf === key || s.primaryEconomy === key).map((s: any) => `» ${s.name}`).sort();
+    const strongNames = props.site.links.strongSites
+      .filter(s => s.type.inf === key || (s.type.inf === 'colony' && s.intrinsic?.includes(key as any)))
+      .map(s => `» ${s.name}`)
+      .sort();
+    const weakNames = (
+      appliedWeakSources.length
+        ? appliedWeakSources
+        : [
+            ...(props.site.links.sameBodyWeakSites ?? []),
+            ...props.site.links.weakSites,
+          ]
+            .filter(s => s.type.inf === key || (s.type.inf === 'colony' && s.intrinsic?.includes(key as any)))
+            .map(s => s.name)
+        )
+      .map(n => `» ${n}`)
+      .sort();
 
     linkRows.push(<tr key={`link${props.site.buildId}-${key}`}>
       <td className={cn.br}>
@@ -58,7 +79,9 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
 
   // TODO: Split this component into 2?
   // list of strong linked sites
-  const siteRows = props.site.links.strongSites.map(s => {
+  const siteRows = props.site.links.strongSites
+    .filter(s => s.type.inf !== 'none')
+    .map(s => {
     return <div key={`link${props.site.buildId}-${s.buildId ?? (s as any).id}`} style={{ marginLeft: 8 }}>
       {!props.sysView && <ProjectLink proj={siteAsProjRef(s)} noSys noBold />}
       {props.sysView && <SiteLink prefix='ml' site={s} sysView={props.sysView} siteGraphType='none' noPin />}
@@ -104,20 +127,28 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
 const generateColorBlocks = (site: SiteMap2, width: number, height: number): JSX.Element[] => {
   if (!site.links) return [];
 
-  let maxLinks = 0
-  Object.values(site.links.economies).forEach(l => maxLinks += (l.strong * 62) + (l.weak * 8));
+  let maxLinks = 0;
+  for (const key of Object.keys(site.links.economies)) {
+    const { strong, weak } = site.links.economies[key];
+    const inf = key as keyof typeof site.economies;
+    const appliedWeak = getAppliedWeakLinkCount(site, inf);
+    const weakForBar = appliedWeak > 0 ? appliedWeak : weak;
+    maxLinks += (strong * 62) + (weakForBar * 8);
+  }
   const blockWidthRatio = width / maxLinks;
 
   const colorBlocks = [];
   for (const key of Object.keys(site.links.economies)) {
     const { strong, weak } = site.links.economies[key];
+    const inf = key as keyof typeof site.economies;
+    const appliedWeakForBar = getAppliedWeakLinkCount(site, inf);
+    const weakForBar = appliedWeakForBar > 0 ? appliedWeakForBar : weak;
 
     const color = economyColors[key] ?? '#FFF';
-    const blockWidth = (((strong * 62) + (weak * 8)) * blockWidthRatio) - 4;
 
     let title = `${mapName[key]} -`;
     if (strong > 0) { title += ` strong: ${strong}`; }
-    if (weak > 0) { title += ` weak: ${weak}`; }
+    if (weakForBar > 0) { title += ` weak: ${weakForBar}`; }
 
 
     const block = <div
@@ -125,7 +156,7 @@ const generateColorBlocks = (site: SiteMap2, width: number, height: number): JSX
       title={title}
       style={{
         display: 'inline-block',
-        width: blockWidth,
+        width: (((strong * 62) + (weakForBar * 8)) * blockWidthRatio) - 4,
         height: height,
         marginRight: 2,
         backgroundColor: color,

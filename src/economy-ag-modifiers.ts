@@ -35,8 +35,12 @@ export const isSameBodyElwWwColonySource = (source: SiteMap2 | undefined, site: 
     matches([BT.elw, BT.ww], site.body?.type);
 };
 
-/** Documented ±0.4 agriculture body modifiers (community sheet / ED colonization spec). */
-export const AGRICULTURE_BODY_MODIFIER_RULES: AgricultureBodyModifierRule[] = [
+/**
+ * Documented ±0.4 agriculture modifiers (community sheet / Mega Guide).
+ * Decreases (icy, tidal) apply on **strong-link contributions** only; weak links stay +0.05.
+ * Own docked agriculture keeps intrinsics + positive body buffs (Hyggekrog / converted ports).
+ */
+export const AGRICULTURE_STRONG_LINK_MODIFIER_RULES: AgricultureBodyModifierRule[] = [
   {
     delta: 0.4,
     formulaPart: 'BIO 0.4',
@@ -75,15 +79,70 @@ export const AGRICULTURE_BODY_MODIFIER_RULES: AgricultureBodyModifierRule[] = [
   },
 ];
 
-export function getAgricultureBodyModifierDeltas(
+/** @deprecated Alias for strong-link rules; use explicit names below. */
+export const AGRICULTURE_BODY_MODIFIER_RULES = AGRICULTURE_STRONG_LINK_MODIFIER_RULES;
+
+/** Positive modifiers for a port's own agriculture row (after body intrinsics). */
+export const AGRICULTURE_INTRINSIC_BODY_BUFF_RULES = AGRICULTURE_STRONG_LINK_MODIFIER_RULES.filter(
+  rule => rule.delta > 0,
+);
+
+function filterAgricultureModifierRules(
+  rules: AgricultureBodyModifierRule[],
   site: SiteMap2,
   options?: AgricultureModifierOptions,
   sourceSite?: SiteMap2,
 ) {
   const ctx: AgricultureModifierContext = { site, options, sourceSite };
-  return AGRICULTURE_BODY_MODIFIER_RULES
+  return rules
     .filter(rule => rule.applies(ctx))
     .map(({ delta, formulaPart, auditReason }) => ({ delta, formulaPart, auditReason }));
+}
+
+export function getAgricultureStrongLinkModifierDeltas(
+  site: SiteMap2,
+  options?: AgricultureModifierOptions,
+  sourceSite?: SiteMap2,
+) {
+  return filterAgricultureModifierRules(
+    AGRICULTURE_STRONG_LINK_MODIFIER_RULES,
+    site,
+    options,
+    sourceSite,
+  );
+}
+
+export function getAgricultureIntrinsicBodyBuffDeltas(
+  site: SiteMap2,
+  options?: AgricultureModifierOptions,
+) {
+  return filterAgricultureModifierRules(AGRICULTURE_INTRINSIC_BODY_BUFF_RULES, site, options);
+}
+
+/**
+ * Orbital colony paired with a same-body surface colony port receives agriculture body
+ * buffs via port-to-port strong links (Snail), not on its own docked row.
+ */
+export function shouldSkipPositiveAgricultureBodyBuffs(site: SiteMap2): boolean {
+  if (!site.body || !site.type || site.type.inf !== 'colony' || !site.type.orbital) {
+    return false;
+  }
+
+  const surface = site.body.surfacePrimary;
+  if (!surface || surface === site || surface.type.inf !== 'colony') {
+    return false;
+  }
+
+  return surface.type.buildClass === 'outpost' || surface.type.buildClass === 'starport';
+}
+
+/** @deprecated Use getAgricultureStrongLinkModifierDeltas or getAgricultureIntrinsicBodyBuffDeltas. */
+export function getAgricultureBodyModifierDeltas(
+  site: SiteMap2,
+  options?: AgricultureModifierOptions,
+  sourceSite?: SiteMap2,
+) {
+  return getAgricultureStrongLinkModifierDeltas(site, options, sourceSite);
 }
 
 export function applyAgricultureBodyBuffs(
@@ -93,9 +152,11 @@ export function applyAgricultureBodyBuffs(
 ) {
   if (map.agriculture <= 0) { return; }
 
-  for (const { delta, auditReason } of getAgricultureBodyModifierDeltas(site)) {
-    if (auditReason) {
-      adjustFn('agriculture', delta, auditReason, map, site, 'body');
+  if (!shouldSkipPositiveAgricultureBodyBuffs(site)) {
+    for (const { delta, auditReason } of getAgricultureIntrinsicBodyBuffDeltas(site)) {
+      if (auditReason) {
+        adjustFn('agriculture', delta, auditReason, map, site, 'body');
+      }
     }
   }
 
@@ -124,7 +185,7 @@ export function calculateAgricultureStrongLinkContribution(
   const parts = [`${sourceValue.toFixed(1)}`];
   let score = sourceValue;
 
-  for (const { delta, formulaPart } of getAgricultureBodyModifierDeltas(site, {
+  for (const { delta, formulaPart } of getAgricultureStrongLinkModifierDeltas(site, {
     enableTerraformableBonus: options?.enableTerraformableAgricultureBonus ?? false,
     skipElWwForSameBodyColonySource: true,
   }, sourceSite)) {

@@ -39,6 +39,7 @@ export {
   canInheritGroundOrbitColonyAgriculture,
   getColonyEconomyBeforeWeakLinks,
   getAppliedWeakLinkCount,
+  getAppliedWeakLinkSources,
   isGroundOrbitColonyPair,
   isSameBodySurfaceToOrbitalPair,
 } from "./economy-documented";
@@ -102,8 +103,9 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
   }
 
   if (site.links) {
-    applyStrongLinks2(map, site.links.strongSites, site, calcIds, undefined, options);
-    applyParentHubSubStrongLink(map, site, calcIds);
+    const strongBoostApplied = new Set<Economy>();
+    applyStrongLinks2(map, site.links.strongSites, site, calcIds, undefined, options, strongBoostApplied);
+    applyParentHubSubStrongLink(map, site, calcIds, strongBoostApplied);
     applyWeakLinks(map, site, calcIds);
     applyFixedSurfaceAgricultureFloor(map, site);
     applyOrbitalFixedNonAgAgricultureFloor(map, site);
