@@ -239,9 +239,9 @@ const receivesParentHubSubStrong = (site: SiteMap2): boolean => {
 };
 
 /**
- * Subordinates listed under a hub (e.g. Garcia under Rintaro) contribute sub-strong to other
- * receivers on the body (orbital primary). The subordinate port should receive the same tier-sized
- * sub-strong from its parent hub once the linked economy exists on the port map.
+ * Hub subordinates contribute sub-strong to other receivers on the body (orbital primary).
+ * A subordinate port receives the same tier-sized sub-strong from its parent hub once the
+ * linked economy exists on the port map.
  */
 export const applyParentHubSubStrongLink = (
   map: EconomyMap,
@@ -497,7 +497,7 @@ export const applyStrongLinkBoost = (
   }
 };
 
-export type ApplyBuffsOptions = { /** Scientific/medical hubs: Spansh ignores BIO/GEO hightech body buffs */ skipHightechBodyBuffs?: boolean };
+export type ApplyBuffsOptions = { /** Scientific/medical hubs: skip BIO/GEO hightech body buffs on own row */ skipHightechBodyBuffs?: boolean };
 
 export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolean, options?: ApplyBuffsOptions) => {
   const reserveLevel = site.sys.reserveLevel ?? 'pristine';

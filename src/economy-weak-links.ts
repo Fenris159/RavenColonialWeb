@@ -36,22 +36,21 @@ export const isSecurityInstallation = (s: SiteMap2): boolean =>
 const isSecurityInstallationWeakContributor = (s: SiteMap2): boolean =>
   isSecurityInstallation(s);
 
-/** Military hub installations — strong-link local ports; do not weak-link outward (Synuefai). */
+/** Military hub installations — strong-link local ports; do not weak-link outward. */
 export const isMilitaryHubInstallation = (s: SiteMap2): boolean =>
   s.type.buildClass === "installation" &&
   (s.buildType === "alastor" || s.buildType === "vacuna");
 
-/** Body-primary starport/outpost on the system star — does not emit non-agriculture weak links (forum / Fort Snailing). */
+/** Body-primary starport/outpost on the system star — does not emit non-agriculture weak links. */
 export const isStarBodyPrimaryTieredPort = (s: SiteMap2): boolean =>
   (s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary) &&
   (s.type.buildClass === "starport" || s.type.buildClass === "outpost") &&
   s.body?.type === BT.st;
 
 /**
- * Relay weak links appear on all port link graphs. Economy +5% High Tech applies on
- * outposts (Stafford, Scobee) and on starports that already have hightech from another
- * weak/strong source (Snail/dodec + chronos). Ornamental T3 starports with no hightech
- * row (Gold/dec_truss) show the relay in UI only — see map.hightech at apply time.
+ * Relay weak links appear on all port link graphs. Economy +5% hightech applies on
+ * outposts always, and on starports that already have hightech > 0 when the relay is
+ * processed (name-sort order). Starports with no hightech row show the relay in UI only.
  */
 export const relayWeakLinkAppliesEconomyTo = (
   source: SiteMap2,
@@ -101,7 +100,7 @@ export const siteContributesWeakLinks = (s: SiteMap2): boolean => {
     }
     return s.parentLink !== undefined;
   }
-  // Subordinate tiered ports only; body primaries weak-link outward (Stafford → Gold).
+  // Subordinate tiered ports only; body primaries weak-link agriculture outward.
   if (
     isTieredStation(s) &&
     s.parentLink === undefined &&

@@ -5,7 +5,7 @@
 | Path | In PR | Purpose |
 |------|-------|---------|
 | `src/` | Yes | Production app + economy model |
-| `docs/` | Yes | Production architecture ([economy model](docs/economy-model.md)) |
+| `docs/` | Yes | Production architecture ([technical](docs/economy-model.md) · [plain-language](docs/economy-model-guide.md)) |
 | `local/` | No | Local tests, Spansh tools, and dev-only docs (gitignored) |
 
 ```bash
@@ -15,4 +15,4 @@ npm run build
 
 Local verification (not in git): clone keeps a `local/` folder on disk — see `local/README.md` if present, then `npm run test:economy`.
 
-Economy architecture for reviewers: **[docs/economy-model.md](docs/economy-model.md)**.
+Economy docs: **[technical model](docs/economy-model.md)** · **[plain-language guide](docs/economy-model-guide.md)**.

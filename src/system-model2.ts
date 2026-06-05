@@ -592,7 +592,7 @@ const pickPrimaryByTier = (
   const matches = sites.filter(
     s => s.type.tier === tier && canActAsBodyLinkPrimary(s, bodyHasDockablePort),
   );
-  // Dockable ports beat hubs/installations at the same tier (Gold Enterprise vs Aristotle's Folly).
+  // Dockable ports beat hubs/installations at the same tier when picking body primary.
   const port = matches.find(s => canReceiveLinks(s.type));
   if (port) {
     return port;
@@ -625,7 +625,7 @@ const getBodyPrimaryPort = (
   return undefined;
 }
 
-/** Whether a port/outpost on a body shares the primary's system-wide weak-link pool (Spansh: IC 1805 atropos cluster, Garcia bia). */
+/** Whether a port/outpost on a body shares the primary's system-wide weak-link pool. */
 const siteSharesPrimaryLinkPool = (site: SiteMap2): boolean => {
   if (site.type.inf === "none") {
     return false;

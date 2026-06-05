@@ -8,7 +8,7 @@ import type { SiteMap2, SysMap2 } from "./system-model2";
 import { BodyFeature } from "./types";
 import { Bod, BT } from "./types2";
 
-/** Spansh-derived agriculture rules — not in the community colonization sheet. */
+/** Heuristic agriculture rules — not in the community colonization sheet. */
 
 /** Documented weak-link agriculture increment (community sheet). */
 export const WEAK_LINK_AGRICULTURE_DELTA = 0.05;
@@ -36,8 +36,8 @@ export const AG_WEAK_LINK_BUDGET = {
 } as const;
 
 /**
- * Spansh-regressed weak-link agriculture budgets by colony port buildType (HR 4464 and peers).
- * Orbital cluster types (plutus / vulcan / prometheus) use subordinate-count tiers instead — see below.
+ * Empirically fitted weak-link agriculture budgets by colony port buildType.
+ * Orbital cluster types (plutus / vulcan / prometheus) use subordinate-count tiers instead.
  */
 export const AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE: Readonly<Record<string, number>> = {
   hestia: 1.60,
@@ -45,11 +45,11 @@ export const AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE: Readonly<Record<string, number>>
   apollo: 1.60,
   clotho: 1.25,
   chronos: 1.40,
-  /** Civilian surface outpost near agriculture cluster (IC 1805 Spansh). */
+  /** Civilian surface outpost near an agriculture cluster. */
   atropos: 1.40,
 };
 
-/** Small/medium agriculture settlements (Spansh intrinsic 60%). */
+/** Small/medium agriculture settlements (fixed intrinsic 60%). */
 export const TIER1_AGRICULTURE_SETTLEMENT_BUILD_TYPES = new Set(["picumnus", "annona", "consus"]);
 
 export const getSettlementFixedEconomyValue = (site: SiteMap2): number => {
@@ -137,7 +137,7 @@ export const applyObservedPresetEconomies = (map: EconomyMap, site: SiteMap2) =>
     return;
   }
 
-  // Preset targets subordinate icy atropos outposts (HR 4464 / IC 1805), not body primaries (e.g. Whelk on 9 c).
+  // Preset targets subordinate icy atropos outposts, not body primaries.
   if (site === site.body?.orbitalPrimary || site === site.body?.surfacePrimary) {
     return;
   }
@@ -224,7 +224,7 @@ export const shouldApplyForeignStarAgricultureWeakLink = (
     return true;
   }
 
-  // Odyssey agriculture settlements stack weak links from their host star (IC 1805 Spansh).
+  // Odyssey agriculture settlements stack weak links from their host star.
   if (source.type.buildClass === "settlement" && source.type.inf === "agriculture") {
     return true;
   }
@@ -325,7 +325,7 @@ const AG_WEAK_LINK_BUDGET_RULES: AgWeakLinkBudgetRule[] = [
       usesOrbitalClusterWeakLinkBudget(site),
   },
   {
-    label: 'Spansh-observed colony port weak-link budget by buildType',
+    label: 'Observed colony port weak-link budget by buildType',
     budget: ({ site }) => AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE[site.buildType],
     when: ({ site }) =>
       isColonyPortWithoutSameBodyAgStrong(site) &&
@@ -399,7 +399,7 @@ export const explainAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWor
   };
 };
 
-/** Spansh-implied weak-link budget after strong links (diagnostics only). */
+/** Implied weak-link budget after strong links (diagnostics only). */
 export const getImpliedAgricultureWeakLinkBudget = (spanshPct: number, agricultureBeforeWeakLinks: number): number => {
   const spansh = spanshPct / 100;
   return Math.max(0, Math.round((spansh - agricultureBeforeWeakLinks) * 100) / 100);

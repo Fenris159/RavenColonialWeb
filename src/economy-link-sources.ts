@@ -52,7 +52,7 @@ export const isDemeterSpaceFarm = (s: SiteMap2): boolean =>
 
 /**
  * Farm anchored to a colony port on the same body (either direction) — strong local/cluster only,
- * no outward weak links (Synuefai Derrickson → Stafford).
+ * no outward weak links.
  */
 export const isAnchoredSpaceFarmInstallation = (s: SiteMap2, calcIds?: string[]): boolean => {
   if (!isDemeterSpaceFarm(s) || !s.body) {

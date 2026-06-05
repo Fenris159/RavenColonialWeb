@@ -38,7 +38,7 @@ export const isSameBodyElwWwColonySource = (source: SiteMap2 | undefined, site: 
 /**
  * Documented ±0.4 agriculture modifiers (community sheet / Mega Guide).
  * Decreases (icy, tidal) apply on **strong-link contributions** only; weak links stay +0.05.
- * Own docked agriculture keeps intrinsics + positive body buffs (Hyggekrog / converted ports).
+ * Own docked agriculture keeps intrinsics + positive body buffs on subordinate surface ports.
  */
 export const AGRICULTURE_STRONG_LINK_MODIFIER_RULES: AgricultureBodyModifierRule[] = [
   {
@@ -121,7 +121,7 @@ export function getAgricultureIntrinsicBodyBuffDeltas(
 
 /**
  * Orbital colony paired with a same-body surface colony port receives agriculture body
- * buffs via port-to-port strong links (Snail), not on its own docked row.
+ * buffs via port-to-port strong links, not on its own docked row.
  */
 export function shouldSkipPositiveAgricultureBodyBuffs(site: SiteMap2): boolean {
   if (!site.body || !site.type || site.type.inf !== 'colony' || !site.type.orbital) {

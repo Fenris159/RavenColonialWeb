@@ -6,7 +6,7 @@ export const OPERATIONAL_MARKET_ID_MIN = 4_200_000_001;
 
 const COMMS_BUILD_TYPES = new Set(["aletheia", "pistis", "soter"]);
 
-/** Player-built station marketIds in Spansh dumps (includes pre-operational 395–397 journal IDs). */
+/** Player-built station marketIds (includes pre-operational 395–397 journal IDs). */
 export const isPlayerMadeMarketId = (marketId: number): boolean => {
   const s = String(marketId);
   return (
@@ -76,7 +76,7 @@ const collectAthenaCommsSearchBodyNums = (site: SiteMap2): number[] => {
 
 /**
  * True when completed (or planned) comms exists on the athena host or an ancestor body.
- * IC 1805: comms often uses 396* marketIds; moons inherit from parent gas giant / star bodies.
+ * Comms often uses 396* marketIds; moons inherit from parent gas giant / star bodies.
  */
 export const bodyHasOperationalCommsForAthena = (site: SiteMap2, calcIds?: string[]): boolean => {
   const siteMaps = allSiteMapsInSystem(site);
@@ -87,7 +87,7 @@ export const bodyHasOperationalCommsForAthena = (site: SiteMap2, calcIds?: strin
   );
 };
 
-/** 140% hightech when comms qualifies; star-primary HMC athena sites stay 100% (Diophantus et al.). */
+/** 140% hightech when comms qualifies; star-primary HMC athena hosts stay 100%. */
 export const getAthenaHightechIntrinsic = (site: SiteMap2, calcIds?: string[]): number => {
   if (!bodyHasOperationalCommsForAthena(site, calcIds)) {
     return 1.0;
@@ -100,11 +100,11 @@ export const getAthenaHightechIntrinsic = (site: SiteMap2, calcIds?: string[]): 
   return 1.4;
 };
 
-/** How a hub/installation intrinsic is determined (1.0 = 100% Spansh strength). */
+/** How a hub/installation intrinsic is determined (1.0 = 100% market strength). */
 export type FacilityRegistryEntry =
   | {
       kind: "linkOnly";
-      /** Spansh usually reports no economy object for these. */
+      /** External snapshots usually report no economy object for these. */
       notes?: string;
     }
   | {
@@ -138,8 +138,8 @@ const entryForBuildType = (buildType: string): FacilityRegistryEntry | undefined
 };
 
 /**
- * Spansh-aligned facility economy registry.
- * Spansh harvest: see local/docs/facility-economy-registry.md (not in git).
+ * Facility economy registry — fixed intrinsics, link-only hubs, and athena comms rules.
+ * Harvest maintenance: see local/docs/facility-economy-registry.md (not in git).
  */
 export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = {
   // --- Installations: link-only (inf none) ---
@@ -154,11 +154,11 @@ export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = 
   // --- Hubs: link-only ---
   aegle: {
     kind: "linkOnly",
-    notes: "RC inf none; HR 4464 Spansh once showed refinery 140% (verify buildType match)",
+    notes: "RC inf none; observed markets once showed refinery 140% (verify buildType match)",
   },
   io: {
     kind: "linkOnly",
-    notes: "RC inf none; HR 4464 Spansh once showed military 100%",
+    notes: "RC inf none; observed markets once showed military 100%",
   },
 
   // --- Installations: fixed intrinsics (default 100% until evidence overrides) ---
@@ -198,18 +198,17 @@ export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = 
     economy: "hightech",
     withoutComms: 1.0,
     withOperationalComms: 1.4,
-    notes: "Scientific hub; 140% when operational comms qualifies. Spansh compare often stale (undockable).",
+    notes: "Scientific hub; 140% when operational comms qualifies. Undockable — external compare often stale.",
     evidence: {
       samples: 36,
       spanshPercents: [100, 140],
-      systems: ["IC 1805 Sector FH-B c14-13"],
     },
   },
   caelus: {
     kind: "fixed",
     economy: "hightech",
     intrinsic: 1.0,
-    evidence: { samples: 1, spanshPercents: [100], systems: ["IC 1805 Sector FH-B c14-13"] },
+    evidence: { samples: 1, spanshPercents: [100] },
   },
   tartarus: { kind: "fixed", economy: "extraction", intrinsic: 1.0 },
   tellus_e: { kind: "fixed", economy: "tourism", intrinsic: 1.0 },
@@ -220,7 +219,7 @@ export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = 
     kind: "fixed",
     economy: "industrial",
     intrinsic: 1.4,
-    evidence: { samples: 1, spanshPercents: [140], systems: ["HR 4464"] },
+    evidence: { samples: 1, spanshPercents: [140] },
   },
   molae: { kind: "fixed", economy: "industrial", intrinsic: 1.0 },
   tellus_i: { kind: "fixed", economy: "industrial", intrinsic: 1.0 },
@@ -229,7 +228,7 @@ export const FACILITY_ECONOMY_REGISTRY: Record<string, FacilityRegistryEntry> = 
     kind: "fixed",
     economy: "refinery",
     intrinsic: 1.0,
-    notes: "HR 4464 samples had empty Spansh economies; default 100% until confirmed",
+    notes: "Observed samples had empty economy payloads; default 100% until confirmed",
   },
 };
 
