@@ -56,6 +56,12 @@ When a user opens a system in **SystemView2** or **ProjectView**, the app passes
 
 Nothing under `src/economy/` imports React or view code. Dependency direction is always **views → economy**.
 
+### Terraformable agriculture what-if toggle
+
+SystemView2 has a top command-bar button for **Terraformable Agri Bonuses**. It is off by default and persists as `terraformableAgriBonus` in local storage.
+
+The button passes `enableTerraformableAgricultureBonus` into `buildSystemModel2`. When enabled, terraformable bodies receive the optional +0.4 agriculture modifier on own-row agriculture buffs and agriculture strong-link contribution formulas. This is intentionally a what-if mode for planning around a future Elite Dangerous fix; the default remains conservative for current live-game behavior.
+
 ---
 
 ## Internal flow

@@ -500,7 +500,10 @@ export const applyStrongLinkBoost = (
   }
 };
 
-export type ApplyBuffsOptions = { /** Scientific/medical hubs: skip BIO/GEO hightech body buffs on own row */ skipHightechBodyBuffs?: boolean };
+export type ApplyBuffsOptions = EconomyModelOptions & {
+  /** Scientific/medical hubs: skip BIO/GEO hightech body buffs on own row */
+  skipHightechBodyBuffs?: boolean;
+};
 
 export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolean, options?: ApplyBuffsOptions) => {
   const reserveLevel = site.sys.reserveLevel ?? 'pristine';
@@ -516,7 +519,7 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
     }
   }
 
-  applyAgricultureBodyBuffs(map, site, adjust);
+  applyAgricultureBodyBuffs(map, site, adjust, options);
 
   if (map.hightech > 0 && !options?.skipHightechBodyBuffs) {
     if (isSettlement && USE_NEW_MODEL) {

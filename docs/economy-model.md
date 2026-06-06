@@ -495,6 +495,23 @@ interface EconomyModelOptions {
 
 From `SystemView2` → `buildSystemModel2`. Persisted as `terraformableAgriBonus` in local storage.
 
+### Terraformable agriculture what-if toggle
+
+SystemView2 includes a top command-bar button titled **Enable/Disable Terraformable Agri Bonuses**. It toggles `enableTerraformableAgricultureBonus` and immediately rebuilds the system model with the new option.
+
+Purpose: Elite Dangerous currently appears not to apply the expected terraformable agriculture modifier consistently. The toggle keeps production estimates conservative by default, while allowing planners to preview what the numbers would look like if/when terraformable agriculture bonuses are fixed in-game.
+
+When enabled:
+
+- Terraformable receiver bodies add **+0.4 agriculture** to strong-link agriculture contribution formulas.
+- Terraformable bodies with an existing own-row agriculture value add **+0.4 agriculture** through `applyAgricultureBodyBuffs`.
+- The setting is saved in browser local storage as `terraformableAgriBonus`.
+
+When disabled:
+
+- Terraformable is ignored for agriculture scoring.
+- Other agriculture modifiers still apply normally: BIO, ELW/WW, icy/rocky-ice, and tidal rules are unchanged.
+
 ---
 
 ## Module map

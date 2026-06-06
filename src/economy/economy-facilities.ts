@@ -56,7 +56,10 @@ export const calculateFacilityEconomies2 = (
   }
 
   adjust(site.type.inf, intrinsic, "Facility fixed economy", map, site);
-  applyBuffs(map, site, false, { skipHightechBodyBuffs: true });
+  applyBuffs(map, site, false, {
+    ...options,
+    skipHightechBodyBuffs: true,
+  });
 
   const primaryEconomy = Object.keys(map).sort(
     (a, b) => map[b as keyof EconomyMap] - map[a as keyof EconomyMap],

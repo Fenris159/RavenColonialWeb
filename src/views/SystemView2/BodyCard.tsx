@@ -65,7 +65,7 @@ const calcForBody = (bod: Bod | BodyMap2, sysView: SystemView2) => {
   };
   // run economy calculations as if it were a Coriolis
   applyBodyType(mapColony, site);
-  applyBuffs(mapColony, site, false);
+  applyBuffs(mapColony, site, false, sysView.getEconomyModelOptions());
   const auditColony = site.economyAudit!.sort((a, b) => a.inf.localeCompare(b.inf));
 
   site.economyAudit = [];

@@ -1,6 +1,7 @@
 import { EconomyMap } from "../site-data";
 import { BodyFeature } from "../types";
 import { BT } from "../types2";
+import { calculateAgricultureStrongLinkContribution } from "./economy-ag-modifiers";
 import { applyBuffs } from "./economy-documented";
 import { applyWeakLinks } from "./economy-documented";
 import { SiteMap2, SysMap2 } from "./system-model2";
@@ -105,5 +106,76 @@ describe("economy regressions", () => {
       }),
     );
     expect(target.economyAudit?.some(entry => entry.reason.includes("Infinity"))).toBe(false);
+  });
+
+  it("only includes terraformable agriculture strong-link bonus when enabled", () => {
+    const body = {
+      features: [BodyFeature.terraformable],
+      name: "Terraformable test body",
+      num: 1,
+      parents: [],
+      type: BT.hmc,
+    };
+    const site = {
+      body,
+      sys: {
+        bodies: [body],
+        reserveLevel: "common",
+      } as unknown as SysMap2,
+    } as unknown as SiteMap2;
+
+    const disabled = calculateAgricultureStrongLinkContribution(0.4, site, {
+      enableTerraformableAgricultureBonus: false,
+    });
+    const enabled = calculateAgricultureStrongLinkContribution(0.4, site, {
+      enableTerraformableAgricultureBonus: true,
+    });
+
+    expect(disabled.score).toBe(0.4);
+    expect(disabled.formula).not.toContain("TERRAFORMABLE");
+    expect(enabled.score).toBe(0.8);
+    expect(enabled.formula).toContain("TERRAFORMABLE 0.4");
+  });
+
+  it("only includes terraformable agriculture own-row buff when enabled", () => {
+    const body = {
+      features: [BodyFeature.terraformable],
+      name: "Terraformable agriculture body",
+      num: 1,
+      parents: [],
+      type: BT.ww,
+    };
+    const site = {
+      body,
+      economyAudit: [],
+      sys: {
+        bodies: [body],
+        reserveLevel: "common",
+      } as unknown as SysMap2,
+      type: {
+        inf: "colony",
+        orbital: false,
+      },
+    } as unknown as SiteMap2;
+    const disabled = createEconomyMap({ agriculture: 1 });
+    const enabled = createEconomyMap({ agriculture: 1 });
+
+    applyBuffs(disabled, site, false, {
+      enableTerraformableAgricultureBonus: false,
+    });
+    site.economyAudit = [];
+    applyBuffs(enabled, site, false, {
+      enableTerraformableAgricultureBonus: true,
+    });
+
+    expect(disabled.agriculture).toBe(1.4);
+    expect(enabled.agriculture).toBe(1.8);
+    expect(site.economyAudit).toContainEqual(
+      expect.objectContaining({
+        delta: 0.4,
+        inf: "agriculture",
+        reason: "Buff: body is TERRAFORMABLE",
+      }),
+    );
   });
 });

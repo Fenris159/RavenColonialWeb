@@ -161,13 +161,20 @@ Agriculture is the fiddliest row because body conditions apply differently on **
 
 - **+100%** if the body has a **Biological** signal and the planet type does not already grant Agriculture (Earth-like and Water worlds already get Agriculture from the planet type).
 - **+40%** Biological buff on that row for most ports.
+- **Optional +40% Terraformable what-if buff** when the System page's Terraformable Agri Bonuses button is enabled.
 - **Exception:** an **orbital starport** with a **surface colony port** on the same body does **not** get those agriculture buffs on its **own row** — they show on the **strong link** from the surface port.
 - **No** icy or tidal **penalties** on the own row (your subordinate surface outpost can show +40% Biological without −40% tidal on the docked row).
 
 ### On strong links into this port
 
-- Full **+40% / −40%** table: Biological, Earth-like/Water world, icy body, tidal lock to the star, and so on.
+- Full **+40% / −40%** table: Biological, Earth-like/Water world, optional Terraformable, icy body, tidal lock to the star, and so on.
 - A tidal penalty on a **link** cannot pull that link’s contribution below **+10%**.
+
+### Terraformable what-if toggle
+
+The System page has a top-bar **Terraformable Agri Bonuses** button. It is off by default because current Elite Dangerous market behavior does not appear to apply the expected terraformable agriculture bonus consistently.
+
+Turn it on to preview what agriculture numbers would look like if that in-game behavior is fixed later. The setting is saved in your browser and affects own-row agriculture buffs plus agriculture strong-link formulas.
 
 ### On weak links
 

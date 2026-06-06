@@ -78,7 +78,7 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
     case 'settlement': {
       const intrinsic = getSettlementFixedEconomyValue(site);
       adjust(site.type.inf, intrinsic, "Odyssey settlement fixed economy", map, site);
-      applyBuffs(map, site, true);
+      applyBuffs(map, site, true, options);
       applyAgricultureSettlementFloor(map, site);
       return finishUp(map, site);
     }
@@ -96,7 +96,7 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
     }
 
     if (USE_NEW_MODEL) {
-      applyBuffs(map, site, false);
+      applyBuffs(map, site, false, options);
     }
 
     applyObservedPresetEconomies(map, site);

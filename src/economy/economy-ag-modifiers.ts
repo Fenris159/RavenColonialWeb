@@ -50,6 +50,7 @@ export const AGRICULTURE_STRONG_LINK_MODIFIER_RULES: AgricultureBodyModifierRule
   {
     delta: 0.4,
     formulaPart: 'TERRAFORMABLE 0.4',
+    auditReason: 'Buff: body is TERRAFORMABLE',
     applies: ({ site, options }) =>
       !!options?.enableTerraformableBonus &&
       matches([BodyFeature.terraformable], site.body?.features),
@@ -137,11 +138,14 @@ export function applyAgricultureBodyBuffs(
   map: EconomyMap,
   site: SiteMap2,
   adjustFn: typeof adjust,
+  options?: EconomyModelOptions,
 ) {
   if (map.agriculture <= 0) { return; }
 
   if (!shouldSkipPositiveAgricultureBodyBuffs(site)) {
-    for (const { delta, auditReason } of getAgricultureIntrinsicBodyBuffDeltas(site)) {
+    for (const { delta, auditReason } of getAgricultureIntrinsicBodyBuffDeltas(site, {
+      enableTerraformableBonus: options?.enableTerraformableAgricultureBonus ?? false,
+    })) {
       if (auditReason) {
         adjustFn('agriculture', delta, auditReason, map, site, 'body');
       }
