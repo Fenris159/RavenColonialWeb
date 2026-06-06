@@ -1,6 +1,6 @@
-import { Economy, EconomyMap } from "./site-data";
+import { Economy, EconomyMap } from "../site-data";
 import { SiteMap2 } from "./system-model2";
-import { asPosNegTxt2 } from "./util";
+import { asPosNegTxt2 } from "../util";
 import {
   applyObservedPresetEconomies,
   applyAgricultureSettlementFloor,

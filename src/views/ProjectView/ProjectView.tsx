@@ -22,7 +22,7 @@ import { ShowCoachingMarks } from '../../components/ShowCoachingMarks';
 import { ViewEditBuildType } from '../SystemView2/ViewEditBuildType';
 import { getAvgHaulCosts } from '../../avg-haul-costs';
 import { EconomyTable2 } from '../SystemView2/EconomyTable2';
-import { buildSystemModel2, SysMap2 } from '../../system-model2';
+import { buildSystemModel2, SysMap2 } from '../../economy/system-model2';
 import { App } from '../../App';
 import { InlineMarketOrders } from '../../components/InlineMarketOrders';
 

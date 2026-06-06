@@ -7,7 +7,7 @@ import { BuildType } from "../../components/BuildType/BuildType";
 import { store } from "../../local-storage";
 import { App } from "../../App";
 import { CalloutMsg } from "../../components/CalloutMsg";
-import { applyTax, isTypeValid2, SysMap2 } from "../../system-model2";
+import { applyTax, isTypeValid2, SysMap2 } from "../../economy/system-model2";
 import { TierPoint } from "../../components/TierPoints";
 import { EconomyBlock } from "../../components/EconomyBlock";
 

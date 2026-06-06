@@ -7,7 +7,7 @@ import { ActionButton, CommandBar, ContextualMenuItemType, DefaultButton, Dialog
 import { Component, createRef, FunctionComponent, useState } from "react";
 import { CopyButton } from '../../components/CopyButton';
 import { appTheme, cn } from '../../theme';
-import { buildSystemModel2, getSnapshot, hasPreReq2, SiteMap2, SysMap2, unknown } from '../../system-model2';
+import { buildSystemModel2, getSnapshot, hasPreReq2, SiteMap2, SysMap2, unknown } from '../../economy/system-model2';
 import { TierPoint } from '../../components/TierPoints';
 import { SystemStats } from './SystemStats';
 import { BothTierPoints, BuildOrder } from './BuildOrder';
@@ -27,14 +27,14 @@ import { ArchitectSummary } from './ArchitectSummary';
 import { getSiteType, mapName } from '../../site-data';
 import { BodyPill, SitePill } from './SitePill';
 import { App } from '../../App';
-import { isSpanshCompareExcluded } from '../../spansh-compare-reliability';
+import { isSpanshCompareExcluded } from '../../economy/compare/spansh-compare-reliability';
 import {
   buildMarketIdByNameFromRcSites,
   mergeMarketIdByNameIndexes,
   resolveSpanshEconomyForSite,
   spanshEconomiesNeedRefresh,
   type SpanshCompareSite,
-} from '../../spansh-economy-resolve';
+} from '../../economy/compare/spansh-economy-resolve';
 
 interface SystemView2Props {
   systemName: string;

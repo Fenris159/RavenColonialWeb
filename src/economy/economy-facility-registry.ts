@@ -1,6 +1,6 @@
-import { ConcreteEconomy, Economy, EconomyMap, getSiteType, siteTypes } from "./site-data";
+import { ConcreteEconomy, Economy, EconomyMap, getSiteType, siteTypes } from "../site-data";
 import { SiteMap2 } from "./system-model2";
-import { BT } from "./types2";
+import { BT } from "../types2";
 
 export const OPERATIONAL_MARKET_ID_MIN = 4_200_000_001;
 

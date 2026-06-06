@@ -11,7 +11,7 @@ import { PadSize } from "../PadSize";
 import { TierPoint } from "../TierPoints";
 import { BuildEffects } from '../BuildEffects';
 import { SiteImage } from '../VisualIdentify';
-import { isTypeValid2, SysMap2 } from '../../system-model2';
+import { isTypeValid2, SysMap2 } from '../../economy/system-model2';
 import { getAverageHauls } from '../../avg-haul-costs';
 
 

@@ -1,4 +1,4 @@
-import { buildEdsmMarketIdByNormalizedName } from "../spansh-economy-resolve";
+import { buildEdsmMarketIdByNormalizedName } from "../economy/compare/spansh-economy-resolve";
 import { ResponseEdsmStations, ResponseEdsmSystem, ResponseEdsmSystemBodies, ResponseEdsmSystemFactions, ResponseEdsmTypeAhead } from "../types";
 import { callSvcAPI } from "./api-util";
 

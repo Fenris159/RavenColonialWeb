@@ -1,6 +1,6 @@
 import { isAnchoredSpaceFarmInstallation, isDemeterSpaceFarm } from "./economy-link-sources";
 import type { SiteMap2 } from "./system-model2";
-import { BT } from "./types2";
+import { BT } from "../types2";
 
 const isTieredStation = (s: SiteMap2): boolean => {
   return (s.type.buildClass === 'starport' || s.type.buildClass === 'outpost')

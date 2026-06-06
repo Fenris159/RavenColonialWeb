@@ -2,7 +2,7 @@ import { FunctionComponent, useState } from "react";
 import { Chevrons } from "../../components/Chevrons";
 import { TierPoint } from "../../components/TierPoints";
 import { mapName, sysEffects, SysEffects } from "../../site-data";
-import { getSysScoreDiagnostic, SysMap2 } from "../../system-model2";
+import { getSysScoreDiagnostic, SysMap2 } from "../../economy/system-model2";
 import { asPosNegTxt, isMobile } from "../../util";
 import { appTheme, cn } from "../../theme";
 import { HaulList } from "./HaulList";

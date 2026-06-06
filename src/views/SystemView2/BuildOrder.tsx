@@ -2,7 +2,7 @@ import { ActionButton, Callout, DefaultButton, DirectionalHint, Icon, IconButton
 import { Component, CSSProperties, FunctionComponent } from "react";
 import { appTheme, cn } from "../../theme";
 import { asPosNegTxt, isMobile } from "../../util";
-import { getPreReqNeeded, hasPreReq2, isTypeValid2, SiteMap2, SiteTypeValidity, sumTierPoints, SysMap2, TierPoints } from "../../system-model2";
+import { getPreReqNeeded, hasPreReq2, isTypeValid2, SiteMap2, SiteTypeValidity, sumTierPoints, SysMap2, TierPoints } from "../../economy/system-model2";
 import { getSiteType } from "../../site-data";
 import { TierPoint } from "../../components/TierPoints";
 import { App } from "../../App";

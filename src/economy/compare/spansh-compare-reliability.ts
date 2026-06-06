@@ -1,4 +1,4 @@
-import type { BuildClass, PadSize, SiteType } from "./site-data";
+import type { BuildClass, PadSize, SiteType } from "../../site-data";
 
 /**
  * Spansh/journal compare confidence for a site.

@@ -1,12 +1,12 @@
-import { EconomyMap } from "./site-data";
+import { EconomyMap } from "../site-data";
 import {
   adjust,
   bodyIsTidalToStar,
   matches,
 } from "./economy-core";
 import type { SiteMap2, SysMap2 } from "./system-model2";
-import { BodyFeature } from "./types";
-import { Bod, BT } from "./types2";
+import { BodyFeature } from "../types";
+import { Bod, BT } from "../types2";
 
 /** Heuristic agriculture rules — not in the community colonization sheet. */
 

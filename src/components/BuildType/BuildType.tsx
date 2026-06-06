@@ -7,7 +7,7 @@ import { delayFocus, isMobile } from "../../util";
 import { store } from '../../local-storage';
 import { ShowCoachingMarks } from '../ShowCoachingMarks';
 import { BigSiteTable } from '../BigSiteTable/BigSiteTable';
-import { SysMap2 } from '../../system-model2';
+import { SysMap2 } from '../../economy/system-model2';
 
 interface ChooseBuildTypeProps {
   buildType: string | undefined,

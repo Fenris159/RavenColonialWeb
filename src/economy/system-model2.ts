@@ -1,4 +1,4 @@
-import { SysSnapshot } from './api/v2-system';
+import { SysSnapshot } from '../api/v2-system';
 import { calculateColonyEconomies2, calculateFacilityEconomies2, EconomyModelOptions, isFacilityWithEconomy, stellarRemnants } from './economy-model2';
 import type { AgEconomyCalcFlags } from './economy-core';
 import {
@@ -8,9 +8,9 @@ import {
   flattenHubGrandchildStrongSites,
 } from './economy-link-sources';
 import { siteAlreadyStrongLinkedTo, siteContributesWeakLinks } from './economy-weak-links';
-import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "./site-data";
-import { BodyFeature } from './types';
-import { Bod, BT, Site, Sys } from './types2';
+import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "../site-data";
+import { BodyFeature } from '../types';
+import { Bod, BT, Site, Sys } from '../types2';
 
 export const unknown = 'Unknown';
 

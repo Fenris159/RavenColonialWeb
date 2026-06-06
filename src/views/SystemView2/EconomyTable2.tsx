@@ -2,7 +2,7 @@ import { Icon, Stack, Link, Panel, PanelType } from "@fluentui/react";
 import { FunctionComponent, useState } from "react";
 import { EconomyBlock } from "../../components/EconomyBlock";
 import { EconomyMap, mapName } from "../../site-data";
-import { SiteMap2 } from "../../system-model2";
+import { SiteMap2 } from "../../economy/system-model2";
 import { appTheme, cn } from "../../theme";
 import { BodyFeature, mapBodyFeature } from "../../types";
 import { asPosNegTxt, isMobile, asPosNegTxt2 } from "../../util";
@@ -10,15 +10,15 @@ import { BodyOverride } from "./BodyOverride";
 import { SystemView2 } from "./SystemView2";
 import { mapBodyTypeNames } from "../../types2";
 import { EconomyBlocks } from "../../components/MarketLinks/MarketLinks";
-import { isFacilityWithEconomy, stellarRemnants } from "../../economy-model2";
+import { isFacilityWithEconomy, stellarRemnants } from "../../economy";
 import { App } from "../../App";
-import { findRealEconomiesRow, getSpanshCompareFailureReason, isConstructionSpanshPlaceholder } from "../../spansh-economy-resolve";
+import { findRealEconomiesRow, getSpanshCompareFailureReason, isConstructionSpanshPlaceholder } from "../../economy/compare/spansh-economy-resolve";
 import {
   isSpanshCompareExcluded,
   isUndockableFacility,
   SPANSH_COMPARE_EXCLUDED_NOTE,
   SPANSH_COMPARE_LIMITED_BODY,
-} from "../../spansh-compare-reliability";
+} from "../../economy/compare/spansh-compare-reliability";
 import { SpanshCompareCaveat } from "../../components/SpanshCompareCaveat";
 
 export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: SystemView2; noTableHeader?: boolean; noDisclaimer?: boolean; noChart?: boolean }> = (props) => {

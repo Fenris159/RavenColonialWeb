@@ -1,4 +1,4 @@
-import { EconomyMap } from "./site-data";
+import { EconomyMap } from "../site-data";
 import {
   EconomyModelOptions,
   STRONG_LINK_CONTRIBUTION_FLOOR,
@@ -7,8 +7,8 @@ import {
   matches,
 } from "./economy-core";
 import type { SiteMap2 } from "./system-model2";
-import { BodyFeature } from "./types";
-import { BT } from "./types2";
+import { BodyFeature } from "../types";
+import { BT } from "../types2";
 
 export interface AgricultureModifierOptions {
   enableTerraformableBonus?: boolean;

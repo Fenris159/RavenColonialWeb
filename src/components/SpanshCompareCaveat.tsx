@@ -4,7 +4,7 @@ import { appTheme } from "../theme";
 import {
   SPANSH_COMPARE_LIMITED_BODY,
   SPANSH_COMPARE_LIMITED_TITLE,
-} from "../spansh-compare-reliability";
+} from "../economy/compare/spansh-compare-reliability";
 
 export const SpanshCompareCaveat: FunctionComponent<{ compact?: boolean; style?: CSSProperties }> = (props) => {
   const colorYellow = appTheme.isInverted ? appTheme.palette.yellow : "goldenrod";

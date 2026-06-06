@@ -4,9 +4,9 @@ How colonization economy percentages are calculated in `src/`. The architect UI 
 
 **Plain-language companion (no code):** [economy-model-guide.md](./economy-model-guide.md)
 
-**Entry point:** `economy-model2.ts` (public re-exports).
+**Entry point:** `economy/index.ts` (re-exports `economy-model2.ts`).
 
-**System build:** `buildSystemModel2` in `system-model2.ts` assigns body primaries, subordinate links, strong/weak candidate pools, then runs economy calc per site in `calcIds`.
+**System build:** `buildSystemModel2` in `economy/system-model2.ts` assigns body primaries, subordinate links, strong/weak candidate pools, then runs economy calc per site in `calcIds`.
 
 ---
 
@@ -383,7 +383,7 @@ Then `applyBuffs`. Strong/weak links apply normally. Ground–orbit inheritance:
 
 ### General colony ports
 
-`applyBodyType` + `applyBuffs` + `applyObservedPresetEconomies` (icy **atropos** subordinate preset only). Orbital primary may skip `applyBodyType` when paired with surface colony and legacy flag — see `USE_NEW_MODEL` branch in `economy-model2.ts`.
+`applyBodyType` + `applyBuffs` + `applyObservedPresetEconomies` (icy **atropos** subordinate preset only). Orbital primary may skip `applyBodyType` when paired with surface colony and legacy flag — see `USE_NEW_MODEL` branch in `economy/economy-model2.ts`.
 
 ---
 
@@ -479,7 +479,7 @@ Debug: `explainAgricultureWeakLinkBudget()`, `getImpliedAgricultureWeakLinkBudge
 
 **UI only** — does not affect calculation.
 
-`spansh-economy-resolve.ts`: journal `marketId` first; fallback EDSM name index. Completed **ports, outposts, settlements** only.
+`economy/compare/spansh-economy-resolve.ts`: journal `marketId` first; fallback EDSM name index. Completed **ports, outposts, settlements** only.
 
 Hubs/installations excluded (`isSpanshCompareExcluded`). Does not affect economy calculation.
 
@@ -501,16 +501,19 @@ From `SystemView2` → `buildSystemModel2`. Persisted as `terraformableAgriBonus
 
 | File | Purpose |
 |------|---------|
-| `economy-model2.ts` | Pipeline + public API |
-| `system-model2.ts` | Link graph + `buildSystemModel2` |
-| `economy-documented.ts` | Body intrinsics, buffs, strong/weak apply |
-| `economy-ag-modifiers.ts` | Agriculture modifier tables + own-row vs strong-link split |
-| `economy-ag-heuristics.ts` | Weak-link budgets, floors, presets |
-| `economy-weak-links.ts` | Weak-link contributor rules, relay/security apply filters |
-| `economy-link-sources.ts` | Cluster farms, hub flattening, anchored farm detection |
-| `economy-facility-registry.ts` | Per–build-type facility intrinsics |
-| `economy-facilities.ts` | `calculateFacilityEconomies2` |
-| `economy-core.ts` | `adjust`, constants, `bodyIsTidalToStar`, ag flags |
+| `economy/index.ts` | Public re-exports |
+| `economy/economy-model2.ts` | Pipeline + public API |
+| `economy/system-model2.ts` | Link graph + `buildSystemModel2` |
+| `economy/economy-documented.ts` | Body intrinsics, buffs, strong/weak apply |
+| `economy/economy-ag-modifiers.ts` | Agriculture modifier tables + own-row vs strong-link split |
+| `economy/economy-ag-heuristics.ts` | Weak-link budgets, floors, presets |
+| `economy/economy-weak-links.ts` | Weak-link contributor rules, relay/security apply filters |
+| `economy/economy-link-sources.ts` | Cluster farms, hub flattening, anchored farm detection |
+| `economy/economy-facility-registry.ts` | Per–build-type facility intrinsics |
+| `economy/economy-facilities.ts` | `calculateFacilityEconomies2` |
+| `economy/economy-core.ts` | `adjust`, constants, `bodyIsTidalToStar`, ag flags |
+| `economy/compare/spansh-economy-resolve.ts` | Spansh compare resolution (UI) |
+| `economy/compare/spansh-compare-reliability.ts` | Compare confidence helpers (UI) |
 
 ### Where to change behavior
 
@@ -519,13 +522,13 @@ From `SystemView2` → `buildSystemModel2`. Persisted as `terraformableAgriBonus
 | Facility intrinsic / athena comms | `economy-facility-registry.ts` |
 | Body intrinsic / buffs / links | `economy-documented.ts` |
 | Agriculture modifiers | `economy-ag-modifiers.ts` |
-| Weak-link source rules | `economy-weak-links.ts`, `economy-link-sources.ts`, `system-model2.ts` |
-| Gas-giant cluster ag strong | `economy-link-sources.ts`, `system-model2.ts` |
-| Agriculture weak-link budgets | `economy-ag-heuristics.ts` |
-| Pipeline order | `economy-model2.ts` |
-| Spansh compare | `spansh-economy-resolve.ts`, `spansh-compare-reliability.ts` |
+| Weak-link source rules | `economy/economy-weak-links.ts`, `economy/economy-link-sources.ts`, `economy/system-model2.ts` |
+| Gas-giant cluster ag strong | `economy/economy-link-sources.ts`, `economy/system-model2.ts` |
+| Agriculture weak-link budgets | `economy/economy-ag-heuristics.ts` |
+| Pipeline order | `economy/economy-model2.ts` |
+| Spansh compare | `economy/compare/spansh-economy-resolve.ts`, `economy/compare/spansh-compare-reliability.ts` |
 
-### Types (`system-model2.ts`)
+### Types (`economy/system-model2.ts`)
 
 | Field | Meaning |
 |-------|---------|

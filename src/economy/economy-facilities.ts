@@ -1,4 +1,4 @@
-import { Economy, EconomyMap } from "./site-data";
+import { Economy, EconomyMap } from "../site-data";
 import { SiteMap2 } from "./system-model2";
 import { applyBuffs } from "./economy-documented";
 import { adjust, resetAgEconomyCalc } from "./economy-core";

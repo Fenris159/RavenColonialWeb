@@ -1,11 +1,11 @@
 import { ActionButton, Callout, DirectionalHint, Icon, IconButton, Link, mergeStyles, Stack } from "@fluentui/react";
 import { FunctionComponent, useState } from "react";
 import { LinkSrvSurvey } from "../../components/LinkSrvSurvey";
-import { applyBodyType, applyBuffs, applyStrongLinkBoost, bodyIsTidalToStar } from "../../economy-model2";
+import { applyBodyType, applyBuffs, applyStrongLinkBoost, bodyIsTidalToStar } from "../../economy";
 import { store } from "../../local-storage";
 import { Economy, getSiteType, mapName } from "../../site-data";
 import { predictSurfaceSlots } from '../../slot-prediction';
-import { AuditEconomy, BodyMap2, EconomyMap, SiteMap2 } from "../../system-model2";
+import { AuditEconomy, BodyMap2, EconomyMap, SiteMap2 } from "../../economy/system-model2";
 import { appTheme, cn } from "../../theme";
 import { BodyFeature, mapBodyFeature } from "../../types";
 import { Bod, BT } from "../../types2";

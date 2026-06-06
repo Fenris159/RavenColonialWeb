@@ -1,7 +1,7 @@
 
 import { store } from "../local-storage";
 import { SysEffects } from "../site-data";
-import { EconomyMap, TierPoints } from "../system-model2";
+import { EconomyMap, TierPoints } from "../economy/system-model2";
 import { BodyFeature, ReserveLevel } from "../types";
 import { Bod, Pop, Site, Sys } from "../types2";
 import { callAPI } from "./api-util";

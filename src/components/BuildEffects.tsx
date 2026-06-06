@@ -8,10 +8,10 @@ import { Icon, mergeStyleSets, Stack } from "@fluentui/react";
 import { TierPoint } from "./TierPoints";
 import { PadSize } from "./PadSize";
 import { HaulList } from "../views/SystemView2/HaulList";
-import { SiteMap2 } from "../system-model2";
+import { SiteMap2 } from "../economy/system-model2";
 import { EconomyBlock } from "./EconomyBlock";
-import { summarizeEconomicInfForBuild } from "../economy-facility-registry";
-import { isUndockableFacility } from "../spansh-compare-reliability";
+import { summarizeEconomicInfForBuild } from "../economy/economy-facility-registry";
+import { isUndockableFacility } from "../economy/compare/spansh-compare-reliability";
 import { SpanshCompareCaveat } from "./SpanshCompareCaveat";
 
 const { tds, tc, tr } = mergeStyleSets({

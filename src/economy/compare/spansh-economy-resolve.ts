@@ -1,8 +1,8 @@
-import type { GetRealEconomies } from "./api/v2-system";
-import type { BuildClass, PadSize } from "./site-data";
-import type { StationEDSM } from "./types";
-import type { Site } from "./types2";
-import { EconomyMap } from "./system-model2";
+import type { GetRealEconomies } from "../../api/v2-system";
+import type { BuildClass, PadSize } from "../../site-data";
+import type { StationEDSM } from "../../types";
+import type { Site } from "../../types2";
+import { EconomyMap } from "../system-model2";
 import {
   getSpanshCompareReliability,
   isSpanshCompareExcluded,

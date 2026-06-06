@@ -1,7 +1,7 @@
-import { Economy, EconomyMap } from "./site-data";
+import { Economy, EconomyMap } from "../site-data";
 import type { SiteMap2, SysMap2 } from "./system-model2";
-import { BodyFeature } from "./types";
-import { Bod, BT } from "./types2";
+import { BodyFeature } from "../types";
+import { Bod, BT } from "../types2";
 
 export interface EconomyModelOptions {
   enableTerraformableAgricultureBonus?: boolean;

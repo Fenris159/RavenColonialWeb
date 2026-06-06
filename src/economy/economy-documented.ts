@@ -1,4 +1,4 @@
-import { Economy, EconomyMap } from "./site-data";
+import { Economy, EconomyMap } from "../site-data";
 import { applyAgricultureBodyBuffs, calculateAgricultureStrongLinkContribution } from "./economy-ag-modifiers";
 import {
   getAgricultureStrongLinkSourceValue,
@@ -32,8 +32,8 @@ import {
   siteContributesWeakLinks,
 } from "./economy-weak-links";
 import type { SiteMap2 } from "./system-model2";
-import { BodyFeature } from "./types";
-import { BT } from "./types2";
+import { BodyFeature } from "../types";
+import { BT } from "../types2";
 
 export const applySpecializedPort = (map: EconomyMap, site: SiteMap2) => {
   if (!site.type.fixed || site.type.fixed === 'none' || site.type.fixed === 'colony') {

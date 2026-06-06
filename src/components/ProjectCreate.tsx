@@ -10,7 +10,7 @@ import { delay } from '../util';
 import { CopyButton } from './CopyButton';
 import { ViewEditBody } from '../views/SystemView2/ViewEditBody';
 import { Bod } from '../types2';
-import { BodyMap2 } from '../system-model2';
+import { BodyMap2 } from '../economy/system-model2';
 import { getAvgHaulCosts } from '../avg-haul-costs';
 
 interface ProjectCreateProps {

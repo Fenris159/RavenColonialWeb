@@ -5,7 +5,7 @@ import { ActionButton, Icon, IconButton, Stack } from "@fluentui/react";
 import { ViewEditName } from "./ViewEditName";
 import { appTheme, cn } from "../../theme";
 import { mapSiteGraphTypeIcon, SitesViewProps } from "./SystemView2";
-import { SiteMap2 } from "../../system-model2";
+import { SiteMap2 } from "../../economy/system-model2";
 import { EconomyBlocks, MarketLinkBlocks } from "../../components/MarketLinks/MarketLinks";
 import { ViewEditBuildStatus } from "./ViewEditStatus";
 import { BuildStatus } from "../../types2";

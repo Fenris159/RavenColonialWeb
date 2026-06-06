@@ -4,9 +4,9 @@ import { SystemView2 } from "./SystemView2";
 import { appTheme } from '../../theme';
 import { isMobile } from '../../util';
 import { EconomyTable2 } from './EconomyTable2';
-import { EconomyMap } from "../../system-model2";
+import { EconomyMap } from "../../economy/system-model2";
 import { App } from "../../App";
-import { isSpanshCompareExcluded, spanshMismatchIsInformational } from "../../spansh-compare-reliability";
+import { isSpanshCompareExcluded, spanshMismatchIsInformational } from "../../economy/compare/spansh-compare-reliability";
 
 export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onClose: () => void }> = (props) => {
   const [onlyProblems, setOnlyProblems] = useState(window.location.hostname.includes('localhost'));

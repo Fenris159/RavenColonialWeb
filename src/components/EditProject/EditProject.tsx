@@ -9,7 +9,7 @@ import { ChooseBody } from "../ChooseBody";
 import { TimeRemaining } from "../TimeRemaining";
 import { delay, isMobile } from '../../util';
 import { CalloutMsg } from '../CalloutMsg';
-import { SysMap2 } from '../../system-model2';
+import { SysMap2 } from '../../economy/system-model2';
 
 
 interface ChooseEditProjectProps {
