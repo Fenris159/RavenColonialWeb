@@ -25,7 +25,7 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
   const validSites = sites;
 
   const colorYellow = appTheme.isInverted ? appTheme.palette.yellow : 'goldenrod';
-  const { sysMap, realEconomies } = props.sysView.state;
+  const { sysMap } = props.sysView.state;
 
   // find sites where predicted economies do not match Spansh
   const nonMatchingSites = !loadingRealEconomies && sysMap.siteMaps.filter(site => {

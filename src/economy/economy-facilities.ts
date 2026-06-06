@@ -3,7 +3,6 @@ import { SiteMap2 } from "./system-model2";
 import { applyBuffs } from "./economy-documented";
 import { adjust, resetAgEconomyCalc } from "./economy-core";
 import {
-  bodyHasOperationalCommsForAthena,
   resolveFacilityIntrinsicFromRegistry,
 } from "./economy-facility-registry";
 

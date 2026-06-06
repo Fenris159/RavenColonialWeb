@@ -43,7 +43,7 @@ export const findRealEconomiesRow = (
 };
 
 /** EDSM returns marketId as string; live API sometimes uses number. */
-export const parseEdsmMarketId = (marketId: string | number | undefined): number | undefined => {
+const parseEdsmMarketId = (marketId: string | number | undefined): number | undefined => {
   if (marketId === undefined || marketId === null || marketId === "") {
     return undefined;
   }
@@ -51,7 +51,7 @@ export const parseEdsmMarketId = (marketId: string | number | undefined): number
   return Number.isFinite(n) && n > 0 ? n : undefined;
 };
 
-export const coerceSiteMarketId = (marketId: number | string | undefined): number | undefined => {
+const coerceSiteMarketId = (marketId: number | string | undefined): number | undefined => {
   if (marketId === undefined || marketId === null || marketId === "") {
     return undefined;
   }
@@ -91,7 +91,7 @@ export const mergeMarketIdByNameIndexes = (
   return out;
 };
 
-export const hasEdsmMarketIdIndex = (index: Record<string, number> | undefined): boolean =>
+const hasEdsmMarketIdIndex = (index: Record<string, number> | undefined): boolean =>
   !!index && Object.keys(index).length > 0;
 
 /** True when EDSM resolved a marketId that is missing from the current Spansh economies payload. */
@@ -145,10 +145,10 @@ export const buildEdsmMarketIdByNormalizedName = (
   return out;
 };
 
-export type SpanshEconomyMatchKind = "marketId" | "edsmName" | "none";
+type SpanshEconomyMatchKind = "marketId" | "edsmName" | "none";
 
 /** UI copy when Spansh row was found via EDSM station name (not journal id). */
-export const formatEdsmNameMatchNote = (
+const formatEdsmNameMatchNote = (
   rcMarketId: number | undefined,
   spanshMarketId: number,
 ): string => {
@@ -158,7 +158,7 @@ export const formatEdsmNameMatchNote = (
   return `EDSM name match (no RC marketId -> Spansh ${spanshMarketId})`;
 };
 
-export interface ResolvedSpanshEconomy {
+interface ResolvedSpanshEconomy {
   row: GetRealEconomies;
   spanshMarketId: number;
   kind: SpanshEconomyMatchKind;

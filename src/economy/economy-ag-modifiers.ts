@@ -28,7 +28,7 @@ interface AgricultureBodyModifierRule {
   applies: (ctx: AgricultureModifierContext) => boolean;
 }
 
-export const isSameBodyElwWwColonySource = (source: SiteMap2 | undefined, site: SiteMap2): boolean => {
+const isSameBodyElwWwColonySource = (source: SiteMap2 | undefined, site: SiteMap2): boolean => {
   return !!source &&
     source.body === site.body &&
     source.type.inf === 'colony' &&
@@ -78,9 +78,6 @@ export const AGRICULTURE_STRONG_LINK_MODIFIER_RULES: AgricultureBodyModifierRule
     applies: ({ site }) => bodyIsTidalToStar(site.sys, site.body),
   },
 ];
-
-/** @deprecated Alias for strong-link rules; use explicit names below. */
-export const AGRICULTURE_BODY_MODIFIER_RULES = AGRICULTURE_STRONG_LINK_MODIFIER_RULES;
 
 /** Positive modifiers for a port's own agriculture row (after body intrinsics). */
 export const AGRICULTURE_INTRINSIC_BODY_BUFF_RULES = AGRICULTURE_STRONG_LINK_MODIFIER_RULES.filter(
@@ -134,15 +131,6 @@ export function shouldSkipPositiveAgricultureBodyBuffs(site: SiteMap2): boolean 
   }
 
   return surface.type.buildClass === 'outpost' || surface.type.buildClass === 'starport';
-}
-
-/** @deprecated Use getAgricultureStrongLinkModifierDeltas or getAgricultureIntrinsicBodyBuffDeltas. */
-export function getAgricultureBodyModifierDeltas(
-  site: SiteMap2,
-  options?: AgricultureModifierOptions,
-  sourceSite?: SiteMap2,
-) {
-  return getAgricultureStrongLinkModifierDeltas(site, options, sourceSite);
 }
 
 export function applyAgricultureBodyBuffs(

@@ -22,7 +22,7 @@ const isRelayInstallationWeakContributor = (s: SiteMap2): boolean =>
  * facilities; Mega Guide: non-port facilities weak-link all ports outside their local body.
  * Distinct from military hub installations (alastor / vacuna), which strong-link locally only.
  */
-export const SECURITY_INSTALLATION_BUILD_TYPES = new Set([
+const SECURITY_INSTALLATION_BUILD_TYPES = new Set([
   "dicaeosyne",
   "eunomia",
   "nomos",
@@ -37,7 +37,7 @@ const isSecurityInstallationWeakContributor = (s: SiteMap2): boolean =>
   isSecurityInstallation(s);
 
 /** Military hub installations — strong-link local ports; do not weak-link outward. */
-export const isMilitaryHubInstallation = (s: SiteMap2): boolean =>
+const isMilitaryHubInstallation = (s: SiteMap2): boolean =>
   s.type.buildClass === "installation" &&
   (s.buildType === "alastor" || s.buildType === "vacuna");
 

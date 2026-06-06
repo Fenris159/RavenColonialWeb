@@ -94,15 +94,6 @@ const usesOrbitalClusterWeakLinkBudget = (site: SiteMap2) =>
   AG_WEAK_LINK_ORBITAL_CLUSTER_BUILD_TYPES.has(site.buildType) &&
   site.type.orbital;
 
-/** @deprecated Use AG_WEAK_LINK_BUDGET + weakLinkBudgetToMaxSources */
-export const AG_WEAK_LINK_CAP_DEFAULT = weakLinkBudgetToMaxSources(AG_WEAK_LINK_BUDGET.DEFAULT);
-
-/** @deprecated Use AG_WEAK_LINK_BUDGET + weakLinkBudgetToMaxSources */
-export const AG_WEAK_LINK_CAP_SAME_BODY_STRONG = weakLinkBudgetToMaxSources(AG_WEAK_LINK_BUDGET.SAME_BODY_SETTLEMENT);
-
-/** @deprecated Use AG_WEAK_LINK_BUDGET + weakLinkBudgetToMaxSources */
-export const AG_WEAK_LINK_CAP_HMC_STARPORT = weakLinkBudgetToMaxSources(AG_WEAK_LINK_BUDGET.HMC_STARPORT);
-
 export function weakLinkBudgetToMaxSources(budget: number): number {
   if (budget <= 0) {
     return 0;

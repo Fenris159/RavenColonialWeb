@@ -2,10 +2,10 @@ import type { BodyMap2, SiteMap2 } from "./system-model2";
 import { BT, Bod } from "../types2";
 
 /** Agriculture installations that can strong-link ports on sibling moons under the same gas giant. */
-export const GAS_GIANT_CLUSTER_AG_INSTALLATION_BUILD_TYPES = new Set(["demeter", "picumnus"]);
+const GAS_GIANT_CLUSTER_AG_INSTALLATION_BUILD_TYPES = new Set(["demeter", "picumnus"]);
 
 /** Nearest gas-giant body num along `body.parents`, if any. */
-export const getGasGiantParentNum = (body: Bod | undefined, allBodies: Bod[]): number | undefined => {
+const getGasGiantParentNum = (body: Bod | undefined, allBodies: Bod[]): number | undefined => {
   if (!body?.parents?.length) {
     return undefined;
   }

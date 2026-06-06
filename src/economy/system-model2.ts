@@ -14,26 +14,6 @@ import { Bod, BT, Site, Sys } from '../types2';
 
 export const unknown = 'Unknown';
 
-// const sysMapCache: Record<string, SysMap> = {};
-
-// /** Returns what ever cached value we have for the given system */
-// export const getSysMap = (systemName: string): SysMap | undefined => {
-//   // return what ever we have cached
-//   return sysMapCache[systemName];
-// }
-
-// /** Returns cached value, or requests + calculates, for the given system. Automatically includes incomplete sites. */
-// export const fetchSysMap = async (systemName: string): Promise<SysMap> => {
-//   // return from cache if already present
-//   if (sysMapCache[systemName]) {
-//     return sysMapCache[systemName];
-//   }
-
-//   const projects = await api.system.findAllBySystem(systemName);
-//   const sysMap = buildSystemModel(projects, true);
-//   return sysMap;
-// }
-
 export type SysUnlocks =
   | 'SettlementTourist'
   | 'InstallationTourist'
@@ -220,7 +200,6 @@ export interface EconomyLink {
 }
 
 export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: boolean, economyModelOptions?: EconomyModelOptions): SysMap2 => {
-  // const orderIDs = sys.sites.map(s => s.id); // necessary?
   const idxLimit = sys.idxCalcLimit ?? sys.sites.length;
 
   // the primary port is always the first site
@@ -367,22 +346,6 @@ const initializeSysMap = (sys: Sys, useIncomplete: boolean, idxLimit: number): S
     }
     return map;
   }, {} as Record<string, BodyMap2>);
-
-  // // sort bodies name but force Unknown to be first in the list
-  // const sortedKeys = Object.keys(bodies)
-  //   .filter(n => n !== unknown)
-  //   .sort();
-  // if (unknown in bodies) {
-  //   sortedKeys.unshift(unknown);
-  // }
-  // const bodyMap: Record<string, BodyMap> = {};
-  // for (let key of sortedKeys) { bodyMap[key] = bodyMap[key]; }
-
-  // // sort all sites and sites-per-body by timeCompleted, forcing unknown to be last
-  // allSites = allSites.sort((a, b) => (a.timeCompleted ?? '9000')?.localeCompare(b.timeCompleted ?? '9000'));
-  // for (let body of Object.values(bodyMap)) {
-  //   body.sites = body.sites.sort((a, b) => (a.timeCompleted ?? '9000')?.localeCompare(b.timeCompleted ?? '9000'));
-  // }
 
   const countSites = sys.sites.length;
   const sysMap: SysMapBuild = {
@@ -644,8 +607,6 @@ const siteSharesPrimaryLinkPool = (site: SiteMap2): boolean => {
 /** Non-primary ports/outposts on a body use the same link candidate pool as the body primary. */
 const shareColonyLinkPoolFromPrimary = (
   body: BodyMap2,
-  bodyMap: Record<string, BodyMap2>,
-  allBodies: Bod[],
   primarySite: SiteMap2 | undefined,
   calcIds: string[],
 ) => {
@@ -653,7 +614,7 @@ const shareColonyLinkPoolFromPrimary = (
     return;
   }
 
-  const { strongSites, weakSites, sameBodyWeakSites = [] } = primarySite.links;
+  const { weakSites, sameBodyWeakSites = [] } = primarySite.links;
   for (const site of body.sites) {
     if (site === primarySite || site.links) {
       continue;
@@ -726,20 +687,8 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
   }
   const linkPoolPrimary = body.surfacePrimary ?? body.orbitalPrimary;
   if (linkPoolPrimary) {
-    shareColonyLinkPoolFromPrimary(body, bodyMap, sys.bodies, linkPoolPrimary, calcIds);
+    shareColonyLinkPoolFromPrimary(body, linkPoolPrimary, calcIds);
   }
-
-  // // order by surface, then tier
-  // const sortedSites = [...body.sites].sort((a, b) => {
-  //   let val = (a.type.orbital ? 1 : 0) - (b.type.orbital ? 1 : 0);
-  //   if (val === 0) {
-  //     val = b.type.tier - a.type.tier;
-  //   }
-  //   if (val === 0) {
-  //     val = b.buildName.localeCompare(a.buildName);
-  //   }
-  //   return val;
-  // });
 
   // then calculate the economies after that
   for (const site of body.sites) {
