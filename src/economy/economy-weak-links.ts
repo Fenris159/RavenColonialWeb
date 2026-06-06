@@ -17,6 +17,11 @@ export const isRelayInstallation = (s: SiteMap2): boolean =>
 const isRelayInstallationWeakContributor = (s: SiteMap2): boolean =>
   s.type.buildClass === "installation" && isRelayInstallation(s);
 
+/** Medical hightech installations weak-link hightech as supporting facilities. */
+export const isMedicalHightechInstallation = (s: SiteMap2): boolean =>
+  s.type.buildClass === "installation" &&
+  (s.buildType === "asclepius" || s.buildType === "eupraxia");
+
 /**
  * Security installations (dicaeosyne / eunomia / nomos / poena) — Update 3 supporting
  * facilities; Mega Guide: non-port facilities weak-link all ports outside their local body.
@@ -56,6 +61,7 @@ export const relayWeakLinkAppliesEconomyTo = (
   source: SiteMap2,
   receiver: SiteMap2,
   receiverMap?: { hightech?: number },
+  receiverHasHightechWeakAnchor?: boolean,
 ): boolean => {
   if (!isRelayInstallation(source)) {
     return true;
@@ -63,7 +69,7 @@ export const relayWeakLinkAppliesEconomyTo = (
   if (receiver.type.buildClass !== "starport") {
     return true;
   }
-  return (receiverMap?.hightech ?? 0) > 0;
+  return (receiverMap?.hightech ?? 0) > 0 || !!receiverHasHightechWeakAnchor;
 };
 
 /** Security installations weak-link all non-local ports (+5% military each), per Update 3 / Mega Guide. */
@@ -93,6 +99,9 @@ export const siteContributesWeakLinks = (s: SiteMap2): boolean => {
       return isDemeterSpaceFarm(s) && !isAnchoredSpaceFarmInstallation(s);
     }
     if (isRelayInstallationWeakContributor(s) || isSecurityInstallationWeakContributor(s)) {
+      return true;
+    }
+    if (isMedicalHightechInstallation(s)) {
       return true;
     }
     if (s.type.inf === 'military' || isMilitaryHubInstallation(s)) {

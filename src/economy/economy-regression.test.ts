@@ -178,4 +178,98 @@ describe("economy regressions", () => {
       }),
     );
   });
+
+  it("applies relay and medical hightech weak support when a hightech anchor exists", () => {
+    const body = {
+      features: [],
+      name: "Hightech weak-link body",
+      num: 1,
+      parents: [],
+      type: BT.rb,
+    };
+    const sys = {
+      bodies: [body],
+      reserveLevel: "common",
+    } as unknown as SysMap2;
+    const hightechSources = [
+      {
+        buildType: "enodia",
+        id: "alpha-relay",
+        name: "Alpha Relay",
+        type: { buildClass: "installation", inf: "hightech" },
+      },
+      {
+        buildType: "chronos",
+        id: "bio-settlement",
+        name: "Bio Settlement",
+        primaryEconomy: "hightech",
+        type: { buildClass: "settlement", inf: "hightech" },
+      },
+      {
+        buildType: "eupraxia",
+        id: "medical",
+        name: "Medical Center",
+        type: { buildClass: "installation", inf: "hightech" },
+      },
+      {
+        buildType: "enodia",
+        id: "zeta-relay",
+        name: "Zeta Relay",
+        type: { buildClass: "installation", inf: "hightech" },
+      },
+    ].map(source => ({
+      body,
+      sys,
+      status: "complete",
+      ...source,
+    })) as unknown as SiteMap2[];
+    const createTarget = (buildClass: "outpost" | "starport") => ({
+      body,
+      economyAudit: [],
+      id: buildClass,
+      links: {
+        economies: {},
+        strongSites: [],
+        weakSites: hightechSources,
+      },
+      name: buildClass,
+      sys,
+      type: {
+        buildClass,
+        inf: buildClass === "outpost" ? "military" : "colony",
+      },
+    }) as unknown as SiteMap2;
+    const calcIds = [
+      ...hightechSources.map(source => source.id),
+      "outpost",
+      "starport",
+    ];
+    const outpost = createTarget("outpost");
+    const starport = createTarget("starport");
+    const outpostMap = createEconomyMap();
+    const starportMap = createEconomyMap();
+
+    applyWeakLinks(outpostMap, outpost, calcIds);
+    applyWeakLinks(starportMap, starport, calcIds);
+
+    expect(outpostMap.hightech).toBe(0.2);
+    expect(outpost.economyAudit).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Alpha Relay" }),
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Bio Settlement" }),
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Medical Center" }),
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Zeta Relay" }),
+      ]),
+    );
+
+    expect(starportMap.hightech).toBe(0.2);
+    expect(starport.economyAudit).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Alpha Relay" }),
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Bio Settlement" }),
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Medical Center" }),
+        expect.objectContaining({ inf: "hightech", reason: "Apply weak link from: Zeta Relay" }),
+      ]),
+    );
+  });
 });

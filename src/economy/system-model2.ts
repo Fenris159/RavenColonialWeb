@@ -239,10 +239,17 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
     }
   }
 
-  // per body, calc strong/weak links
+  // Per body, assemble strong/weak link graphs.
   for (const body of allBodies) {
-    calcBodyLinks(sysMap.bodyMap, body, sys, sysMap.calcIds, economyModelOptions);
+    calcBodyLinks(sysMap.bodyMap, body, sys, sysMap.calcIds);
   }
+
+  // Then calculate link economies after every body has published its link pools.
+  for (const site of sysMap.siteMaps) {
+    calcSiteEconomies(site, sysMap.calcIds, economyModelOptions);
+  }
+
+  stabilizeSiteEconomies(sysMap.siteMaps, sysMap.calcIds, economyModelOptions);
 
   // calc sum effects from all sites
   const { tierPoints, taxCount } = sumTierPoints(sysMap.siteMaps, sysMap.calcIds, !useIncomplete);
@@ -679,7 +686,7 @@ const buildSharedStrongSitesForPort = (
   return out;
 };
 
-const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {
+const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[]) => {
 
   // exit early if no primary port for this body
   if (!body.surfacePrimary && !body.orbitalPrimary) { return; }
@@ -695,11 +702,6 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
   if (linkPoolPrimary) {
     shareColonyLinkPoolFromPrimary(body, linkPoolPrimary, calcIds);
   }
-
-  // then calculate the economies after that
-  for (const site of body.sites) {
-    calcSiteEconomies(site, calcIds, economyModelOptions);
-}
 }
 
 /** T1/T2/T3 starports and outposts only contribute weak links when subordinate to another station. */
@@ -864,6 +866,89 @@ const ensureSiteEconomiesCalculated = (
       delete s.economyCalcState;
     }
   }
+};
+
+const recalculateSiteEconomies = (
+  s: SiteMap2,
+  calcIds: string[],
+  economyModelOptions?: EconomyModelOptions,
+): boolean => {
+  if (s.status === 'demolish' || !calcIds.includes(s.id)) {
+    return false;
+  }
+
+  const shouldCalculateColonyEconomy = usesGeneratedColonyEconomy(s);
+  const shouldCalculateFacilityEconomy = !shouldCalculateColonyEconomy && isFacilityWithEconomy(s);
+  if (!shouldCalculateColonyEconomy && !shouldCalculateFacilityEconomy) {
+    return false;
+  }
+
+  s.economyCalcState = "calculating";
+  try {
+    if (shouldCalculateColonyEconomy) {
+      calculateColonyEconomies2(s, calcIds, economyModelOptions);
+    } else {
+      calculateFacilityEconomies2(s, calcIds, economyModelOptions);
+    }
+    s.economyCalcState = "done";
+    return true;
+  } finally {
+    if (s.economyCalcState === "calculating") {
+      delete s.economyCalcState;
+    }
+  }
+};
+
+const MAX_ECONOMY_STABILIZATION_PASSES = 5;
+
+const siteEconomySignature = (site: SiteMap2): string => {
+  const economies = site.economies
+    ? (Object.keys(site.economies) as Array<keyof EconomyMap>)
+      .sort()
+      .map(key => `${key}:${site.economies![key]}`)
+      .join(',')
+    : '';
+  const links = site.links?.economies
+    ? Object.keys(site.links.economies)
+      .sort()
+      .map(key => {
+        const link = site.links!.economies[key];
+        return `${key}:${link.strong}/${link.weak}`;
+      })
+      .join(',')
+    : '';
+
+  return `${site.id}|${site.primaryEconomy ?? ''}|${economies}|${links}`;
+};
+
+const economySignature = (siteMaps: SiteMap2[]): string =>
+  siteMaps
+    .filter(site => usesGeneratedColonyEconomy(site) || isFacilityWithEconomy(site))
+    .map(siteEconomySignature)
+    .join('\n');
+
+const stabilizeSiteEconomies = (
+  siteMaps: SiteMap2[],
+  calcIds: string[],
+  economyModelOptions?: EconomyModelOptions,
+) => {
+  for (let pass = 0; pass < MAX_ECONOMY_STABILIZATION_PASSES; pass++) {
+    const before = economySignature(siteMaps);
+
+    for (const site of siteMaps) {
+      recalculateSiteEconomies(site, calcIds, economyModelOptions);
+    }
+    for (const site of siteMaps) {
+      calcSiteEconomies(site, calcIds, economyModelOptions);
+    }
+
+    const after = economySignature(siteMaps);
+    if (after === before) {
+      return;
+    }
+  }
+
+  console.warn(`Economy model did not stabilize after ${MAX_ECONOMY_STABILIZATION_PASSES} passes`);
 };
 
 const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOptions?: EconomyModelOptions) => {

@@ -25,6 +25,7 @@ import {
   isGasGiantClusterAgricultureInstallation,
 } from "./economy-link-sources";
 import {
+  isRelayInstallation,
   isStarBodyPrimaryTieredPort,
   relayWeakLinkAppliesEconomyTo,
   securityWeakLinkAppliesEconomyTo,
@@ -586,12 +587,29 @@ const applyWeakLinksFromSources = (
   const agricultureBudgetLabel = Number.isFinite(maxAgricultureWeakLinkBudget)
     ? `budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%`
     : 'uncapped';
+  const hasHightechWeakAnchor = orderedWeakSites.some(s => {
+    if (!calcIds.includes(s.id)) { return false; }
+    if (!siteContributesWeakLinks(s)) { return false; }
+    if (siteAlreadyStrongLinkedTo(s, site)) { return false; }
+    if (isRelayInstallation(s)) { return false; }
+    if (s.type.inf === 'hightech') {
+      return !isStarBodyPrimaryTieredPort(s);
+    }
+    if (s.type.inf !== 'colony') {
+      return false;
+    }
+    if (!s.primaryEconomy || s.primaryEconomy !== 'hightech') {
+      return false;
+    }
+    const isBodyPrimary = s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary;
+    return !isBodyPrimary && !isStarBodyPrimaryTieredPort(s);
+  });
 
   for (let s of orderedWeakSites) {
     if (!calcIds.includes(s.id)) { continue; }
     if (!siteContributesWeakLinks(s)) { continue; }
     if (siteAlreadyStrongLinkedTo(s, site)) { continue; }
-    if (!relayWeakLinkAppliesEconomyTo(s, site, map)) { continue; }
+    if (!relayWeakLinkAppliesEconomyTo(s, site, map, hasHightechWeakAnchor)) { continue; }
     if (!securityWeakLinkAppliesEconomyTo(s, site)) { continue; }
 
     let inf = s.type.inf;
