@@ -447,6 +447,14 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
           edsmStationCount: edsmPayload.stationCount,
           spanshCompareLoading: false,
         });
+      })
+      .catch(err => {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error('Spansh compare failed:', err);
+        this.setState({
+          edsmCompareError: message,
+          spanshCompareLoading: false,
+        });
       });
   };
 

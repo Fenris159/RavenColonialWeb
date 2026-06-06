@@ -179,6 +179,9 @@ export interface SiteMap2 extends Site {
   /** Agriculture calculation flags; reset each time economies are calculated. */
   agEconomyCalc?: AgEconomyCalcFlags;
 
+  /** Internal guard for economy dependency pre-calculation. */
+  economyCalcState?: "pending" | "calculating" | "done";
+
   /** Calculated points needed to start construction */
   calcNeeds?: { tier: number; count: number; }
 }
@@ -227,6 +230,13 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
   // assign subordinate links before weak-link sources are collected (sheet: tiered stations only weak-link when subordinate)
   for (const body of allBodies) {
     assignBodySubordinateLinks(sys.bodies, sysMap.bodyMap, body, sysMap.calcIds);
+  }
+
+  for (const site of sysMap.siteMaps) {
+    if (site.status === 'demolish' || !sysMap.calcIds.includes(site.id)) { continue; }
+    if (usesGeneratedColonyEconomy(site) || isFacilityWithEconomy(site)) {
+      site.economyCalcState = "pending";
+    }
   }
 
   // per body, calc strong/weak links
@@ -471,11 +481,7 @@ const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: bo
     // skip incomplete sites, unless ...
     if (!calcIds.includes(site.id)) continue;
 
-    if (['settlement', 'outpost', 'starport'].includes(site.type.buildClass)) {
-      calculateColonyEconomies2(site, calcIds, economyModelOptions);
-    } else if (isFacilityWithEconomy(site)) {
-      calculateFacilityEconomies2(site, calcIds, economyModelOptions);
-    }
+    ensureSiteEconomiesCalculated(site, calcIds, economyModelOptions);
     const inf = site.primaryEconomy ?? site.type.inf;
 
     if (inf !== 'none') {
@@ -823,15 +829,40 @@ const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: Bod
   }
 }
 
-const precalcLinkSourceEconomies = (
+const usesGeneratedColonyEconomy = (site: SiteMap2): boolean =>
+  ['settlement', 'outpost', 'starport'].includes(site.type.buildClass);
+
+const ensureSiteEconomiesCalculated = (
   s: SiteMap2,
   calcIds: string[],
   economyModelOptions?: EconomyModelOptions,
-) => {
-  if (s.type.inf === "colony") {
-    calculateColonyEconomies2(s, calcIds, economyModelOptions);
-  } else if (isFacilityWithEconomy(s)) {
-    calculateFacilityEconomies2(s, calcIds, economyModelOptions);
+): boolean => {
+  if (s.economyCalcState === "done") {
+    return true;
+  }
+  if (s.economyCalcState === "calculating") {
+    return false;
+  }
+
+  const shouldCalculateColonyEconomy = usesGeneratedColonyEconomy(s);
+  const shouldCalculateFacilityEconomy = !shouldCalculateColonyEconomy && isFacilityWithEconomy(s);
+  if (!shouldCalculateColonyEconomy && !shouldCalculateFacilityEconomy) {
+    return true;
+  }
+
+  s.economyCalcState = "calculating";
+  try {
+    if (shouldCalculateColonyEconomy) {
+      calculateColonyEconomies2(s, calcIds, economyModelOptions);
+    } else {
+      calculateFacilityEconomies2(s, calcIds, economyModelOptions);
+    }
+    s.economyCalcState = "done";
+    return true;
+  } finally {
+    if (s.economyCalcState === "calculating") {
+      delete s.economyCalcState;
+    }
   }
 };
 
@@ -856,13 +887,15 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
     // this mimicks the in-game UI behavior
     const curSiteLinks: Set<ConcreteEconomy> = new Set();
     if (inf === 'colony') {
-      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
+      if (!ensureSiteEconomiesCalculated(s, calcIds, economyModelOptions)) {
+        continue;
+      }
       const pe = s.primaryEconomy;
       if (pe && pe !== 'none' && pe !== 'colony') {
         curSiteLinks.add(pe);
       }
     } else {
-      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
+      ensureSiteEconomiesCalculated(s, calcIds, economyModelOptions);
       curSiteLinks.add(inf);
     }
 
@@ -891,13 +924,15 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
     const inf = s.type.inf;
     if (inf === 'none') continue;
     if (inf === 'colony') {
-      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
+      if (!ensureSiteEconomiesCalculated(s, calcIds, economyModelOptions)) {
+        continue;
+      }
       const pe = s.primaryEconomy;
       if (pe && pe !== 'none' && pe !== 'colony') {
         map[pe].weak++;
       }
     } else {
-      precalcLinkSourceEconomies(s, calcIds, economyModelOptions);
+      ensureSiteEconomiesCalculated(s, calcIds, economyModelOptions);
       if (!map[inf]) { map[inf] = { strong: 0, weak: 0 }; }
       map[inf].weak++;
     }

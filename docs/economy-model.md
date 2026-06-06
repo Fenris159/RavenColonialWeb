@@ -555,7 +555,7 @@ When Mega Guide and observed markets disagree, documented rules define intent; h
 
 ## Verification
 
-Economy regressions live under `local/economy/tests/` (not in PR). Run `npm run test:economy` from the repo root. Scenarios exercised include:
+Tracked PR smoke regressions live under `src/economy/`; run `npm run test:economy` from the repo root. The broader fixture/Spansh verification suite lives under `local/economy/tests/` (not in PR). Scenarios exercised across those suites include:
 
 | Scenario | What it validates |
 |----------|-------------------|

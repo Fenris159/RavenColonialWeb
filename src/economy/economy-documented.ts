@@ -340,6 +340,9 @@ export const applyStrongLinks2 = (
     }
 
     if (!s.primaryEconomy) {
+      if (s.economyCalcState === 'calculating' || s.economyCalcState === 'pending') {
+        continue;
+      }
       console.warn(`Why no primaryEconomy yet for '${s.name}' generating for: ${site.name} ?`);
       continue;
     }
@@ -545,7 +548,7 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
     if (site.sys.bodies.some(b => b.type === BT.bh)) {
       adjust('tourism', +0.4, 'Buff: system has a Black Hole', map, site, 'sys');
     }
-    if (site.sys.bodies.some(b => b.type === BT.bh)) {
+    if (site.sys.bodies.some(b => b.type === BT.ns)) {
       adjust('tourism', +0.4, 'Buff: system has a Neutron Star', map, site, 'sys');
     }
     if (site.sys.bodies.some(b => b.type === BT.wd)) {
@@ -577,6 +580,9 @@ const applyWeakLinksFromSources = (
     foreignStarAgWeakLinksUsed,
   } = ctx;
   const orderedWeakSites = [...sources].sort((a, b) => a.name.localeCompare(b.name));
+  const agricultureBudgetLabel = Number.isFinite(maxAgricultureWeakLinkBudget)
+    ? `budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%`
+    : 'uncapped';
 
   for (let s of orderedWeakSites) {
     if (!calcIds.includes(s.id)) { continue; }
@@ -595,7 +601,7 @@ const applyWeakLinksFromSources = (
       const sourceLabel = intrinsicSourceOnly ? 'intrinsic source only, ' : '';
       noteSkippedWeakLink(
         'agriculture',
-        `Skipped weak link from: ${sourceName} (${sourceLabel}cap reached, budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%)`,
+        `Skipped weak link from: ${sourceName} (${sourceLabel}cap reached, ${agricultureBudgetLabel})`,
         map,
         site,
       );
@@ -604,6 +610,9 @@ const applyWeakLinksFromSources = (
 
     if (inf === 'colony') {
       if (!s.primaryEconomy) {
+        if (s.economyCalcState === 'calculating' || s.economyCalcState === 'pending') {
+          continue;
+        }
         console.warn(`Why no primaryEconomy yet for '${s.name}' generating for: ${site.name} ?`);
         continue;
       }
@@ -621,7 +630,7 @@ const applyWeakLinksFromSources = (
         adjust(
           weakInf,
           WEAK_LINK_AGRICULTURE_DELTA,
-          `Apply weak link from: ${s.name} (intrinsic source only, budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%)`,
+          `Apply weak link from: ${s.name} (intrinsic source only, ${agricultureBudgetLabel})`,
           map,
           site,
         );
@@ -641,7 +650,7 @@ const applyWeakLinksFromSources = (
         adjust(
           inf,
           WEAK_LINK_AGRICULTURE_DELTA,
-          `Apply weak link from: ${s.name} (source only, budget ${Math.round(maxAgricultureWeakLinkBudget * 100)}%)`,
+          `Apply weak link from: ${s.name} (source only, ${agricultureBudgetLabel})`,
           map,
           site,
         );
