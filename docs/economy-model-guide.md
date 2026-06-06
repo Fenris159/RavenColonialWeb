@@ -1,46 +1,44 @@
 # How colonization economies work
 
-A plain-language guide to how Raven Colonial estimates market economy percentages for your ports. This describes the same rules as the [technical economy model](./economy-model.md), without implementation detail.
+A plain-language guide for **Elite Dangerous** colonizers using Raven Colonial to plan Odyssey settlements, installations, and dockable ports. It describes the same rules as the [technical economy model](./economy-model.md), without code or file names.
 
-**What you see in the app:** each dockable port gets a percentage per economy type (Agriculture, Refinery, Military, and so on). Those numbers are built from the port’s **home body**, **system resources**, and **links** to other facilities and ports across the system. The economy table’s audit trail is a **ledger**: every line is a +5%, +40%, +80%, or +100% step; the displayed percent is the sum (225% means 2.25 in the data).
+**What you see in the architect:** each **starport**, **outpost**, or **settlement** that shows a market gets a percentage per economy type (Agriculture, Refinery, Military, High Tech, and so on). Those numbers come from the port’s **landable body**, the **system’s resource level** (Pristine, Depleted, etc.), and **market links** to other builds in the same system. The economy table’s audit trail is a **ledger**: every line is a +5%, +40%, +80%, or +100% step. **225%** in the UI means 2.25 in the game data.
 
-**External check:** where stations are complete in-game, the architect UI can compare estimates against **Spansh** market snapshots.
+**Spansh check:** for **completed** stations you can dock in-game, the UI can compare Raven Colonial’s estimate against **Spansh** market snapshots.
 
-**Two docs:** this guide explains *what happens* in player terms. [economy-model.md](./economy-model.md) maps the same rules to source files and formulas.
+**Two docs:** this guide is for planners and CMDRs. [economy-model.md](./economy-model.md) is the full technical spec for developers.
 
 ---
 
 ## The big picture
 
-Think of each port’s economy as a **ledger** of +5%, +40%, +80%, and +100% steps. The final percentage is the sum of every line that applies to that port.
-
-Three mechanisms feed the ledger:
+Think of each port’s market row as a **ledger** of stacking bonuses. Three kinds of entry fill it:
 
 <div class="economy-flow" role="img" aria-label="Three mechanisms combine into the docked market percentage">
 
 <div class="economy-flow__sources">
 
 <div class="economy-flow__box economy-flow__box--own">
-<p class="economy-flow__title">What the port earns on its own</p>
+<p class="economy-flow__title">What the body gives the port</p>
 <ul>
-<li>Body type (e.g. Rocky → Refinery)</li>
-<li>Body features (e.g. Organics → Agriculture)</li>
-<li>System resource level (e.g. Pristine)</li>
+<li>Planet type (Rocky → Refinery, Earth-like → Agriculture, …)</li>
+<li>Signals (Biological → Agriculture, Geological → Industry, …)</li>
+<li>System resources (Pristine / Depleted on industry rows)</li>
 </ul>
 </div>
 
 <div class="economy-flow__box economy-flow__box--strong">
-<p class="economy-flow__title">Strong links — big contributions</p>
+<p class="economy-flow__title">Strong links — big slices</p>
 <ul>
-<li>Nearby hubs and settlements</li>
-<li>Partner port on the same moon</li>
+<li>Hubs and settlements on the same body</li>
+<li>A second port on the same moon (surface ↔ orbital)</li>
 </ul>
 </div>
 
 <div class="economy-flow__box economy-flow__box--weak">
-<p class="economy-flow__title">Weak links — small +5% steps</p>
+<p class="economy-flow__title">Weak links — +5% each</p>
 <ul>
-<li>Facilities and ports elsewhere in the system</li>
+<li>Relays, security posts, farms, subordinate ports — often on other bodies</li>
 </ul>
 </div>
 
@@ -50,235 +48,239 @@ Three mechanisms feed the ledger:
 <span>↓</span><span>↓</span><span>↓</span>
 </div>
 
-<p class="economy-flow__result">Docked market %</p>
+<p class="economy-flow__result">Market % on the System Map</p>
 
 </div>
 
-| Mechanism | Typical size | Modified by body conditions? |
-|-----------|--------------|------------------------------|
-| **Own row** (body + system buffs) | +40% or +100% chunks | Yes for agriculture boosts; yes for pristine/depleted on industry |
-| **Strong link** | +40%, +80%, or +120% per source | Yes — especially agriculture and pristine boosts on each link |
-| **Weak link** | +5% per source | **Never** — always flat five percent |
+| Mechanism | Typical step | Body conditions change it? |
+|-----------|--------------|----------------------------|
+| **Own row** (planet + system buffs) | +100% or +40% chunks | Yes — agriculture buffs; Pristine/Depleted on Refinery, Industrial, Extraction |
+| **Strong link** | +40%, +80%, or +120% per source | Yes — especially agriculture and Pristine on **each** industry strong link |
+| **Weak link** | +5% per source | **No** — always flat five percent |
 
-The **link graph** in Market Links shows *candidates*. For agriculture, a **budget** may cap how many weak +5% steps actually apply even when many sources are listed.
+**Market Links** in the app shows who *could* link. For **Agriculture**, a **budget** may stop extra +5% steps even when many farms appear in the graph.
 
-**Who gets calculated:** by default only **completed** dockable sites. Planning mode can include planned builds — useful for previews, not for Spansh comparison.
+**Who counts:** by default only **finished** builds (`Complete` in your colonization log). **Include incomplete** (beaker icon) adds planned and in-progress sites for **what-if** planning — not for Spansh comparison.
 
 ---
 
-## What counts when you build
+## Installations vs dockable ports
 
-By default, only **completed** facilities affect the model. “Include incomplete” planning mode can add planned and under-construction sites up to a build-order limit — useful for preview, not for Spansh comparison.
+**Hubs and installations** (relay, security post, space farm, refinery hub, comms, etc.) mostly **feed links** into your starports and outposts. Their own market row (if they have one) comes from fixed facility rules, not the full port pipeline below.
 
-**Hubs and installations** (relay, security post, space farm, refinery hub, and so on) have fixed roles: they feed **links** into ports; their own economy row comes from a facility table, not from the port pipeline below.
+**Odyssey settlements** on the surface use a shorter path: fixed agriculture %, local body buffs, no strong/weak links applied *to* the settlement itself — but they can still **send** weak links outward when tied into the link graph as a subordinate.
+
+**Specialized ports** (Refinery outpost, Tourism starport, Extraction outpost, etc.) start at **+50%** on the surface or **+100%** orbital on their specialty, then use the same link rules as a general colony port.
 
 ---
 
 ## Step by step: how a colony port gets its numbers
 
-1. **Body gifts** — The landable body adds whole economies from its type (rocky → refinery, earth-like → agriculture + tourism + …) and from signals (organics → agriculture, geological → industry, and so on).
+1. **Planet type** — The landable body adds whole economies (Rocky → Refinery, Metal-rich → Extraction, Earth-like → Agriculture + High Tech + …).
 
-2. **Local buffs** — If the port already has an economy from step 1, the system may add **+40%** for pristine/major resources (industry, refinery, extraction), organics (agriculture and hightech), or similar. Low or depleted resources can subtract 40% on those same industry types.
+2. **Signals and system resources** — Biological and geological signals add more on rows you already have. In **Pristine** or **Major** systems, Refinery, Industrial, and Extraction on the port’s **own row** gain **+40%**; **Low** or **Depleted** can subtract **−40%** on those same industry rows. The same Pristine/Depleted rules also apply to **each strong link** from a hub or settlement on that body (see below).
 
-3. **Strong links** — Large chunks from supporting facilities on the same body and from partner ports (see below). Each strong contribution can receive **extra +40%** in a pristine system for refinery, industrial, and extraction — **once per strong link**, not once total.
+3. **Strong links** — Large contributions from facilities on the same body and from a paired port on the same moon. Each industry strong link can pick up its own **+40% Pristine** boost.
 
-4. **Weak links** — Every qualifying source elsewhere in the system adds **+5%** for its economy type (agriculture uses a budget cap).
+4. **Weak links** — Qualifying sources add **+5%** for their economy type (Agriculture is budget-capped). Same-body processing is special: only **Agriculture** weak links are applied from co-located sources; relays do **not** add High Tech +5% to ports on the **same** body as the relay.
 
-5. **Finish** — The highest total becomes the port’s **primary economy**; all non-zero lines are shown in the economy table.
+5. **Finish** — The highest total becomes the port’s **primary economy** (what the System Map highlights). All non-zero rows stay visible in the economy table.
 
-**Order matters for weak links:** nearby same-body agriculture sources are counted first (agriculture only), then system-wide sources in **alphabetical order**. That is why a science hub’s hightech can unlock a relay +5% on a starport when the relay’s name sorts later.
-
-**Settlements** (Odyssey farms and similar) use a simpler path: fixed agriculture percentage, local buffs, no strong or weak links applied *to* the settlement — but settlements can still *send* weak links to ports elsewhere when they are subordinate hubs in the link graph.
-
-**Specialized ports** (refinery outpost, tourism starport, etc.) start at +50% surface or +100% orbital on their specialty, then follow the same link rules as general colonies.
+**Order matters:** same-body **Agriculture** weak links are applied first, then system-wide sources in **alphabetical order** by facility name. That is why a science hub’s High Tech weak link can appear **before** a relay on a starport — and why a relay only adds +5% High Tech on a **starport** if High Tech is already above 0% when the relay’s turn comes.
 
 ---
 
 ## Strong links in plain terms
 
-**Strong links** are the main way a system specializes. A refinery hub, extraction settlement, or second port on a moon pushes a large slice of its economy into a dockable port.
+**Strong links** are how you specialize a system: a Refinery hub, Extraction settlement, or second port on a moon pushes a big slice into a dockable **primary** port.
 
-**Size by facility tier**
+### Strong link size = construction tier (T1 / T2 / T3)
 
-| Tier | Strong link size |
-|------|------------------|
-| Small (outpost, small hub, settlement) | +40% |
-| Medium hub | +80% |
-| Large hub / starport-tier source | +120% |
+In-game, link strength follows the source’s **construction tier**, not pad size or “small/medium/large” labels. A **T2** bio research settlement is a **medium-tier** strong link even if the pad is small.
 
-**Same moon, two ports** — If you have a surface outpost and an orbital starport on one body, the surface port’s body economies can **strong-link** into the orbital port. The orbital port does **not** duplicate agriculture buffs on its own row when a surface **colony port** is present; those conditions apply on the **link** instead.
+| Construction tier | Strong link contribution |
+|-------------------|--------------------------|
+| **T1** (tier-1 outpost, tier-1 hub, tier-1 settlement) | +40% |
+| **T2** (tier-2 hub, tier-2 settlement — e.g. bio research settlement) | +80% |
+| **T3** (tier-3 hub, large starport-class source) | +120% |
 
-**Hub children** — A refinery hub may list settlements underneath it. Those appear as **sub-strong** links into the body’s main port (+40% / +80% from the child’s tier), each able to pick up a pristine +40% boost in refinery/extraction/industrial.
+### Same moon, two ports
 
-**Gas-giant farms** — A space farm on a sibling moon **strong-links agriculture** into that moon’s **main port only** (usually the orbital starport). A second outpost on the moon gets agriculture through **weak +5%** steps, not the farm’s strong link.
+If you have a **surface outpost** and an **orbital starport** on one landable body, the surface port’s body economies can **strong-link** into the orbital port. The orbital port does **not** repeat agriculture buffs on its **own row** when a surface **colony port** is present — those modifiers apply on the **strong link** from the surface port instead.
+
+### Hub children
+
+A Refinery hub with settlements underneath shows each child as a **sub-strong** link into the body’s main port (+40% or +80% from the child’s tier). In a **Pristine** system, **each** of those refinery/industrial/extraction sub-strong links can gain another **+40%** — same as the port’s own rocky refinery row.
+
+### Gas-giant cluster farms
+
+A **space farm** on a **sibling moon** under the same gas giant **strong-links Agriculture** into that moon’s **main port only** (usually the orbital starport). A second outpost on the moon picks up agriculture through **weak +5%** steps, not the farm’s strong link.
 
 ---
 
 ## Weak links in plain terms
 
-**Weak links** are system-wide “background influence”: +5% per source, no bonuses or penalties on that five percent.
+**Weak links** are light background influence: **+5%** per source, with no extra body modifiers on that five percent.
 
-**Who can send weak links**
+### Who sends weak links
 
-| Sender | Behavior |
-|--------|----------|
-| **Relay installation** | Hightech +5% to ports across the system |
-| **Security installation** | Military +5% to all ports not on its body |
-| **Unanchored space farm** | Agriculture +5% to other bodies |
-| **Subordinate port or hub** | Its primary economy type, outward |
-| **Body primary port** | Agriculture outward; on the **star** body, only agriculture (not military/refinery weak export) |
-| **Military hub installation** | Does not weak-link outward |
-| **Relay on a starport with no hightech** | Link shows in UI only — no +5% on the market row (e.g. a large ornamental starport) |
-| **Relay on a starport that already has hightech** | +5% applies on top (e.g. science hub weak link, then relay) |
+| Sender | What it does |
+|--------|----------------|
+| **Relay installation** | High Tech +5% to ports on **other bodies** (not the relay’s own body). See starport rule below. |
+| **Security installation** | Military +5% to ports on **other bodies** only |
+| **Unanchored space farm** | Agriculture +5% to **other** landable bodies |
+| **Subordinate starport / outpost / hub** | Its **primary economy** only, outward (+5%) |
+| **Body primary port** | Agriculture weak links outward. On a port built on the **central star** body, non-agriculture economies stay on the port’s **own row** — they are **not** exported as weak links |
+| **Military hub installation** | Strong military locally; does **not** weak-link outward |
 
-Weak links are processed in **alphabetical order** by source name. That order matters when a relay only applies after another source has already unlocked hightech on a starport.
+### Relay quirks (starports vs outposts)
 
-**Security posts** add military +5% to ports on **other bodies** in the system. A security install on the same moon as your outpost does not weak-link military into that outpost — cross-body pool only.
+| Receiver | Relay High Tech +5% |
+|----------|---------------------|
+| **Outpost** (any body) | Always applies |
+| **Starport** with High Tech already > 0% when the relay is processed | Applies (+5% on top) |
+| **Starport** with no High Tech row yet | **Market Links** may still show the relay; **no +5%** on the market (e.g. large ornamental starport) |
 
-**Foreign stars:** a surface colony with no local agriculture may only accept **one** agriculture weak link from each distant star’s subtree (farms on another star count once). Agriculture settlements are exempt from that cap.
+Relays on the **same body** as a port do **not** add that +5% High Tech weak link to co-located ports — only cross-body weak links count for relay economy. (The relay can still **strong-link** locally.)
+
+### Security posts
+
+Military +5% from a security installation hits ports on **other bodies** only. A security post on the same moon as your outpost does **not** add Military weak link to that outpost.
+
+### Agriculture from distant stars
+
+A surface colony with no local agriculture may only accept **one** agriculture weak link per **distant star’s** subtree (farms around another star count once). Agriculture **settlements** are exempt from that cap.
 
 ---
 
 ## Agriculture — the special case
 
-Agriculture follows the same three-path pattern observed in multi-port and tidal-moon systems (e.g. subordinate surface **145%**, paired orbital primary **225%**).
+Agriculture is the fiddliest row because body conditions apply differently on **your own market** vs **links into another port**. Observed multi-port setups often look like **145%** on a subordinate surface port and **225%** on the paired orbital primary.
 
 ### On the port’s own market row
 
-- **+100%** if the body has organics (and isn’t already an earth-like/water world).
-- **+40%** organics buff on that row for most ports.
-- **Exception:** an **orbital starport** paired with a **surface colony port** on the same body does **not** get those agriculture buffs on its own row — they appear on the **strong link** from the surface port instead.
-- **No** icy or tidal **penalties** on the own row (subordinate surface ports keep +40% organics without −40% tidal on the docked row).
+- **+100%** if the body has a **Biological** signal and the planet type does not already grant Agriculture (Earth-like and Water worlds already get Agriculture from the planet type).
+- **+40%** Biological buff on that row for most ports.
+- **Exception:** an **orbital starport** with a **surface colony port** on the same body does **not** get those agriculture buffs on its **own row** — they show on the **strong link** from the surface port.
+- **No** icy or tidal **penalties** on the own row (your subordinate surface outpost can show +40% Biological without −40% tidal on the docked row).
 
 ### On strong links into this port
 
-- Full **+40% / −40%** table: organics, earth-like/water world, icy body, tidal lock chain to star, and so on.
-- Tidal penalty on a **link** cannot pull that link’s contribution below **+10%**.
+- Full **+40% / −40%** table: Biological, Earth-like/Water world, icy body, tidal lock to the star, and so on.
+- A tidal penalty on a **link** cannot pull that link’s contribution below **+10%**.
 
 ### On weak links
 
 - Flat **+5%** per farm or agriculture port, up to the port’s agriculture **budget**.
 
-**Intuition:** your outpost’s **displayed** agriculture is “what grows here.” **Penalties** for tide and ice apply when agriculture is **pushed through a link** into another port, not when you’re listing the outpost’s own row. Weak links are always a simple +5%.
+**CMDR intuition:** the number on **your** outpost is “what grows here.” Tide and ice hurt agriculture when it is **linked into another port**, not on your outpost’s own row. Weak links are always a flat +5%.
 
-### Agriculture weak-link budgets (plain terms)
+### Agriculture weak-link budgets
 
-Not every farm in the link graph adds +5% to your port. The model caps total weak agriculture by a **budget** — think “how much distant farm influence this port can absorb.” Tighter budgets apply when:
+Not every farm in Market Links adds +5%. Each port has a **budget** — how much weak agriculture it can absorb. Tighter budgets when:
 
-- A **strong** agriculture link already comes from the same moon (only a sliver of weak links left),
-- The port is on a **metal-rich** or **icy** body without being an ag specialist,
+- A **strong** agriculture link already comes from the same moon,
+- The port sits on **metal-rich** or **icy** rock without being an ag specialist,
 - The port is an **orbital cluster** type with many subordinates (budget scales with count),
 - The body is a **habitable ag-primary** world with a small colony strong link.
 
-When the budget is exhausted, extra agriculture sources still appear in Market Links but audit shows **Skipped weak link … cap reached**. Typical default cap is **90%** from weak links alone (eighteen +5% steps) before other rules tighten it.
+When the budget is full, extra farms may still appear in Market Links but the audit shows **Skipped weak link … cap reached**. A typical default cap is **90%** from weak links alone (eighteen +5% steps) before other rules tighten it.
 
 ---
 
-## Refinery, industrial, and extraction — pristine systems
+## Refinery, Industrial, and Extraction in Pristine systems
 
-In **major** or **pristine** systems:
+In **Pristine** or **Major** systems, resource level matters in **two places**:
 
-| Where | +40% pristine bonus |
-|-------|---------------------|
-| Port’s **own** refinery/industrial/extraction from the body | Once, on the intrinsic row |
-| **Each** strong link that adds refinery/industrial/extraction | Again, per link |
+| Where | +40% Pristine (or −40% Depleted) |
+|-------|----------------------------------|
+| Port’s **own** refinery/industrial/extraction from the planet | Once, on that row |
+| **Each strong link** that adds refinery/industrial/extraction (hub, settlement, paired port) | Again, **per link** |
 
-Example — orbital starport on a rocky moon in a pristine system:
-
-- +100% rocky refinery (body)
-- +40% pristine on that intrinsic
-- +40% strong link from surface partner port → +40% pristine on **that** link
-- +80% sub-strong from refinery hub on the moon → +40% pristine on **that** link  
-- **Total refinery 340%**
-
-A port with **only one** refinery strong link gets one pristine boost on the link (e.g. 260% on a single-hub starport).
-
-**Hightech and tourism** strong-link body bonuses (organics, earth-like, black hole, and so on) still apply **at most once** per port calculation, unlike pristine industry boosts.
-
-### Worked example — orbital starport refinery (340%)
+Example — **orbital starport** on a **rocky moon** in a **Pristine** system:
 
 | Ledger line | Amount |
 |-------------|--------|
-| Rocky body → refinery | +100% |
-| Pristine system buff on that row | +40% |
+| Rocky body → Refinery | +100% |
+| Pristine buff on that row | +40% |
 | Strong link from same-body surface colony partner | +40% |
 | Pristine buff on **that** strong link | +40% |
-| Sub-strong from refinery hub child on the moon | +80% |
+| Sub-strong from Refinery hub child on the moon | +80% |
 | Pristine buff on **that** sub-strong link | +40% |
-| **Total** | **340%** |
+| **Total Refinery** | **340%** |
 
-Each refinery **strong** contribution in a pristine system can pick up its own +40% — the body row is not the only beneficiary.
+**High Tech** and **Tourism** body bonuses on strong links (Biological, black hole in system, etc.) still apply **at most once** per port — unlike Pristine industry, which stacks per strong contribution.
 
 ---
 
 ## Multiple ports on one body
 
-Frontier’s docs discourage multiple ports per body; the model still covers it:
+Frontier’s colonization guidance treats multiple ports per body as a special case. Raven Colonial models it as:
 
-1. One **primary** port per body (orbital wins over surface when both exist).
-2. **Subordinate** ports link to the primary and **share its weak-link pool**.
-3. Surface colony → orbital colony **strong-links** body economies; orbital agriculture buffs may move to the link layer.
-4. Space farms **strong-link** the primary only; subordinates rely on weak agriculture steps.
+1. **One primary port** per landable body — **orbital** wins over **surface** when both are dockable colony ports.
+2. **Subordinate** (converted) ports attach to the primary and **share its weak-link candidates** — they can **receive** weak links the same way the primary would.
+3. **Surface colony → orbital colony** strong-links body economies; orbital agriculture buffs may move to the link layer.
+4. **Space farms** strong-link the **primary** only; other ports on the moon rely on weak agriculture +5% steps.
 
-Building extra ports is fragile in-game; the model reflects that split between primary and converted/subordinate behavior.
-
----
-
-## Facilities you’ll see often
-
-| Facility | Effect on ports |
-|----------|-----------------|
-| **Relay** | Weak hightech +5% system-wide (with starport rule above) |
-| **Security post** | Weak military +5% system-wide |
-| **Space farm** | Strong agriculture locally; weak agriculture to other bodies if not tied to a port on the same body |
-| **Refinery / industry hub** | Strong link of that type into the body primary |
-| **Comms** | Unlocks higher hightech on a science hub when complete on the body or parent chain |
-| **Military hub** | Strong military locally; does not weak-link outward |
+Extra ports on one body are awkward in-game; the model reflects **primary** vs **subordinate** behavior separately.
 
 ---
 
-## Documented rules vs tuning knobs
+## Facilities you’ll build often
 
-**Documented rules** come from community colonization references (Mega Guide, Update 3): body tables, strong/weak sizes, subordinate behavior, agriculture three-path model, relay and security scope.
+| Facility | Effect on your ports |
+|----------|----------------------|
+| **Relay** | High Tech +5% weak link to ports on **other bodies** (starport rule above) |
+| **Security post** | Military +5% weak link to ports on **other bodies** |
+| **Space farm** | Strong Agriculture on the local primary; weak Agriculture to other bodies if not anchored to a port on the same body |
+| **Refinery / Industrial hub** | Strong link of that type into the body primary |
+| **Comms** | Unlocks **140%** High Tech on a science hub when operational on the body or a parent body in the chain |
+| **Military hub** | Strong Military locally; does **not** weak-link outward |
 
-**Tuning knobs** are extra caps fit to observed markets: agriculture weak-link **budgets** (how many +5% steps count), some settlement floors, and a few colony presets. When in doubt, the documented layer is authoritative; tuning exists where the public rules are silent.
+---
 
-**Open gap:** low/depleted resource **penalties** on industry may eventually move to strong-link-only (as agriculture icy/tidal already did). Today they still apply on the port’s own industry row.
+## Documented rules vs fine-tuning
+
+**Documented rules** come from community colonization references (Mega Guide, Update 3): body tables, strong/weak sizes by **tier**, subordinate behavior, agriculture’s three-path model, relay and security scope.
+
+**Fine-tuning** in Raven Colonial fits observed markets where public docs are silent: agriculture weak-link **budgets**, some settlement floors, and a few colony presets. Spansh-verified systems are used to keep those knobs honest.
+
+**Known nuance:** Low/Depleted **penalties** on industry still apply on the port’s **own** industry row today; they may eventually match agriculture (penalties on strong links only).
 
 ---
 
 ## Reading the economy table
 
-Each line in the audit trail is one ledger entry: “+40 Buff: body has BIO”, “+80 Apply sub-strong link from: …”, “+5 Apply weak link from: …”.
+Each audit line is one ledger entry: `+40 Buff: body has BIO`, `+80 Apply sub-strong link from: …`, `+5 Apply weak link from: …`.
 
-Sum the lines for an economy type to get the displayed percentage (shown as 145% meaning 1.45 in the data).
+Add the lines for an economy type to get the displayed percentage (**145%** = 1.45 in data).
 
-**Primary economy** is whichever type has the highest total after all steps.
-
----
-
-## Representative scenarios
-
-| Scenario | What it exercises |
-|----------|-------------------|
-| **Gas-giant cluster + ornamental starport** | Relay UI-only when starport has no hightech; agriculture weak links from subordinate; security military cross-body; sibling-moon farm strong link |
-| **Multi-port tidal moon + star-body port** | Surface/orbital colony pair; relay hightech after another weak source; pristine refinery stacking per strong link; security on star; anchored vs cluster farms |
-
-Use these patterns when validating link or buff rule changes.
+**Primary economy** = whichever type totals highest after all steps (what the game treats as the station’s main tag).
 
 ---
 
-## Quick reference card
+## Scenarios worth knowing
+
+| Situation | What to expect |
+|-----------|----------------|
+| **Gas-giant moons + ornamental starport** | Relay may show in links but not add High Tech on a starport with no High Tech row; agriculture weak links from subordinates; security Military from another body; sibling-moon farm strong-links the **primary** only |
+| **Tidal moon with surface + orbital ports** | Surface/orbital colony pair; relay High Tech after another weak source sorts first; Pristine refinery stacking per strong link |
+| **Port on the central star** | Military (or similar) on the **own row**; weak links **outward** are agriculture-only from that primary |
+
+---
+
+## Quick reference
 
 | Question | Answer |
 |----------|--------|
-| How big is a weak link? | Always +5% |
-| How big is a strong link? | +40% / +80% / +120% by source tier |
-| Does tide hurt my outpost’s ag % on its own row? | No −40% on own row; yes on strong links into other ports |
-| Does pristine help refinery twice? | Yes — on body intrinsic and on **each** refinery strong link |
-| Does relay always add hightech? | On outposts yes; on starports only if hightech already > 0 from another link |
-| Who weak-links military from a security install? | Everyone not on that install’s body |
-| Can a star-body primary export refinery weak links? | No — star-body primary exports agriculture weak only |
-| Do farms on another moon strong-link my outpost? | No — strong to that moon’s **primary** port only |
+| How big is a weak link? | Always **+5%** |
+| How big is a strong link? | **+40% / +80% / +120%** by source **construction tier** (T1 / T2 / T3) |
+| Does tide hurt my outpost’s Ag % on its own row? | **No** −40% on own row; **yes** on strong links into other ports |
+| Does Pristine help Refinery twice? | **Yes** — on the body row and on **each** Refinery strong link |
+| Does a relay always add High Tech? | On **outposts**, yes. On **starports**, only if High Tech is already > 0% when the relay is processed. **Never** +5% to ports on the **same body** as the relay |
+| Who gets Military weak link from security? | Ports on **other bodies** only |
+| What weak links does a star-body primary send? | **Agriculture only** — Military and other rows stay on the port’s own market |
+| Does a farm on another moon strong-link my outpost? | **No** — strong link goes to that moon’s **primary** port only |
+| What weak links do subordinate ports send? | Their **primary economy** only (+5% each), not every row on the market |
 
-For modifiers tables, budget rule list, and module ownership, see [economy-model.md](./economy-model.md).
+For modifier tables, budget rules, and code ownership, see [economy-model.md](./economy-model.md).
