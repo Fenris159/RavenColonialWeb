@@ -431,6 +431,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
             marketId: site.marketId,
             status: site.status,
             buildClass: site.type.buildClass,
+            padSize: site.type.padSize,
           }));
 
         if (

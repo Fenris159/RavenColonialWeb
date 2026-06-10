@@ -107,7 +107,9 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
 
           <div>
             <span>
-              <Icon iconName='LightBulb' /> Compares dockable ports and settlements only. Hubs and installations use modeled economies and are not included.
+              <Icon iconName='LightBulb' /> To update Spansh data - dock at stations with a client that uploads to EDDN
+              <br />
+              Compares sites with landing pads. Sites with no landing pads use modeled economies and are not included.
             </span>
             <Link onClick={() => setOnlyProblems(!onlyProblems)} style={{ marginLeft: 4, userSelect: 'none', fontSize: 12 }}>
               <Icon

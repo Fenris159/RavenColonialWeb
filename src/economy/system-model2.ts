@@ -4,7 +4,6 @@ import type { AgEconomyCalcFlags } from './economy-core';
 import {
   bodyPrimaryReceivesGasGiantClusterAgStrongLinks,
   findGasGiantClusterAgricultureInstallations,
-  findSameBodyWeakLinkCandidates,
   flattenHubGrandchildStrongSites,
 } from './economy-link-sources';
 import { siteAlreadyStrongLinkedTo, siteContributesWeakLinks } from './economy-weak-links';
@@ -601,91 +600,6 @@ const getBodyPrimaryPort = (
   return undefined;
 }
 
-/** Whether a port/outpost on a body shares the primary's system-wide weak-link pool. */
-const siteSharesPrimaryLinkPool = (site: SiteMap2): boolean => {
-  if (site.type.inf === "none") {
-    return false;
-  }
-  // Multi-economy colony ports (non-fixed intrinsic)
-  if (site.type.inf === "colony" && !site.type.fixed) {
-    return true;
-  }
-  // Fixed specialized outposts (bia, fauna, vulcan, …) still accumulate linked economies in-game
-  if (site.type.fixed && site.type.fixed !== "none" && site.type.fixed !== "colony") {
-    return true;
-  }
-  return false;
-};
-
-/** Non-primary ports/outposts on a body use the same link candidate pool as the body primary. */
-const shareColonyLinkPoolFromPrimary = (
-  body: BodyMap2,
-  primarySite: SiteMap2 | undefined,
-  calcIds: string[],
-) => {
-  if (!primarySite?.links) {
-    return;
-  }
-
-  const { weakSites, sameBodyWeakSites = [] } = primarySite.links;
-  for (const site of body.sites) {
-    if (site === primarySite || site.links) {
-      continue;
-    }
-    if (!calcIds.includes(site.id) || site.status === "demolish") {
-      continue;
-    }
-    if (!["starport", "outpost"].includes(site.type.buildClass)) {
-      continue;
-    }
-    if (!siteSharesPrimaryLinkPool(site)) {
-      continue;
-    }
-
-    const strongSitesForSite = site.type.fixed
-      ? buildSharedStrongSitesForPort(body, site, primarySite, body.surfacePrimary, body.orbitalPrimary)
-      : body.sites.filter(s => s.parentLink === site);
-    const excludeSelf = (list: SiteMap2[]) => list.filter(s => s.id !== site.id);
-    site.links = {
-      economies: {},
-      strongSites: strongSitesForSite,
-      weakSites: excludeSelf([...weakSites]),
-      sameBodyWeakSites: excludeSelf([...sameBodyWeakSites]),
-    };
-  }
-};
-
-/** Same-body subordinates of this port plus strong-link sources from body primaries (surface + orbital). */
-const buildSharedStrongSitesForPort = (
-  body: BodyMap2,
-  site: SiteMap2,
-  linkPrimary: SiteMap2,
-  surfacePrimary?: SiteMap2,
-  orbitalPrimary?: SiteMap2,
-): SiteMap2[] => {
-  const seen = new Set<string>();
-  const add = (list: SiteMap2[]) => {
-    for (const s of list) {
-      if (s === site || seen.has(s.id)) {
-        continue;
-      }
-      seen.add(s.id);
-      out.push(s);
-    }
-  };
-  const out: SiteMap2[] = [];
-  add(body.sites.filter(s => s.parentLink === site));
-  for (const primary of [surfacePrimary, orbitalPrimary]) {
-    if (primary?.links?.strongSites && primary !== linkPrimary) {
-      add(primary.links.strongSites);
-    }
-  }
-  if (linkPrimary.links?.strongSites) {
-    add(linkPrimary.links.strongSites);
-  }
-  return out;
-};
-
 const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: Sys, calcIds: string[]) => {
 
   // exit early if no primary port for this body
@@ -697,10 +611,6 @@ const calcBodyLinks = (bodyMap: Record<string, BodyMap2>, body: BodyMap2, sys: S
   }
   if (body.orbitalPrimary) {
     calcSiteLinks(sys.bodies, bodyMap, body, body.orbitalPrimary, calcIds);
-  }
-  const linkPoolPrimary = body.surfacePrimary ?? body.orbitalPrimary;
-  if (linkPoolPrimary) {
-    shareColonyLinkPoolFromPrimary(body, linkPoolPrimary, calcIds);
   }
 }
 
@@ -800,17 +710,20 @@ const calcSiteLinks = (bods: Bod[], bodyMap: Record<string, BodyMap2>, body: Bod
   // Weak links: same-body subordinates/hubs, then other bodies (full candidate pool).
   // Economy calc applies +5% steps until the agriculture weak-link budget is exhausted.
   // When primarySite.original.weakLinkIds is set, only those sources are used (player-configured links).
-  let sameBodyWeakSites = findSameBodyWeakLinkCandidates(
-    siblingSites,
-    primarySite,
-    calcIds,
-    siteContributesWeakLinks,
-  );
+  let sameBodyWeakSites: SiteMap2[] = [];
   let weakSites = excludeStrongLinkedWeak(
     Object.values(bodyMap)
       .filter(b => b !== body)
       .flatMap(b => b.sites)
-      .filter(s => !siblingSites.includes(s) && calcIds.includes(s.id) && siteContributesWeakLinks(s)),
+      .filter(s =>
+        !siblingSites.includes(s) &&
+        calcIds.includes(s.id) &&
+        !(
+          (s.type.buildClass === "starport" || s.type.buildClass === "outpost") &&
+          (s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary)
+        ) &&
+        siteContributesWeakLinks(s),
+      ),
   );
   sameBodyWeakSites = excludeStrongLinkedWeak(sameBodyWeakSites);
 
@@ -1012,21 +925,16 @@ const calcSiteEconomies = (site: SiteMap2, calcIds: string[], economyModelOption
       if (!ensureSiteEconomiesCalculated(s, calcIds, economyModelOptions)) {
         continue;
       }
-      const pe = s.primaryEconomy;
-      if (pe && pe !== 'none' && pe !== 'colony') {
-        map[pe].weak++;
+      for (const intrinsicInf of s.intrinsic ?? []) {
+        if (intrinsicInf === 'none' || intrinsicInf === 'colony') {
+          continue;
+        }
+        map[intrinsicInf].weak++;
       }
     } else {
       ensureSiteEconomiesCalculated(s, calcIds, economyModelOptions);
       if (!map[inf]) { map[inf] = { strong: 0, weak: 0 }; }
       map[inf].weak++;
-    }
-  }
-
-  // In-game link UI shows at most one weak slot per non-agriculture economy.
-  for (const key of Object.keys(map) as ConcreteEconomy[]) {
-    if (key !== 'agriculture' && map[key].weak > 1) {
-      map[key].weak = 1;
     }
   }
 

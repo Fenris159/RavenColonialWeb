@@ -120,7 +120,7 @@ Agriculture behavior **not** in the public sheet: weak-link budget caps (`AG_WEA
 
 ### `economy-weak-links.ts`
 
-Defines **which sites can emit weak links** (hubs, relay/security/medical installations, subordinate tiered ports, etc.) and **whether a weak link actually changes the receiver** (`relayWeakLinkAppliesEconomyTo`, `securityWeakLinkAppliesEconomyTo`). `siteContributesWeakLinks` / `siteAlreadyStrongLinkedTo` are used when `system-model2` assembles link pools.
+Defines **which sites can emit weak links** (hubs, relay/security installations, subordinate tiered ports, etc.) and **whether a weak link actually changes the receiver** (`relayWeakLinkAppliesEconomyTo`, `securityWeakLinkAppliesEconomyTo`). `siteContributesWeakLinks` / `siteAlreadyStrongLinkedTo` are used when `system-model2` assembles link pools.
 
 ### `economy-link-sources.ts`
 

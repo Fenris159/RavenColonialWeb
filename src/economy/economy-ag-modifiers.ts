@@ -122,34 +122,36 @@ export function getAgricultureIntrinsicBodyBuffDeltas(
  * buffs via port-to-port strong links, not on its own docked row.
  */
 export function shouldSkipPositiveAgricultureBodyBuffs(site: SiteMap2): boolean {
-  if (!site.body || !site.type || site.type.inf !== 'colony' || !site.type.orbital) {
-    return false;
-  }
-
-  const surface = site.body.surfacePrimary;
-  if (!surface || surface === site || surface.type.inf !== 'colony') {
-    return false;
-  }
-
-  return surface.type.buildClass === 'outpost' || surface.type.buildClass === 'starport';
+  return false;
 }
 
 export function applyAgricultureBodyBuffs(
   map: EconomyMap,
   site: SiteMap2,
   adjustFn: typeof adjust,
-  options?: EconomyModelOptions,
+  options?: EconomyModelOptions & { isSettlement?: boolean },
 ) {
   if (map.agriculture <= 0) { return; }
 
+  let positiveBuffApplied = false;
   if (!shouldSkipPositiveAgricultureBodyBuffs(site)) {
     for (const { delta, auditReason } of getAgricultureIntrinsicBodyBuffDeltas(site, {
       enableTerraformableBonus: options?.enableTerraformableAgricultureBonus ?? false,
     })) {
       if (auditReason) {
         adjustFn('agriculture', delta, auditReason, map, site, 'body');
+        if (delta > 0) {
+          positiveBuffApplied = true;
+        }
       }
     }
+  }
+
+  if (
+    (!options?.isSettlement || positiveBuffApplied) &&
+    (matches([BT.ib], site.body?.type) || bodyIsTidalToStar(site.sys, site.body))
+  ) {
+    adjustFn('agriculture', -0.4, 'Buff: body is ICY or has TIDAL', map, site, 'body');
   }
 
   if (matches([BT.elw, BT.ww], site.body?.type) && map.agriculture < 1) {

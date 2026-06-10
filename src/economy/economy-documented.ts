@@ -225,20 +225,6 @@ const shouldApplyStrongLinkEconomy = (
   economy: Economy,
 ): boolean => subLink === undefined || subLink === '*' || economy === subLink;
 
-/** Fixed outposts / shared-pool ports subordinate to an economy-bearing hub (athena, enodia, …). */
-const receivesParentHubSubStrong = (site: SiteMap2): boolean => {
-  if (!site.parentLink) {
-    return false;
-  }
-  if (site.type.fixed && site.type.fixed !== "none" && site.type.fixed !== "colony") {
-    return true;
-  }
-  if (site.type.inf === "colony" && !site.type.fixed) {
-    return true;
-  }
-  return false;
-};
-
 /**
  * Hub subordinates contribute sub-strong to other receivers on the body (orbital primary).
  * A subordinate port receives the same tier-sized sub-strong from its parent hub once the
@@ -250,30 +236,12 @@ export const applyParentHubSubStrongLink = (
   calcIds: string[],
   strongBoostApplied?: Set<Economy>,
 ) => {
-  const parent = site.parentLink;
-  if (!parent || !receivesParentHubSubStrong(site) || !calcIds.includes(parent.id)) {
-    return;
-  }
-
-  const parentInf = parent.type.inf;
-  if (parentInf === "none" || parentInf === "colony") {
-    return;
-  }
-
-  const parentTier = parent.type.tier;
-  const infSize = parentTier === 1 ? 0.4 : parentTier === 2 ? 0.8 : 1.2;
-  if (!(parentInf in map)) {
-    return;
-  }
-
-  adjust(
-    parentInf,
-    infSize,
-    `Apply sub-strong link from parent: ${parent.name} (T${parentTier})`,
-    map,
-    site,
-  );
-  applyStrongLinkBoost(parentInf, map, site, "sub-strong link", strongBoostApplied);
+  // Disabled for live parity: Spansh rows do not show parent-hub sub-strong links
+  // on subordinate or converted ports in the current observed data set.
+  void map;
+  void site;
+  void calcIds;
+  void strongBoostApplied;
 };
 
 export const applyStrongLinks2 = (
@@ -422,8 +390,8 @@ export const canInheritGroundOrbitColonyAgriculture = (source: SiteMap2, target:
   return true;
 };
 
-/** Reserve/volcanism strong-link boosts stack per contribution; hightech/tourism boost once per port calc. */
-const STRONG_LINK_BOOST_ONCE_PER_CALC = new Set<Economy>(['hightech', 'tourism']);
+/** Strong-link boosts stack per contribution in the live-site-compatible model. */
+const STRONG_LINK_BOOST_ONCE_PER_CALC = new Set<Economy>();
 
 export const applyStrongLinkBoost = (
   inf: Economy,
@@ -520,7 +488,7 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
     }
   }
 
-  applyAgricultureBodyBuffs(map, site, adjust, options);
+  applyAgricultureBodyBuffs(map, site, adjust, { ...options, isSettlement });
 
   if (map.hightech > 0 && !options?.skipHightechBodyBuffs) {
     if (isSettlement && USE_NEW_MODEL) {
@@ -637,28 +605,29 @@ const applyWeakLinksFromSources = (
         console.warn(`Why no primaryEconomy yet for '${s.name}' generating for: ${site.name} ?`);
         continue;
       }
-
-      const weakInf = s.primaryEconomy;
       const isBodyPrimary =
         s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary;
-      if (isBodyPrimary && !agricultureOnly && weakInf !== 'agriculture') {
-        continue;
-      }
+
+      for (const weakInf of s.intrinsic ?? []) {
+        if (weakInf === 'none' || weakInf === 'colony') { continue; }
+        if (agricultureOnly && weakInf !== 'agriculture') { continue; }
+        if (isBodyPrimary && !agricultureOnly && weakInf !== 'agriculture') { continue; }
       if (weakInf === 'agriculture') {
-        if (!shouldApplyAgricultureWeakLink(s, site)) { continue; }
-        if (!shouldApplyForeignStarAgricultureWeakLink(s, site, homeStarRoot, foreignStarAgWeakLinksUsed)) { continue; }
-        if (skipAgricultureIfCapped(s.name, true)) { continue; }
-        adjust(
-          weakInf,
-          WEAK_LINK_AGRICULTURE_DELTA,
-          `Apply weak link from: ${s.name} (intrinsic source only, ${agricultureBudgetLabel})`,
-          map,
-          site,
-        );
-        agricultureWeakLinksApplied.count++;
-      } else if (!agricultureOnly && weakInf in map) {
-        if (isStarBodyPrimaryTieredPort(s)) { continue; }
-        adjust(weakInf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
+          if (!shouldApplyAgricultureWeakLink(s, site)) { continue; }
+          if (!shouldApplyForeignStarAgricultureWeakLink(s, site, homeStarRoot, foreignStarAgWeakLinksUsed)) { continue; }
+          if (skipAgricultureIfCapped(s.name, true)) { continue; }
+          adjust(
+            weakInf,
+            WEAK_LINK_AGRICULTURE_DELTA,
+            `Apply weak link from: ${s.name} (intrinsic source only, ${agricultureBudgetLabel})`,
+            map,
+            site,
+          );
+          agricultureWeakLinksApplied.count++;
+        } else if (!agricultureOnly && weakInf in map) {
+          if (isStarBodyPrimaryTieredPort(s)) { continue; }
+          adjust(weakInf, WEAK_LINK_AGRICULTURE_DELTA, `Apply weak link from: ${s.name} (intrinsic)`, map, site);
+        }
       }
       continue;
     }

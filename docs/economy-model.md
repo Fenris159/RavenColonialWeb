@@ -276,11 +276,9 @@ Surface colony ports without agriculture intrinsic (`shouldLimitForeignStarAgric
 
 | Receiver | +5% hightech from relay |
 |----------|-------------------------|
-| Outpost | Yes, when a hightech anchor exists in the weak pool |
-| Starport with a hightech anchor in the weak pool | Yes; relay order does not depend on source name sorting |
-| Starport with no hightech anchor | No — link visible in Market Links only |
-
-Hightech anchors are non-relay hightech weak sources, such as bio/scientific settlements or eligible medical hightech installations.
+| Outpost | Always |
+| Starport with `hightech > 0` when relay is processed | Yes (earlier weak/strong source in name sort) |
+| Starport with hightech 0 | No — link visible in Market Links only |
 
 ### Security weak link — economy apply
 
@@ -406,7 +404,6 @@ Mega Guide: multiple ports on one body are a special case; RC models:
 | Build types | Role |
 |-------------|------|
 | `enodia`, `ichnaea` | Relay — weak hightech system-wide |
-| `asclepius`, `eupraxia` | Medical — hightech weak support |
 | `dicaeosyne`, `eunomia`, `nomos`, `poena` | Security — weak military system-wide |
 | `demeter`, `picumnus` | Space farm — strong local/cluster; weak cross-body if unanchored |
 | `alastor`, `vacuna` | Military hub — strong local only; no outward weak |

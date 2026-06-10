@@ -53,12 +53,6 @@ export const AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE: Readonly<Record<string, number>>
 export const TIER1_AGRICULTURE_SETTLEMENT_BUILD_TYPES = new Set(["picumnus", "annona", "consus"]);
 
 export const getSettlementFixedEconomyValue = (site: SiteMap2): number => {
-  if (
-    site.type.inf === "agriculture" &&
-    TIER1_AGRICULTURE_SETTLEMENT_BUILD_TYPES.has(site.buildType)
-  ) {
-    return 0.6;
-  }
   return 1.0;
 };
 
@@ -106,20 +100,6 @@ export function maxSourcesToWeakLinkBudget(maxSources: number): number {
 }
 
 export const getAgricultureStrongLinkSourceValue = (source: SiteMap2, tierCoefficient: number): number => {
-  if (source.type.inf !== 'agriculture') {
-    return tierCoefficient;
-  }
-
-  // Space farms (demeter / picumnus) strong-link ports by tier coefficient, not full facility strength.
-  if (source.type.buildClass === "installation") {
-    return tierCoefficient;
-  }
-
-  const sourceAg = source.economies?.agriculture;
-  if (sourceAg !== undefined && sourceAg > 0) {
-    return Math.max(tierCoefficient, sourceAg);
-  }
-
   return tierCoefficient;
 };
 
@@ -147,21 +127,7 @@ export const getColonyAgricultureStrongLinkSourceValue = (
   tierCoefficient: number,
   getColonyAgricultureIntrinsic: (site: SiteMap2) => number,
 ) => {
-  if (source.body !== site.body || source.type.inf !== 'colony') {
-    return tierCoefficient;
-  }
-
-  const sourceAg = getColonyAgricultureIntrinsic(source);
-  if (source.type.tier < site.type.tier) {
-    return tierCoefficient + Math.max(0, sourceAg - tierCoefficient) * 0.75;
-  }
-
-  let value = Math.max(tierCoefficient, sourceAg);
-  if (matches([BT.elw, BT.ww], site.body?.type) && tierCoefficient > 1.0) {
-    value = Math.max(value, sourceAg + (tierCoefficient - 1.0) * 1.125);
-  }
-
-  return value;
+  return tierCoefficient;
 };
 
 const isAgTourismColonyAgricultureWeakSource = (source: SiteMap2, site: SiteMap2) => {
@@ -351,19 +317,7 @@ const AG_WEAK_LINK_BUDGET_RULES: AgWeakLinkBudgetRule[] = [
 
 /** Minimum agriculture economy strength contributed via weak links (game-facing % / 100). */
 export const getMaxAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWorld: boolean): number => {
-  const ctx: AgWeakLinkBudgetContext = { site, agPrimaryHabWorld };
-  let budget = Number.POSITIVE_INFINITY;
-
-  for (const rule of AG_WEAK_LINK_BUDGET_RULES) {
-    if (!rule.when(ctx)) {
-      continue;
-    }
-
-    const ruleBudget = resolveAgWeakLinkRuleBudget(rule, ctx);
-    budget = Math.min(budget, ruleBudget);
-  }
-
-  return budget;
+  return Number.POSITIVE_INFINITY;
 };
 
 /** Derived max weak-link source count from the tightest matching budget rule. */

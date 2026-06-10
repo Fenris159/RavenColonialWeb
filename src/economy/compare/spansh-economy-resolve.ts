@@ -107,7 +107,7 @@ export const spanshEconomiesNeedRefresh = (
     if (site.status && site.status !== "complete") {
       continue;
     }
-    if (site.buildClass && isSpanshCompareExcluded({ buildClass: site.buildClass })) {
+    if (site.padSize && isSpanshCompareExcluded({ padSize: site.padSize })) {
       continue;
     }
     if (resolveSpanshEconomyForSite(site, realEconomies, marketIdByName)) {
@@ -186,7 +186,7 @@ export const resolveSpanshEconomyForSite = (
   if (site.status && site.status !== "complete") {
     return null;
   }
-  if (site.buildClass && isSpanshCompareExcluded({ buildClass: site.buildClass })) {
+  if (site.padSize && isSpanshCompareExcluded({ padSize: site.padSize })) {
     return null;
   }
 
@@ -241,7 +241,7 @@ export const getSpanshCompareFailureReason = (
   if (site.status && site.status !== "complete") {
     return undefined;
   }
-  if (site.buildClass && isSpanshCompareExcluded({ buildClass: site.buildClass })) {
+  if (site.padSize && isSpanshCompareExcluded({ padSize: site.padSize })) {
     return undefined;
   }
   if (resolveSpanshEconomyForSite(site, realEconomies, edsmMarketIdByName)) {

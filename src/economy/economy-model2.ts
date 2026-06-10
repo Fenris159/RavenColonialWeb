@@ -48,6 +48,8 @@ export { calculateAgricultureStrongLinkContribution } from "./economy-ag-modifie
 
 export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], options?: EconomyModelOptions): Economy => {
   site.economyAudit = [];
+  site.bodyBuffed = undefined;
+  site.systemBuffed = undefined;
   resetAgEconomyCalc(site);
 
   const map = {

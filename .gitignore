@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+src/economy/hip52675-fixture-compare.test.ts
+src/economy/compare/spansh-compare-reliability.test.ts
 
 # production build output
 /build
@@ -26,7 +28,6 @@ yarn-error.log*
 
 # Local editor / agent (never ship)
 .cursor/
-.vscode/
 .vs/
 AGENT-HANDOFF.md
 

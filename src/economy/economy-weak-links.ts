@@ -1,4 +1,4 @@
-import { isAnchoredSpaceFarmInstallation, isDemeterSpaceFarm } from "./economy-link-sources";
+import { isDemeterSpaceFarm } from "./economy-link-sources";
 import type { SiteMap2 } from "./system-model2";
 import { BT } from "../types2";
 
@@ -91,12 +91,12 @@ export const siteAlreadyStrongLinkedTo = (source: SiteMap2, site: SiteMap2): boo
   return false;
 };
 
-/** T1/T2/T3 ports only contribute weak links when subordinate; hubs when subordinate. Subordinate installations weak-link their economy. */
+/** T1/T2/T3 ports only contribute weak links when subordinate; colony body primaries export agriculture only at apply time. */
 export const siteContributesWeakLinks = (s: SiteMap2): boolean => {
   if (s.type.inf === 'none') { return false; }
   if (s.type.buildClass === 'installation') {
     if (s.type.inf === 'agriculture') {
-      return isDemeterSpaceFarm(s) && !isAnchoredSpaceFarmInstallation(s);
+      return isDemeterSpaceFarm(s);
     }
     if (isRelayInstallationWeakContributor(s) || isSecurityInstallationWeakContributor(s)) {
       return true;
@@ -104,11 +104,24 @@ export const siteContributesWeakLinks = (s: SiteMap2): boolean => {
     if (isMedicalHightechInstallation(s)) {
       return true;
     }
-    if (s.type.inf === 'military' || isMilitaryHubInstallation(s)) {
-      return false;
+    if (isMilitaryHubInstallation(s)) {
+      return true;
     }
     return s.parentLink !== undefined;
   }
+
+  if (isHubWeakContributor(s)) {
+    return true;
+  }
+
+  if (
+    isTieredStation(s) &&
+    s.type.inf !== 'colony' &&
+    (s === s.body?.orbitalPrimary || s === s.body?.surfacePrimary)
+  ) {
+    return false;
+  }
+
   // Subordinate tiered ports only; body primaries weak-link agriculture outward.
   if (
     isTieredStation(s) &&
@@ -118,6 +131,5 @@ export const siteContributesWeakLinks = (s: SiteMap2): boolean => {
   ) {
     return false;
   }
-  if (isHubWeakContributor(s) && s.parentLink === undefined) { return false; }
   return true;
 };

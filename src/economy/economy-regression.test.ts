@@ -2,6 +2,7 @@ import { EconomyMap } from "../site-data";
 import { BodyFeature } from "../types";
 import { BT } from "../types2";
 import { calculateAgricultureStrongLinkContribution } from "./economy-ag-modifiers";
+import { calculateColonyEconomies2 } from "./economy-model2";
 import { applyBuffs } from "./economy-documented";
 import { applyWeakLinks } from "./economy-documented";
 import { SiteMap2, SysMap2 } from "./system-model2";
@@ -46,6 +47,45 @@ describe("economy regressions", () => {
         delta: 0.4,
         inf: "tourism",
         reason: "Buff: system has a Neutron Star",
+      }),
+    );
+  });
+
+  it("resets body buff markers before recalculating a colony economy", () => {
+    const body = {
+      features: [],
+      name: "WW test body",
+      num: 1,
+      parents: [],
+      type: BT.ww,
+    };
+    const site = {
+      body,
+      bodyBuffed: new Set(["tourism"]),
+      buildType: "artemis",
+      economyAudit: [],
+      id: "target",
+      name: "Target",
+      sys: {
+        bodies: [body],
+        reserveLevel: "common",
+      } as unknown as SysMap2,
+      type: {
+        buildClass: "starport",
+        inf: "colony",
+        orbital: true,
+        tier: 3,
+      },
+    } as unknown as SiteMap2;
+
+    calculateColonyEconomies2(site, [site.id]);
+
+    expect(site.economies?.tourism).toBe(1.4);
+    expect(site.economyAudit).toContainEqual(
+      expect.objectContaining({
+        delta: 0.4,
+        inf: "tourism",
+        reason: "Buff: body is ELW or WW or AW",
       }),
     );
   });

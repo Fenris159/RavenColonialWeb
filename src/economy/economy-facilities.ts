@@ -36,6 +36,8 @@ export const calculateFacilityEconomies2 = (
   options?: import("./economy-core").EconomyModelOptions,
 ): Economy => {
   site.economyAudit = [];
+  site.bodyBuffed = undefined;
+  site.systemBuffed = undefined;
   resetAgEconomyCalc(site);
 
   const map = {
