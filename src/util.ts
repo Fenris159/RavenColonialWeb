@@ -60,7 +60,6 @@ export const getTypeForCargo = (cargo: string) => {
       return type;
   }
 
-  console.warn(`Unexpected type for cargo: ${cargo}`);
   return '?';
 };
 
@@ -137,7 +136,7 @@ export const fcFullName = (name: string, displayName: string) => {
 export const sumCargo = (cargo: Record<string, number> | undefined): number => {
   if (!cargo) { return 0; }
   const sum = Object.keys(cargo)
-    .filter(k => k in mapCommodityNames)
+    // .filter(k => k in mapCommodityNames) // include commodities unrelated to colonisation
     .reduce((s, k) => s += cargo[k], 0);
   return sum;
 }

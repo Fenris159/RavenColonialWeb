@@ -1,8 +1,9 @@
 
 export const autoUpdateFrequency = 30 * 1000; // 30 seconds
 export const autoUpdateStopDuration = 60 * 60 * 1000; // 60 minutes
-export const twoDays = (60 * 60 * 1000) * 24 * 2; // 2 days
-export const fourWeeks = (60 * 60 * 1000) * 24 * 28; // 28 days
+export const oneDay = (60 * 60 * 1000) * 24; // 24 hours
+export const twoDays = oneDay * 2; // 2 days
+export const threeWeeks = oneDay * 21; // 21 days
 
 export enum TopPivot {
   home = 'home',
@@ -449,8 +450,8 @@ export const mapCommodityNames: Record<string, string> = {
   "advancedcatalysers": "Advanced Catalysers",
   "agriculturalmedicines": "Agri-Medicines",
   "aluminium": "Aluminium",
-  "autofabricators": "Auto-Fabricators",
   "animalmeat": "Animal Meat",
+  "autofabricators": "Auto-Fabricators",
   "basicmedicines": "Basic Medicines",
   "battleweapons": "Battle Weapons",
   "beer": "Beer",

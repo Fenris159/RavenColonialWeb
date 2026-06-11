@@ -4,7 +4,7 @@ import { CommandBar, ContextualMenu, DefaultButton, Dialog, DialogFooter, Icon, 
 import { Component, ErrorInfo, } from 'react';
 import { store } from './local-storage';
 import { appTheme, cn } from './theme';
-import { SortMode, fourWeeks, TopPivot, twoDays } from './types';
+import { SortMode, TopPivot, twoDays, threeWeeks } from './types';
 import { About, Home, ProjectView } from './views';
 import { ModalCommander } from './components/ModalCommander';
 import { LinkSrvSurvey } from './components/LinkSrvSurvey';
@@ -261,7 +261,7 @@ export class App extends Component<AppProps, AppState> {
     const { cmdrEdit, pivot, showDonate, showThemes, showFeedback, showReLogin, cmdrSettings, showChangeLog, showJournalParser } = this.state;
 
     const timeSinceLastLogin = Date.now() - new Date(cmdrSettings?.lastLogin ?? '').getTime();
-    const tooLong = timeSinceLastLogin > fourWeeks;
+    const tooLong = timeSinceLastLogin > threeWeeks;
 
     const changeLogColor = (Date.now() - lastEntry.getTime()) < twoDays ? appTheme.palette.yellowDark : undefined;
 
@@ -367,7 +367,7 @@ export class App extends Component<AppProps, AppState> {
             {
               className: cn.bBox,
               id: 'current-cmdr', key: 'current-cmdr',
-              title: tooLong ? 'It has been 30 days since you last logged in' : undefined,
+              title: tooLong ? 'It has been a while since you last logged in' : undefined,
               iconProps: {
                 iconName: !store.cmdrName ? 'UserWarning' : tooLong ? 'SkypeCircleClock' : 'Contact',
                 style: { color: tooLong ? appTheme.palette.yellowDark : undefined }

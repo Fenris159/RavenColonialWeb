@@ -11,7 +11,7 @@ import { redirectToFrontierAuth, resetApiKey } from '../api/auth';
 import { CopyButton } from './CopyButton';
 import { App } from '../App';
 import { CmdrSettingsUpdate } from '../api/cmdr';
-import { fourWeeks } from '../types';
+import { threeWeeks } from '../types';
 
 interface ModalCommanderProps {
   onComplete: () => void;
@@ -127,7 +127,7 @@ export class ModalCommander extends Component<ModalCommanderProps, ModalCommande
       : showApiKey && !localStorage.getItem('streamer') ? apiKey : '(hidden)';
 
     const timeSinceLastLogin = Date.now() - new Date(App.cmdrSettings?.lastLogin ?? '').getTime();
-    const tooLong = timeSinceLastLogin > fourWeeks;
+    const tooLong = timeSinceLastLogin > threeWeeks;
 
     return <>
       <div className="edit-cmdr half">

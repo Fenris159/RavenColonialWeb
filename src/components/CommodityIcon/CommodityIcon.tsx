@@ -21,7 +21,6 @@ export const CommodityIcon: FunctionComponent<{ name: string; }> = (props) => {
     iconName = mapCommodityIcon[commodityClass]!;
   }
   if (!iconName) {
-    console.error(`Unexpected: ${props.name}`);
     commodityClass = 'Unknown';
     iconName = 'Unknown';
     iconColor = 'grey';
