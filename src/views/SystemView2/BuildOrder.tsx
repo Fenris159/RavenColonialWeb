@@ -7,6 +7,7 @@ import { getSiteType } from "../../site-data";
 import { TierPoint } from "../../components/TierPoints";
 import { App } from "../../App";
 import { applySpanshInversionReorder, getSpanshInversionSwapCount, type SpanshInversionHint, type SpanshInversionHints } from "../../economy/compare/spansh-inversion-detect";
+import { getActivePrimaryId, groupAllSitesByBodyWithPlansLast, groupCompletedSitesByBody, groupSitesByActiveCut, groupSitesByBody, isBelowCutLineOnly } from "./build-order-sort";
 
 const onMobile = isMobile();
 
@@ -39,7 +40,7 @@ interface BuildOrderProps {
   orderIDs: string[];
   useIncomplete: boolean;
   spanshInversionHints?: SpanshInversionHints;
-  onUseIncompleteChange?: (useIncomplete: boolean) => void;
+  onUseIncompleteChange?: (useIncomplete: boolean, orderIDs?: string[], cutoffIdx?: number) => void;
   onClose: (orderIDs: string[] | undefined, cutoffIdx: number | undefined, useIncomplete?: boolean) => void
 };
 
@@ -63,24 +64,38 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
   constructor(props: BuildOrderProps) {
     super(props);
 
+    this.state = this.createStateFromProps(props);
+  }
+
+  componentDidUpdate(prevProps: BuildOrderProps) {
+    if (
+      prevProps.sysMap !== this.props.sysMap ||
+      prevProps.orderIDs !== this.props.orderIDs ||
+      prevProps.useIncomplete !== this.props.useIncomplete
+    ) {
+      this.setState(this.createStateFromProps(this.props));
+    }
+  }
+
+  createStateFromProps(props: BuildOrderProps): BuildOrderState {
     const map = props.sysMap.siteMaps.reduce((m, site) => {
       m[site.id] = site;
       return m;
     }, {} as Record<string, SiteMap2>);
 
-    const cutoffIdx = props.useIncomplete
-      ? props.orderIDs.length
-      : groupCompletedSitesByBody(map, props.orderIDs).cutoffIdx;
-    const sortedIDs = props.useIncomplete
-      ? groupAllSitesByBodyWithPlansLast(map, props.orderIDs)
-      : groupCompletedSitesByBody(map, props.orderIDs).sortedIDs;
+    const initialOrder = props.useIncomplete
+      ? groupSitesByActiveCut(map, props.orderIDs, props.sysMap.calcIds)
+      : groupCompletedSitesByBody(map, props.orderIDs);
+    const cutoffIdx = initialOrder.cutoffIdx;
+    const sortedIDs = initialOrder.sortedIDs;
     const calcIds = this.getNewCalcIDs(map, sortedIDs, cutoffIdx);
 
     const sortedSiteMaps = sortedIDs.map(id => map[id]);
-    const { tierPoints } = sumTierPoints(sortedSiteMaps, calcIds, undefined, sortedIDs[0]);
-    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, sortedIDs, undefined, sortedIDs[0]);
+    const primaryId = props.sysMap.primaryPortId ?? getActivePrimaryId(map, sortedIDs);
+    const { tierPoints } = sumTierPoints(sortedSiteMaps, calcIds, undefined, primaryId);
+    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, this.getModeTotalCalcIDs(map, sortedIDs, props.useIncomplete), undefined, primaryId);
 
-    this.state = {
+    return {
       map: map,
       sortedIDs: sortedIDs,
       dragId: undefined,
@@ -89,14 +104,26 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
       totalTierPoints: totalTierPoints,
       cutoffIdx: cutoffIdx,
       calcIds: calcIds,
-      invalidOrdering: this.isOrderingInvalid(map, sortedIDs),
+      invalidOrdering: !props.useIncomplete && this.isOrderingInvalid(map, sortedIDs),
       useIncomplete: props.useIncomplete,
     };
   }
 
   getNewCalcIDs(map: Record<string, SiteMap2>, sortedIDs: string[], cutoffIdx: number) {
-    const newCalcIds = sortedIDs.filter((id, i) => cutoffIdx < 0 ? map[id].status === 'complete' : i < cutoffIdx);
+    const newCalcIds = sortedIDs.filter((id, i) => {
+      const site = map[id];
+      if (isBelowCutLineOnly(site)) { return false; }
+      return cutoffIdx < 0 ? site.status === 'complete' : i < cutoffIdx;
+    });
     return newCalcIds;
+  }
+
+  getModeTotalCalcIDs(map: Record<string, SiteMap2>, sortedIDs: string[], useIncomplete: boolean) {
+    return sortedIDs.filter(id => {
+      const site = map[id];
+      if (!site || site.status === 'demolish' || isBelowCutLineOnly(site)) { return false; }
+      return useIncomplete || site.status === 'complete';
+    });
   }
 
   isOrderingInvalid(map: Record<string, SiteMap2>, sortedIDs: string[]) {
@@ -132,20 +159,21 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
     }
   }
 
-  setNewCalcIDs(newSorted: string[], newCutOffIdx: number) {
+  setNewCalcIDs(newSorted: string[], newCutOffIdx: number, useIncomplete = this.state.useIncomplete) {
     const { map } = this.state;
     const sortedSiteMaps = newSorted.map(id => map[id]);
 
     const newCalcIds = this.getNewCalcIDs(map, newSorted, newCutOffIdx);
 
-    const { tierPoints } = sumTierPoints(sortedSiteMaps, newCalcIds, undefined, newSorted[0]);
-    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, newSorted, undefined, newSorted[0]);
+    const primaryId = this.props.sysMap.primaryPortId ?? getActivePrimaryId(map, newSorted);
+    const { tierPoints } = sumTierPoints(sortedSiteMaps, newCalcIds, undefined, primaryId);
+    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, this.getModeTotalCalcIDs(map, newSorted, useIncomplete), undefined, primaryId);
     this.setState({
       sortedIDs: newSorted,
       tierPoints, totalTierPoints,
       calcIds: newCalcIds,
       cutoffIdx: newCutOffIdx,
-      invalidOrdering: this.isOrderingInvalid(map, newSorted),
+      invalidOrdering: !useIncomplete && this.isOrderingInvalid(map, newSorted),
     });
   }
 
@@ -174,7 +202,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
 
       const key = `bol${id.substring(1)}${i}`;
       const demolished = s.status === 'demolish';
-      const isCutOff = !calcIds.includes(id) || demolished;
+      const isCutOff = !calcIds.includes(id) || demolished || isBelowCutLineOnly(s);
       const isMarketLinkPrimary = s.body?.surfacePrimary?.id === s.id || s.body?.orbitalPrimary?.id === s.id;
       const inversionHint = this.props.spanshInversionHints?.[s.id];
       const inversionDirection = inversionHint && getSpanshInversionDirection(inversionHint, sortedIDs);
@@ -217,7 +245,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
         }}
       >
         <td className={`cr ${cn.br}`} style={{}}>
-          {foundPlanning && s.status !== 'plan' && <Icon className='icon-inline' style={{ color: appTheme.palette.yellowDark, float: 'left' }} iconName='WarningSolid' title='Planning sites should be ordered last' />}
+          {!useIncomplete && foundPlanning && s.status !== 'plan' && <Icon className='icon-inline' style={{ color: appTheme.palette.yellowDark, float: 'left' }} iconName='WarningSolid' title='Planning sites should be ordered last' />}
           <div>{i + 1}</div>
         </td>
 
@@ -229,7 +257,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
           </span>
 
           <span style={{ fontSize: 12 }}>{getSiteType(s.buildType, true)?.displayName2} ({s.buildType})</span>
-          {i === 0 && <Icon iconName='CrownSolid' style={{ marginLeft: 8 }} title='Primary port' />}
+          {id === getActivePrimaryId(map, sortedIDs) && <Icon iconName='CrownSolid' style={{ marginLeft: 8 }} title='Primary port' />}
           {isMarketLinkPrimary && <Icon iconName='Link12' style={{ marginLeft: 4, color: isCutOff ? 'grey' : appTheme.palette.themeTertiary, fontSize: 12, position: 'relative', top: 1 }} title='Primary market link' />}
           {s.status === 'plan' && <Icon iconName='WebAppBuilderFragment' style={{ marginLeft: 4, color: appTheme.palette.yellowDark }} className='icon-inline' title='Planned site' />}
           {s.status === 'build' && <Icon iconName='ConstructionCone' style={{ marginLeft: 4, color: appTheme.palette.yellowDark }} className='icon-inline' title='Under construction' />}
@@ -304,7 +332,9 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
     // and add a totals row
     rows.push(<tr key='bol-totals' style={{ fontSize: 16 }}>
       <td className={cn.bt} />
-      <td className={`${cn.bt} ${cn.br}`} style={{ textAlign: 'right', color: 'grey' }} colSpan={2}>All-site points:</td>
+      <td className={`${cn.bt} ${cn.br}`} style={{ textAlign: 'right', color: appTheme.palette.themeDark }} colSpan={2}>
+        {useIncomplete ? 'All-site points:' : 'Completed-site points:'}
+      </td>
       <td className={`cc ${cn.bt} ${cn.br}`} style={{ fontWeight: 'bold', color: totalTierPoints.tier2 < 0 ? appTheme.palette.redDark : appTheme.palette.green }}>
         {asPosNegTxt(totalTierPoints.tier2)}
       </td>
@@ -313,6 +343,31 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
       </td>
       <td className={cn.bt} />
     </tr>);
+
+    const brokenBelowIdx = sortedIDs.findIndex(id => isBelowCutLineOnly(map[id]));
+    if (brokenBelowIdx >= 0) {
+      const stripeBackground = appTheme.palette.neutralLight;
+      rows.splice(brokenBelowIdx, 0, <tr
+        key='bol-broken-below'
+        style={{
+          height: 28,
+          background: `repeating-linear-gradient(45deg, ${stripeBackground}, ${stripeBackground} 10px, ${appTheme.palette.white} 10px, ${appTheme.palette.white} 20px)`,
+          color: appTheme.palette.redDark,
+        }}
+        title='Rows below this line are excluded from calculations because they have missing or invalid modeling data.'
+      >
+        <td className={cn.br} />
+        <td className={`cc`} colSpan={1}>
+          <div style={{ fontSize: 16, fontWeight: 'bold' }}>BROKEN BELOW</div>
+        </td>
+        <td className={cn.br}>
+          <Icon iconName='WarningSolid' style={{ color: appTheme.palette.redDark }} />
+        </td>
+        <td className={`cc ${cn.br}`} />
+        <td className={`cc ${cn.br}`} />
+        <td />
+      </tr>);
+    }
 
     // insert CUT LINE row
     if (cutoffIdx >= 0) {
@@ -467,9 +522,9 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
             title='Set cut line before the first non-complete site'
             onClick={() => {
               const completeOnly = groupCompletedSitesByBody(map, sortedIDs);
-              this.setNewCalcIDs(completeOnly.sortedIDs, completeOnly.cutoffIdx);
+              this.setNewCalcIDs(completeOnly.sortedIDs, completeOnly.cutoffIdx, false);
               this.setState({ useIncomplete: false });
-              this.props.onUseIncompleteChange?.(false);
+              this.props.onUseIncompleteChange?.(false, completeOnly.sortedIDs, completeOnly.cutoffIdx);
             }}
           />
 
@@ -493,9 +548,9 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
             title='Set cut line to the bottom'
             onClick={() => {
               const allSites = groupAllSitesByBodyWithPlansLast(map, sortedIDs);
-              this.setNewCalcIDs(allSites, allSites.length);
+              this.setNewCalcIDs(allSites, allSites.length, true);
               this.setState({ useIncomplete: true });
-              this.props.onUseIncompleteChange?.(true);
+              this.props.onUseIncompleteChange?.(true, allSites, allSites.length);
             }}
           />
         </Stack>
@@ -646,119 +701,4 @@ const formatSpanshInversionTitle = (hint: SpanshInversionHint, direction: 'up' |
     ...hint.reasons.map(reason => `Reason: ${reason}`),
     `Suggested action: ${suggestedAction}, or press Auto re-order markets to apply all current inversion swaps.`,
   ].join('\n');
-};
-
-const groupSitesByBody = (map: Record<string, SiteMap2>, sortedIDs: string[], cutoffIdx: number) => {
-  const primaryId = sortedIDs[0];
-  const splitIdx = cutoffIdx >= 0 ? Math.min(cutoffIdx, sortedIDs.length) : sortedIDs.length;
-  const aboveCut = sortedIDs.slice(0, splitIdx);
-  const belowCut = sortedIDs.slice(splitIdx);
-
-  return [
-    ...groupSiteSegmentByBody(map, aboveCut, primaryId),
-    ...groupSiteSegmentByBody(map, belowCut, undefined),
-  ];
-};
-
-const groupCompletedSitesByBody = (map: Record<string, SiteMap2>, sortedIDs: string[]) => {
-  const primaryId = sortedIDs[0];
-  const completeIDs = sortedIDs.filter(id => map[id].status === 'complete');
-
-  if (!completeIDs.includes(primaryId)) {
-    return {
-      sortedIDs: groupSitesByBody(map, sortedIDs, 0),
-      cutoffIdx: 0,
-    };
-  }
-
-  const incompleteIDs = sortedIDs.filter(id => map[id].status !== 'complete');
-  const groupedCompleteIDs = groupSiteSegmentByBody(map, completeIDs, primaryId);
-  const groupedIncompleteIDs = groupSiteSegmentByBody(map, incompleteIDs, undefined);
-
-  return {
-    sortedIDs: [...groupedCompleteIDs, ...groupedIncompleteIDs],
-    cutoffIdx: groupedCompleteIDs.length,
-  };
-};
-
-const groupAllSitesByBodyWithPlansLast = (map: Record<string, SiteMap2>, sortedIDs: string[]) => {
-  const primaryId = sortedIDs[0];
-  const nonPlanIDs = sortedIDs.filter(id => map[id].status !== 'plan');
-  const planIDs = sortedIDs.filter(id => map[id].status === 'plan');
-
-  return [
-    ...groupSiteSegmentByBody(map, nonPlanIDs, nonPlanIDs.includes(primaryId) ? primaryId : undefined),
-    ...groupSiteSegmentByBody(map, planIDs, undefined),
-  ];
-};
-
-const groupSiteSegmentByBody = (map: Record<string, SiteMap2>, ids: string[], primaryId?: string) => {
-  const originalIndex = new Map(ids.map((id, i) => [id, i]));
-  const primaryIDs = primaryId && ids.includes(primaryId) ? [primaryId] : [];
-  const primarySite = primaryId ? map[primaryId] : undefined;
-  const primaryBodyKey = primarySite
-    ? getBodyGroupKey(primarySite)
-    : undefined;
-  const bodyGroups = ids
-    .filter(id => id !== primaryId)
-    .reduce((groups, id) => {
-      const site = map[id];
-      const key = getBodyGroupKey(site);
-      const group = groups.get(key) ?? [];
-      group.push(id);
-      groups.set(key, group);
-      return groups;
-    }, new Map<string, string[]>());
-
-  const primaryBodyIDs = primaryBodyKey
-    ? bodyGroups.get(primaryBodyKey) ?? []
-    : [];
-  if (primaryBodyKey) {
-    bodyGroups.delete(primaryBodyKey);
-  }
-
-  const groupedIDs = Array.from(bodyGroups.values())
-    .sort((a, b) => compareBodyGroups(map, a, b))
-    .flatMap(group => group.sort((a, b) => compareSitesWithinBody(map, originalIndex, a, b)));
-
-  return [
-    ...primaryIDs,
-    ...primaryBodyIDs.sort((a, b) => compareSitesWithinBody(map, originalIndex, a, b)),
-    ...groupedIDs,
-  ];
-};
-
-const getBodyGroupKey = (site: SiteMap2) =>
-  `${site.body?.num ?? site.bodyNum ?? Number.MAX_SAFE_INTEGER}:${site.body?.name ?? 'Unknown'}`;
-
-const compareBodyGroups = (map: Record<string, SiteMap2>, a: string[], b: string[]) => {
-  const siteA = map[a[0]];
-  const siteB = map[b[0]];
-  const bodyA = siteA.body?.num ?? siteA.bodyNum ?? Number.MAX_SAFE_INTEGER;
-  const bodyB = siteB.body?.num ?? siteB.bodyNum ?? Number.MAX_SAFE_INTEGER;
-  if (bodyA !== bodyB) { return bodyA - bodyB; }
-
-  return (siteA.body?.name ?? '').localeCompare(siteB.body?.name ?? '');
-};
-
-const compareSitesWithinBody = (map: Record<string, SiteMap2>, originalIndex: Map<string, number>, a: string, b: string) => {
-  const siteA = map[a];
-  const siteB = map[b];
-
-  const rankA = getBodyGroupRank(siteA);
-  const rankB = getBodyGroupRank(siteB);
-  if (rankA !== rankB) { return rankA - rankB; }
-
-  const indexA = originalIndex.get(a) ?? Number.MAX_SAFE_INTEGER;
-  const indexB = originalIndex.get(b) ?? Number.MAX_SAFE_INTEGER;
-  if (indexA !== indexB) { return indexA - indexB; }
-
-  return siteA.name.localeCompare(siteB.name) || siteA.id.localeCompare(siteB.id);
-};
-
-const getBodyGroupRank = (site: SiteMap2) => {
-  if (site.body?.orbitalPrimary?.id === site.id) { return 0; }
-  if (site.type.orbital) { return 1; }
-  if (site.body?.surfacePrimary?.id === site.id) { return 2; }
-  return 3;
 };

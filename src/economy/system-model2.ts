@@ -10,6 +10,7 @@ import { siteAlreadyStrongLinkedTo, siteContributesWeakLinks } from './economy-w
 import { canReceiveLinks, ConcreteEconomy, Economy, getSiteType, mapName, SiteType, SysEffects, sysEffects } from "../site-data";
 import { BodyFeature } from '../types';
 import { Bod, BT, Site, Sys } from '../types2';
+import { isExcludedFromCalculations } from './site-calc-exclusions';
 
 export const unknown = 'Unknown';
 
@@ -205,7 +206,7 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
   const idxLimit = sys.idxCalcLimit ?? sys.sites.length;
 
   // Keep API compatibility: the system primary is encoded by sites[0].
-  const primaryPortId = sys.sites?.[0]?.id;
+  const primaryPortId = getSystemPrimaryPortId(sys);
 
   sys = { ...sys, primaryPortId };
   sys.sites = sys.sites.map(s => { return { ...s }; });
@@ -249,7 +250,7 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
   stabilizeSiteEconomies(sysMap.siteMaps, sysMap.calcIds, economyModelOptions);
 
   // calc sum effects from all sites
-  const { tierPoints, taxCount } = sumTierPoints(sysMap.siteMaps, sysMap.calcIds, !useIncomplete);
+  const { tierPoints, taxCount } = sumTierPoints(sysMap.siteMaps, sysMap.calcIds, undefined, sysMap.primaryPortId);
   const sumEffects = sumSystemEffects(sysMap.siteMaps, sysMap.calcIds, sysMap.primaryPortId, buffNerf, economyModelOptions);
 
   // calc system unlocks
@@ -318,8 +319,8 @@ const initializeSysMap = (sys: Sys, useIncomplete: boolean, idxLimit: number): S
   let systemScore = 0;
 
   const calcIds = useIncomplete
-    ? sys.sites.filter((s, i) => i < idxLimit && s.status !== 'demolish').map(s => s.id) // include up to idxLimit
-    : sys.sites.filter(s => s.status === 'complete').map(s => s.id); // include only completed sites
+    ? sys.sites.filter((s, i) => i < idxLimit && s.status !== 'demolish' && !isExcludedFromCalculations(s, sys.bodies.find(b => b.num === s.bodyNum))).map(s => s.id) // include up to idxLimit
+    : sys.sites.filter(s => s.status === 'complete' && !isExcludedFromCalculations(s, sys.bodies.find(b => b.num === s.bodyNum))).map(s => s.id); // include only completed sites
 
   // first: group sites by their bodies
   if (!sys.sites) { sys.sites = []; }
@@ -425,6 +426,28 @@ const isIncludedForTierNeeds = (site: SiteMap2, calcIds: string[], incBuildStart
     return site.status !== 'plan';
   }
   return calcIds.includes(site.id);
+};
+
+const isValidSystemPrimaryPort = (sys: Sys, site: Site | undefined): boolean => {
+  if (!site || site.status !== 'complete' || isExcludedFromCalculations(site, sys.bodies.find(body => body.num === site.bodyNum))) {
+    return false;
+  }
+
+  if (!sys.bodies.some(body => body.num === site.bodyNum)) {
+    return false;
+  }
+
+  const type = getSiteType(site.buildType, true);
+  return type?.buildClass === 'starport' || type?.buildClass === 'outpost';
+};
+
+const getSystemPrimaryPortId = (sys: Sys): string | undefined => {
+  if (isValidSystemPrimaryPort(sys, sys.sites?.[0])) {
+    return sys.sites[0].id;
+  }
+
+  const fallbackPrimary = sys.sites?.find(site => isValidSystemPrimaryPort(sys, site));
+  return fallbackPrimary ? fallbackPrimary.id : sys.sites?.[0]?.id;
 };
 
 const getCanonicalTaxOrder = (siteMaps: SiteMap2[], calcIds: string[], primaryPortId: string | undefined, incBuildStarted?: boolean) =>

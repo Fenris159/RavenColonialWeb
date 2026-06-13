@@ -30,6 +30,11 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
   const spanshInversionCount = new Set(Object.values(spanshInversionHints).map(h =>
     [h.siteId, h.swapWithSiteId].sort().join(':')
   )).size;
+  const showFeedback = (ev?: React.MouseEvent<HTMLElement>) => {
+    ev?.preventDefault();
+    ev?.stopPropagation();
+    App.showFeedback(`Economy modelling issues in: ${props.sysView.state.systemName}`);
+  };
 
   // find sites where predicted economies do not match Spansh
   const nonMatchingSites = !loadingRealEconomies && sysMap.siteMaps.filter(site => {
@@ -58,11 +63,18 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
     <Panel
       isOpen
       isLightDismiss
+      isBlocking={false}
       className='build-order'
       headerText={`Compare: ${props.sysView.state.systemName}`}
       allowTouchBodyScroll={isMobile()}
       type={isMobile() ? PanelType.medium : PanelType.custom}
       customWidth='1280px'
+      focusTrapZoneProps={{
+        disabled: true,
+        forceFocusInsideTrap: false,
+        isClickableOutsideFocusTrap: true,
+      }}
+      popupProps={{ enableAriaHiddenSiblings: false }}
       styles={{
         overlay: { backgroundColor: appTheme.palette.blackTranslucent40 },
       }}
@@ -87,7 +99,7 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
           </div>
 
           <div>
-            Economy modelling calculations are a work in progress, please <Link onClick={() => App.showFeedback(`Economy modelling issues in: ${props.sysView.state.systemName}`)}>report errors or issues</Link>
+            Economy modelling calculations are a work in progress, please <Link onClick={showFeedback}>report errors or issues</Link>
           </div>
           <div>
             <Link onClick={() => {

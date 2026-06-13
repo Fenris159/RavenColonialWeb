@@ -36,6 +36,8 @@ import {
   type SpanshCompareSite,
 } from '../../economy/compare/spansh-economy-resolve';
 import { detectSameBodySpanshInversions } from '../../economy/compare/spansh-inversion-detect';
+import { sanitizeImportedSystemSites } from './import-sanitize';
+import { groupAllSitesByBodyWithPlansLast, groupCompletedSitesByBody } from './build-order-sort';
 
 interface SystemView2Props {
   systemName: string;
@@ -273,7 +275,21 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       // default to ALL sites if no value is set
       newSys.idxCalcLimit = newSys.sites.length;
     }
-    const newSysMap = buildSystemModel2(newSys, this.state.useIncomplete, this.state.buffNerf, this.getEconomyModelOptions());
+    let sysForMap = newSys;
+    if (this.state.useIncomplete) {
+      const initialSysMap = buildSystemModel2(newSys, true, this.state.buffNerf, this.getEconomyModelOptions());
+      const map = initialSysMap.siteMaps.reduce((m, site) => {
+        m[site.id] = site;
+        return m;
+      }, {} as Record<string, SiteMap2>);
+      const allOrderIDs = groupAllSitesByBodyWithPlansLast(map, initialSysMap.sites.map(s => s.id));
+      sysForMap = {
+        ...newSys,
+        sites: allOrderIDs.map(id => newSys.sites.find(s => s.id === id)!),
+        idxCalcLimit: allOrderIDs.length,
+      };
+    }
+    const newSysMap = buildSystemModel2(sysForMap, this.state.useIncomplete, this.state.buffNerf, this.getEconomyModelOptions());
     const orderIDs = newSysMap.sites.map(s => s.id);
 
     const dirties: Record<string, Site> = {};
@@ -293,7 +309,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     this.setState({
       systemName: newSys.name,
       processingMsg: undefined,
-      sysOriginal: newSys,
+      sysOriginal: sysForMap,
       sysMap: newSysMap,
       lastRev: lastRev,
       dirtySites: dirties,
@@ -401,6 +417,9 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     if (!nameOrNum || !systemName) {
       return;
     }
+    if (!force && this.state.realEconomies !== undefined) {
+      return;
+    }
 
     this.setState({
       spanshCompareLoading: true,
@@ -506,10 +525,17 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     const nameOrNum = this.state.sysMap?.id64.toString() ?? this.props.systemName;
     api.systemV2.import(nameOrNum, type)
       .then(newSys => {
+        const sanitized = sanitizeImportedSystemSites(this.state.sysOriginal, newSys);
+        if (sanitized.droppedSites.length) {
+          console.warn(
+            `Dropped ${sanitized.droppedSites.length} new site(s) from import:`,
+            sanitized.droppedSites.map(s => `${s.name} (${s.id})`).join(', '),
+          );
+        }
         if (type === 'sites') {
           this.setState({ importSitesComplete: true });
         }
-        return this.useLoadedData(newSys, false);
+        return this.useLoadedData(sanitized.sys, false);
       })
       .catch(err => {
         if (err.statusCode === 404) {
@@ -634,15 +660,49 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     this.setUseIncomplete(!this.state.useIncomplete);
   };
 
-  setUseIncomplete = (newValue: boolean) => {
+  setUseIncomplete = (newValue: boolean, orderIDs?: string[], idxCalcLimit?: number) => {
     if (newValue === this.state.useIncomplete) {
-      return;
+      if (!orderIDs) {
+        return;
+      }
     }
-    const sysMap = buildSystemModel2(this.state.sysMap, newValue, this.state.buffNerf, this.getEconomyModelOptions());
-    this.setState({
-      sysMap: sysMap,
-      useIncomplete: newValue,
-    });
+    let nextOrderIDs = orderIDs;
+    let nextIdxCalcLimit = idxCalcLimit;
+    if (!nextOrderIDs) {
+      const map = this.state.sysMap.siteMaps.reduce((m, site) => {
+        m[site.id] = site;
+        return m;
+      }, {} as Record<string, SiteMap2>);
+      if (newValue) {
+        nextOrderIDs = groupAllSitesByBodyWithPlansLast(map, this.state.orderIDs);
+        nextIdxCalcLimit = nextOrderIDs.length;
+      } else {
+        const completeOnly = groupCompletedSitesByBody(map, this.state.orderIDs);
+        nextOrderIDs = completeOnly.sortedIDs;
+        nextIdxCalcLimit = completeOnly.cutoffIdx;
+      }
+    }
+
+    const nextSys = nextOrderIDs
+      ? {
+        ...this.state.sysMap,
+        sites: nextOrderIDs.map(id => this.state.sysMap.sites.find(s => s.id === id)!),
+        idxCalcLimit: nextIdxCalcLimit,
+      }
+      : this.state.sysMap;
+    const sysMap = buildSystemModel2(nextSys, newValue, this.state.buffNerf, this.getEconomyModelOptions());
+    if (nextOrderIDs) {
+      this.setState({
+        sysMap: sysMap,
+        orderIDs: nextOrderIDs,
+        useIncomplete: newValue,
+      });
+    } else {
+      this.setState({
+        sysMap: sysMap,
+        useIncomplete: newValue,
+      });
+    }
     store.useIncomplete = newValue;
   };
 
@@ -1458,8 +1518,8 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
             iconProps: { iconName: 'FabricFolderSearch' },
             disabled: !!processingMsg || !sysMap,
             onClick: () => {
-              this.doGetRealEconomies(true);
               this.setState({ auditWholeSystem: true });
+              this.doGetRealEconomies(false);
             }
           },
 
