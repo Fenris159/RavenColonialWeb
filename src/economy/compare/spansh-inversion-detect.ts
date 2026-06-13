@@ -101,6 +101,44 @@ export const detectSameBodySpanshInversions = (
   return hints;
 };
 
+export const getSpanshInversionSwapCount = (hints: SpanshInversionHints | undefined) =>
+  hints ? collectSpanshInversionPairs(hints).length : 0;
+
+export const applySpanshInversionReorder = (
+  sortedIDs: string[],
+  hints: SpanshInversionHints | undefined,
+) => {
+  if (!hints) {
+    return sortedIDs;
+  }
+
+  const newSortedIDs = [...sortedIDs];
+  for (const hint of collectSpanshInversionPairs(hints)) {
+    const siteIdx = newSortedIDs.indexOf(hint.siteId);
+    const partnerIdx = newSortedIDs.indexOf(hint.swapWithSiteId);
+    if (siteIdx < 0 || partnerIdx < 0 || siteIdx === partnerIdx) {
+      continue;
+    }
+
+    newSortedIDs[siteIdx] = hint.swapWithSiteId;
+    newSortedIDs[partnerIdx] = hint.siteId;
+  }
+
+  return newSortedIDs;
+};
+
+const collectSpanshInversionPairs = (hints: SpanshInversionHints) => {
+  const seen = new Set<string>();
+  return Object.values(hints).filter(hint => {
+    const key = [hint.siteId, hint.swapWithSiteId].sort().join('|');
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+
 const scorePair = (
   a: { site: SiteMap2; resolved: ResolvedSpanshEconomyLike },
   b: { site: SiteMap2; resolved: ResolvedSpanshEconomyLike },

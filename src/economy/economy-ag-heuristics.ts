@@ -73,6 +73,21 @@ export const getOrbitalClusterAgWeakLinkBudget = (site: SiteMap2): number => {
   return AG_WEAK_LINK_BUDGET.DEFAULT;
 };
 
+const getTidalOrbitalClusterAgWeakLinkBudget = (site: SiteMap2): number | undefined => {
+  if (
+    !usesOrbitalClusterWeakLinkBudget(site) ||
+    site.type.inf !== "colony" ||
+    site.type.fixed ||
+    !matches([BodyFeature.tidal], site.body?.features)
+  ) {
+    return undefined;
+  }
+
+  return site.agEconomyCalc?.sameBodyAgFacilityStrongLink || site.agEconomyCalc?.sameBodyAgSettlementStrongLink
+    ? 0.55
+    : 0.65;
+};
+
 /** Non-ag-specialized colony port (body BIO/ELW may still add agriculture to intrinsic). */
 const isColonyPortWithoutSameBodyAgStrong = (site: SiteMap2) =>
   (site.type.buildClass === "starport" || site.type.buildClass === "outpost") &&
@@ -317,6 +332,11 @@ const AG_WEAK_LINK_BUDGET_RULES: AgWeakLinkBudgetRule[] = [
 
 /** Minimum agriculture economy strength contributed via weak links (game-facing % / 100). */
 export const getMaxAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWorld: boolean): number => {
+  const tidalOrbitalClusterBudget = getTidalOrbitalClusterAgWeakLinkBudget(site);
+  if (tidalOrbitalClusterBudget !== undefined) {
+    return tidalOrbitalClusterBudget;
+  }
+
   return Number.POSITIVE_INFINITY;
 };
 

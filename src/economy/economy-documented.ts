@@ -53,6 +53,26 @@ export const applySpecializedPort = (map: EconomyMap, site: SiteMap2) => {
   }
 };
 
+export const applyFixedPortPostLinkBodyBuffs = (map: EconomyMap, site: SiteMap2) => {
+  if (
+    !site.type.fixed ||
+    site.type.fixed === 'none' ||
+    site.type.fixed === 'colony' ||
+    site.type.fixed === 'agriculture'
+  ) {
+    return;
+  }
+
+  if (!matches([BodyFeature.bio], site.body?.features) || map.agriculture <= 0) {
+    return;
+  }
+
+  adjust('agriculture', +0.4, 'Buff: body has BIO', map, site, 'body');
+  if (map.terraforming <= 0) {
+    adjust('terraforming', +0.4, 'Buff: body has BIO', map, site, 'body');
+  }
+};
+
 export const applyBodyType = (map: EconomyMap, site: SiteMap2) => {
   if (site.type.inf !== 'colony') {
     console.warn(`Why are we in: applyBodyType?`);

@@ -2,11 +2,11 @@ import { ActionButton, Callout, DefaultButton, DirectionalHint, Icon, IconButton
 import { Component, CSSProperties, FunctionComponent } from "react";
 import { appTheme, cn } from "../../theme";
 import { asPosNegTxt, isMobile } from "../../util";
-import { getPreReqNeeded, hasPreReq2, isTypeValid2, SiteMap2, SiteTypeValidity, sumTierPoints, SysMap2, TierPoints } from "../../economy/system-model2";
+import { hasPreReq2, isTypeValid2, SiteMap2, SiteTypeValidity, sumTierPoints, SysMap2, TierPoints } from "../../economy/system-model2";
 import { getSiteType } from "../../site-data";
 import { TierPoint } from "../../components/TierPoints";
 import { App } from "../../App";
-import type { SpanshInversionHint, SpanshInversionHints } from "../../economy/compare/spansh-inversion-detect";
+import { applySpanshInversionReorder, getSpanshInversionSwapCount, type SpanshInversionHint, type SpanshInversionHints } from "../../economy/compare/spansh-inversion-detect";
 
 const onMobile = isMobile();
 
@@ -151,6 +151,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
 
   render() {
     const { map, sortedIDs, dragId, dragging, tierPoints, totalTierPoints, targetId, targetValidity, cutoffIdx, calcIds, invalidOrdering, useIncomplete } = this.state;
+    const inversionFixCount = getSpanshInversionSwapCount(this.props.spanshInversionHints);
     const selectedModeButtonStyle: CSSProperties = {
       backgroundColor: appTheme.palette.themeLighterAlt,
       borderColor: appTheme.palette.themePrimary,
@@ -447,10 +448,13 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
             className={cn.bBox2}
             style={{ height: 30 }}
             iconProps={{ iconName: 'AutoEnhanceOn' }}
-            text='Auto re-order sites'
-            title={`Re-orders sites by:\n\n1st  : Completed sites\n2nd : Building in-progress\n3rd  : Planning sites\n\nThen attempts to satisfy any pre-reqs or tier point deficits.`}
+            text='Auto re-order markets'
+            disabled={!inversionFixCount}
+            title={inversionFixCount
+              ? `Apply ${inversionFixCount} recommended market inversion ${inversionFixCount === 1 ? 'swap' : 'swaps'}.\n\nMoves each site marked with a Spansh up/down arrow directly to its recommended partner position. This only changes the highlighted market-link inversion pairs; it does not regroup bodies or recalculate a general site order.`
+              : 'No recommended Spansh market inversion movements are currently available. Run Compare audit of the whole system, then check for up/down arrow hints in this panel.'}
             onClick={() => {
-              const newSortedIDs = autoReOrderSites(map);
+              const newSortedIDs = applySpanshInversionReorder(sortedIDs, this.props.spanshInversionHints);
               this.setNewCalcIDs(newSortedIDs, cutoffIdx);
             }}
           />}
@@ -521,7 +525,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
         </table>
 
         <div className='small' style={{ marginBottom: 8 }}>
-          Auto re-ordering sites is a work in progress, please <Link onClick={() => App.showFeedback(`Auto re-order issue in: ${this.props.sysMap.name}`)}>report errors or issues</Link>
+          Auto re-order markets applies the current Spansh inversion arrow hints only. If a recommended swap looks wrong, please <Link onClick={() => App.showFeedback(`Auto re-order market issue in: ${this.props.sysMap.name}`)}>report errors or issues</Link>
         </div>
 
         {!!targetId && targetValidity && <Callout
@@ -640,19 +644,9 @@ const formatSpanshInversionTitle = (hint: SpanshInversionHint, direction: 'up' |
     `Possible Spansh inversion with ${hint.swapWithSiteName}.`,
     `Confidence: ${hint.confidence}.`,
     ...hint.reasons.map(reason => `Reason: ${reason}`),
-    `Suggested action: ${suggestedAction}.`,
+    `Suggested action: ${suggestedAction}, or press Auto re-order markets to apply all current inversion swaps.`,
   ].join('\n');
 };
-
-const getStatusNum = (status: string) => {
-  switch (status) {
-    case 'complete': return 1;
-    case 'build': return 2;
-    case 'plan': return 3;
-    case 'demolish': return 1;
-    default: throw new Error(`Unexpected status: ${status}`);
-  }
-}
 
 const groupSitesByBody = (map: Record<string, SiteMap2>, sortedIDs: string[], cutoffIdx: number) => {
   const primaryId = sortedIDs[0];
@@ -768,91 +762,3 @@ const getBodyGroupRank = (site: SiteMap2) => {
   if (site.body?.surfacePrimary?.id === site.id) { return 2; }
   return 3;
 };
-
-const autoReOrderSites = (map: Record<string, SiteMap2>) => {
-
-  // FIRST: re-order sites by marketID if known, otherwise by status: complete < build < plan
-  let sortedIDs = Object.values(map)
-    .sort((a, b) => {
-
-      // first compare market IDs (but do not attempt to compare recycled marketIDs)
-      if (!!a.marketId && !!b.marketId && a.marketId > 4_200_000_000 && b.marketId > 4_200_000_000) {
-        return a.marketId - b.marketId;
-      }
-
-      // otherwise give precedent to status
-      const as = getStatusNum(a.status);
-      const bs = getStatusNum(b.status);
-      if (as !== bs) { return as - bs; }
-
-      // do not order by the timestamp component of IDs - I think it is more harmful than helpful
-      return 0;
-    })
-    .map(s => s.id);
-
-  console.log(`** FIRST sort **\n\n${sortedIDs.map((id, i) => `#${i} : ${id} (${map[id].status}) / ${map[id].name} / ${map[id].buildType} - ${map[id].type.displayName2}`).join(`\n`)}\n\n`);
-
-  // SECOND: re-order to satisfy pre-reqs and tier point deficits
-  let n = 0;
-  const allSites = sortedIDs.map(id => map[id]);
-  for (let i = 0; i < sortedIDs.length; i++) {
-    n++;
-    if (n > sortedIDs.length * 3) {
-      console.warn(`Interrupting run away 2nd sort`);
-      break;
-    }
-    const id = sortedIDs[i];
-    const site = map[id];
-    const priorSiteIDs = sortedIDs.slice(0, i);
-    const priorSites = priorSiteIDs.map(id => map[id]);
-    const trailingSites = sortedIDs.slice(i).map(id => map[id]);
-
-    // do we have any pre-reqs to satisfy?
-    if (site.type.preReq) {
-      const isValid = hasPreReq2(priorSites, site.type);
-      if (!isValid) {
-        // find the next site that satisfies the pre-req
-        const neededBuildTypes = getPreReqNeeded(site.type);
-        if (!neededBuildTypes.length) { continue; }
-
-        const fixIdx = trailingSites.findIndex(s => neededBuildTypes.includes(s.buildType));
-        if (fixIdx < 0) {
-          console.log(`AutoSort: #${i + 1} '${site.name}' (${site.buildType}) needs pre-req: ${site.type.preReq} - no fix found`);
-          continue;
-        }
-
-        // inject satisfying pre-req where we are, then process that item next
-        const [fixSite] = trailingSites.splice(fixIdx, 1);
-        console.log(`AutoSort: #${i + 1} '${site.name}' (${site.buildType}) needs pre-req: ${site.type.preReq} - fixing with: '${fixSite.name}' (${fixSite.buildType}, ${fixSite.id})`);
-        const [fixId] = sortedIDs.splice(i + fixIdx, 1);
-        sortedIDs.splice(i, 0, fixId);
-        i--;
-        continue;
-      }
-    }
-
-    // do we have a tier-point decifit?
-    const { tierPoints } = sumTierPoints(allSites, [...priorSiteIDs, id], undefined, sortedIDs[0]);
-    let pointsDelta = site.type.needs.tier === 2 ? tierPoints.tier2 : tierPoints.tier3;
-    if (i > 0 && pointsDelta < 0) {
-      // find next site that can provide points for needed tier
-      const fixIdx = trailingSites.findIndex(s => s.type.gives.tier === site.type.needs.tier && s.type.gives.count > 0);
-      if (fixIdx < 0) {
-        console.log(`AutoSort: #${i + 1} '${site.name}' (${site.buildType}) needs ${Math.abs(pointsDelta)} T${site.type.needs.tier} points - no fix found`);
-        continue;
-      }
-
-      // inject fix where we are
-      const [fixSite] = trailingSites.splice(fixIdx, 1);
-      console.log(`AutoSort: #${i + 1} '${site.name}' (${site.buildType}) needs ${Math.abs(pointsDelta)} T${site.type.needs.tier} points - fixing with: '${fixSite.name}' (${fixSite.buildType}, ${fixSite.id}) for +${fixSite.type.gives.count} T${fixSite.type.gives.tier} points`);
-      const [fixId] = sortedIDs.splice(i + fixIdx, 1);
-      sortedIDs.splice(i, 0, fixId);
-      pointsDelta += fixSite.type.gives.count;
-      i--;
-      continue;
-    }
-  }
-
-  console.log(`** FINAL sort (${n} iterations over ${sortedIDs.length}) **\n\n${sortedIDs.map((id, i) => `#${i} : ${id} (${map[id].status}) / ${map[id].name} / ${map[id].buildType} - ${map[id].type.displayName2}`).join(`\n`)}\n\n`);
-  return sortedIDs;
-}

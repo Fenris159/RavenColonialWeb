@@ -17,6 +17,7 @@ import {
 import {
   applyBodyType,
   applyBuffs,
+  applyFixedPortPostLinkBodyBuffs,
   applyParentHubSubStrongLink,
   applySpecializedPort,
   applyStrongLinks2,
@@ -111,6 +112,7 @@ export const calculateColonyEconomies2 = (site: SiteMap2, calcIds: string[], opt
     applyWeakLinks(map, site, calcIds);
     applyFixedSurfaceAgricultureFloor(map, site);
     applyOrbitalFixedNonAgAgricultureFloor(map, site);
+    applyFixedPortPostLinkBodyBuffs(map, site);
   }
 
   return finishUp(map, site);

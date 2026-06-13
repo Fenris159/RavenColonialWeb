@@ -76,7 +76,12 @@ export const AGRICULTURE_STRONG_LINK_MODIFIER_RULES: AgricultureBodyModifierRule
     delta: -0.4,
     formulaPart: 'TIDAL 0.4',
     auditReason: 'Buff: body has TIDAL',
-    applies: ({ site }) => bodyIsTidalToStar(site.sys, site.body),
+    applies: ({ site }) =>
+      bodyIsTidalToStar(site.sys, site.body) ||
+      (
+        matches([BodyFeature.tidal], site.body?.features) &&
+        !matches([BodyFeature.bio], site.body?.features)
+      ),
   },
 ];
 
