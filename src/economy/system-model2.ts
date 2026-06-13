@@ -204,12 +204,10 @@ export interface EconomyLink {
 export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: boolean, economyModelOptions?: EconomyModelOptions): SysMap2 => {
   const idxLimit = sys.idxCalcLimit ?? sys.sites.length;
 
-  // the primary port is always the first site
-  sys.primaryPortId = sys.sites?.length > 0
-    ? sys.sites[0].id
-    : undefined;
+  // Keep API compatibility: the system primary is encoded by sites[0].
+  const primaryPortId = sys.sites?.[0]?.id;
 
-  sys = { ...sys };
+  sys = { ...sys, primaryPortId };
   sys.sites = sys.sites.map(s => { return { ...s }; });
 
   // Read:
@@ -252,7 +250,7 @@ export const buildSystemModel2 = (sys: Sys, useIncomplete: boolean, buffNerf?: b
 
   // calc sum effects from all sites
   const { tierPoints, taxCount } = sumTierPoints(sysMap.siteMaps, sysMap.calcIds, !useIncomplete);
-  const sumEffects = sumSystemEffects(sysMap.siteMaps, sysMap.calcIds, buffNerf, economyModelOptions);
+  const sumEffects = sumSystemEffects(sysMap.siteMaps, sysMap.calcIds, sysMap.primaryPortId, buffNerf, economyModelOptions);
 
   // calc system unlocks
   const sysUnlocks = {} as Record<SysUnlocks, boolean>;
@@ -421,32 +419,74 @@ export const getSysScoreDiagnostic = (sys: Sys, siteMaps: SiteMap2[]) => {
   return scoreTxt;
 };
 
-export const sumTierPoints = (siteMaps: SiteMap2[], calcIds: string[], incBuildStarted?: boolean) => {
+const isIncludedForTierNeeds = (site: SiteMap2, calcIds: string[], incBuildStarted?: boolean) => {
+  if (site.status === 'demolish') { return false; }
+  if (incBuildStarted) {
+    return site.status !== 'plan';
+  }
+  return calcIds.includes(site.id);
+};
+
+const getCanonicalTaxOrder = (siteMaps: SiteMap2[], calcIds: string[], primaryPortId: string | undefined, incBuildStarted?: boolean) =>
+  siteMaps
+    .filter(site =>
+      isIncludedForTierNeeds(site, calcIds, incBuildStarted)
+      && site.id !== primaryPortId
+      && site.type.needs.count > 0
+      && site.type.needs.tier > 1
+      && site.type.buildClass === 'starport'
+      && site.type.tier > 1
+    )
+    .sort((a, b) => {
+      const tierA = a.type.tier ?? 0;
+      const tierB = b.type.tier ?? 0;
+      if (tierA !== tierB) { return tierB - tierA; }
+
+      const bodyA = a.body?.num ?? a.bodyNum ?? Number.MAX_SAFE_INTEGER;
+      const bodyB = b.body?.num ?? b.bodyNum ?? Number.MAX_SAFE_INTEGER;
+      if (bodyA !== bodyB) { return bodyA - bodyB; }
+
+      const orbitA = a.type.orbital ? 0 : 1;
+      const orbitB = b.type.orbital ? 0 : 1;
+      if (orbitA !== orbitB) { return orbitA - orbitB; }
+
+      const marketA = a.marketId ?? Number.MAX_SAFE_INTEGER;
+      const marketB = b.marketId ?? Number.MAX_SAFE_INTEGER;
+      if (marketA !== marketB) { return marketA - marketB; }
+
+      return a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
+    });
+
+export const sumTierPoints = (siteMaps: SiteMap2[], calcIds: string[], incBuildStarted?: boolean, primaryPortIdOverride?: string) => {
 
   const tierPoints: TierPoints = { tier2: 0, tier3: 0 };
-  const primaryPortId = siteMaps && siteMaps[0]?.id;
+  const primaryPortId = primaryPortIdOverride ?? siteMaps[0]?.id;
+
+  for (const site of siteMaps) {
+    delete site.calcNeeds;
+  }
 
   let taxCount = -2;
+  for (const site of getCanonicalTaxOrder(siteMaps, calcIds, primaryPortId, incBuildStarted)) {
+    taxCount++;
+    site.calcNeeds = {
+      tier: site.type.needs.tier,
+      count: applyTax(site.type.tier, site.type.needs.count, taxCount),
+    };
+  }
+
   for (const site of siteMaps) {
-    if (site.status === 'demolish') { continue; }
-    // skip mock sites, unless ...
-    if (incBuildStarted) {
-      // allow status:build or complete even though they may not be in calcIds
-      if (site.status === 'plan') { continue; }
-    } else if (!calcIds.includes(site.id)) { continue; }
+    if (!isIncludedForTierNeeds(site, calcIds, incBuildStarted)) { continue; }
 
     // sum system tier points needed - these are already spent for projects in-progress
     if (site.id !== primaryPortId && site.type.needs.count > 0 && site.type.needs.tier > 1) {
-      let needCount = site.type.needs.count;
-      if (site.type.buildClass === 'starport' && site.type.tier > 1) {
-        taxCount++;
-        needCount = applyTax(site.type.tier, needCount, taxCount);
-      }
+      const needCount = site.calcNeeds?.count ?? site.type.needs.count;
 
       const tierName = site.type.needs.tier === 2 ? 'tier2' : 'tier3';
       tierPoints[tierName] -= needCount;
-      // store this on the site itself, so we can display these adjusted costs
-      site.calcNeeds = { tier: site.type.needs.tier, count: needCount };
+      if (!site.calcNeeds) {
+        site.calcNeeds = { tier: site.type.needs.tier, count: needCount };
+      }
     }
 
     // skip incomplete sites, unless ...
@@ -475,12 +515,11 @@ export const applyTax = (tier: number, cost: number, taxCount: number) => {
   return cost;
 };
 
-const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: boolean, economyModelOptions?: EconomyModelOptions) => {
+const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], primaryPortId: string | undefined, buffNerf?: boolean, economyModelOptions?: EconomyModelOptions) => {
 
   const mapEconomies: Record<string, number> = {};
   const sumEffects: SysEffects = {};
 
-  let first = true;
   for (const site of siteMaps) {
     if (site.status === 'demolish') { continue; }
 
@@ -499,12 +538,10 @@ const sumSystemEffects = (siteMaps: SiteMap2[], calcIds: string[], buffNerf?: bo
       let effect = site.type.effects[key] ?? 0;
       if (effect === 0) continue;
       if (buffNerf) {
-        effect = adjustAfflictedStarPortSumEffect(key, effect, first);
+        effect = adjustAfflictedStarPortSumEffect(key, effect, site.id === primaryPortId);
       }
       sumEffects[key] = (sumEffects[key] ?? 0) + effect;
     }
-
-    first = false;
   }
 
   // sort: highest count first, or alpha if equal

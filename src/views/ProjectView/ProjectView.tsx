@@ -268,7 +268,7 @@ export class ProjectView extends Component<ProjectViewProps, ProjectViewState> {
 
       if (newProj.complete) {
         const sys = await api.systemV2.getSys(newProj.systemAddress.toString());
-        const sysMap = buildSystemModel2(sys, false, !!App.cmdrSettings?.noBuffNerf);
+        const sysMap = buildSystemModel2(sys, false, !App.cmdrSettings?.noBuffNerf);
         this.setState({ sysMap });
       } else if (!isPrep) {
         // if ALL commodities have a count of -1 ... it means the project is brand new and we want people to edit them to real numbers

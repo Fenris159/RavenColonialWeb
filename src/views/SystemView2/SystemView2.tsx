@@ -35,6 +35,7 @@ import {
   spanshEconomiesNeedRefresh,
   type SpanshCompareSite,
 } from '../../economy/compare/spansh-economy-resolve';
+import { detectSameBodySpanshInversions } from '../../economy/compare/spansh-inversion-detect';
 
 interface SystemView2Props {
   systemName: string;
@@ -472,6 +473,22 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       this.state.edsmMarketIdByName,
     );
 
+  getSpanshInversionHints = () => {
+    if (
+      this.state.spanshCompareLoading ||
+      !this.state.sysMap ||
+      this.state.realEconomies === undefined
+    ) {
+      return {};
+    }
+
+    return detectSameBodySpanshInversions(
+      this.state.sysMap,
+      this.resolveSpanshEconomyForSite,
+      this.state.orderIDs,
+    );
+  };
+
   doImport = (type?: string, force?: boolean) => {
     if (!store.cmdrName && this.state.sysOriginal !== undefined) {
       console.warn('You need to sign in in for this');
@@ -614,7 +631,13 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
   };
 
   toggleUseIncomplete = () => {
-    const newValue = !this.state.useIncomplete;
+    this.setUseIncomplete(!this.state.useIncomplete);
+  };
+
+  setUseIncomplete = (newValue: boolean) => {
+    if (newValue === this.state.useIncomplete) {
+      return;
+    }
     const sysMap = buildSystemModel2(this.state.sysMap, newValue, this.state.buffNerf, this.getEconomyModelOptions());
     this.setState({
       sysMap: sysMap,
@@ -871,7 +894,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
   doToggleBuffNerf = () => {
     const newBuffNerf = !this.state.buffNerf;
 
-    const newSysMap = buildSystemModel2(this.state.sysMap, this.state.useIncomplete, newBuffNerf);
+    const newSysMap = buildSystemModel2(this.state.sysMap, this.state.useIncomplete, newBuffNerf, this.getEconomyModelOptions());
     this.setState({
       sysMap: newSysMap,
       buffNerf: newBuffNerf,
@@ -918,13 +941,17 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
         <BuildOrder
           sysMap={sysMap}
           orderIDs={this.state.orderIDs}
-          onClose={(orderIDs, idxCalcLimit) => {
+          useIncomplete={this.state.useIncomplete}
+          spanshInversionHints={this.getSpanshInversionHints()}
+          onUseIncompleteChange={this.setUseIncomplete}
+          onClose={(orderIDs, idxCalcLimit, useIncomplete) => {
             if (orderIDs) {
-              sysMap.primaryPortId = orderIDs[0];
+              const nextUseIncomplete = useIncomplete ?? this.state.useIncomplete;
               sysMap.sites = orderIDs.map(id => sysMap.sites.find(s => s.id === id)!);
               sysMap.idxCalcLimit = idxCalcLimit;
-              const newSysMap = buildSystemModel2(sysMap, this.state.useIncomplete, this.state.buffNerf);
-              this.setState({ sysMap: newSysMap, orderIDs, showBuildOrder: false });
+              const newSysMap = buildSystemModel2(sysMap, nextUseIncomplete, this.state.buffNerf, this.getEconomyModelOptions());
+              this.setState({ sysMap: newSysMap, orderIDs, useIncomplete: nextUseIncomplete, showBuildOrder: false });
+              store.useIncomplete = nextUseIncomplete;
             } else {
               this.setState({ showBuildOrder: false });
             }

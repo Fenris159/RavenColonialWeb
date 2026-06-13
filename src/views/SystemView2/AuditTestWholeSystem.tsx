@@ -26,6 +26,10 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
 
   const colorYellow = appTheme.isInverted ? appTheme.palette.yellow : 'goldenrod';
   const { sysMap } = props.sysView.state;
+  const spanshInversionHints = props.sysView.getSpanshInversionHints();
+  const spanshInversionCount = new Set(Object.values(spanshInversionHints).map(h =>
+    [h.siteId, h.swapWithSiteId].sort().join(':')
+  )).size;
 
   // find sites where predicted economies do not match Spansh
   const nonMatchingSites = !loadingRealEconomies && sysMap.siteMaps.filter(site => {
@@ -123,6 +127,11 @@ export const AuditTestWholeSystem: FunctionComponent<{ sysView: SystemView2; onC
           {nonMatchingSites && nonMatchingSites.length === 0 && validSites.length > 0 && <Stack horizontal verticalAlign='center' style={{ fontSize: onlyProblems ? 18 : 12, marginTop: onlyProblems ? 20 : undefined }}>
             <Icon iconName='SkypeCircleCheck' style={{ color: appTheme.palette.greenLight, marginRight: 8, fontSize: onlyProblems ? 18 : undefined }} />
             <span>All valid site economies match Spansh data</span>
+          </Stack>}
+
+          {spanshInversionCount > 0 && <Stack horizontal verticalAlign='center' style={{ color: colorYellow, marginTop: 8 }}>
+            <Icon iconName='Switch' style={{ marginRight: 6 }} />
+            <span>{spanshInversionCount} possible same-body Spansh inversion{spanshInversionCount === 1 ? '' : 's'} found. Check the arrow hints in Order for Calculations.</span>
           </Stack>}
 
         </div>

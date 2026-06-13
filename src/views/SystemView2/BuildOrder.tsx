@@ -6,6 +6,7 @@ import { getPreReqNeeded, hasPreReq2, isTypeValid2, SiteMap2, SiteTypeValidity, 
 import { getSiteType } from "../../site-data";
 import { TierPoint } from "../../components/TierPoints";
 import { App } from "../../App";
+import type { SpanshInversionHint, SpanshInversionHints } from "../../economy/compare/spansh-inversion-detect";
 
 const onMobile = isMobile();
 
@@ -36,7 +37,10 @@ const icb = mergeStyles({
 interface BuildOrderProps {
   sysMap: SysMap2;
   orderIDs: string[];
-  onClose: (orderIDs: string[] | undefined, cutoffIdx: number | undefined) => void
+  useIncomplete: boolean;
+  spanshInversionHints?: SpanshInversionHints;
+  onUseIncompleteChange?: (useIncomplete: boolean) => void;
+  onClose: (orderIDs: string[] | undefined, cutoffIdx: number | undefined, useIncomplete?: boolean) => void
 };
 
 interface BuildOrderState {
@@ -51,6 +55,7 @@ interface BuildOrderState {
   cutoffIdx: number;
   calcIds: string[];
   invalidOrdering: boolean;
+  useIncomplete: boolean;
 }
 
 export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
@@ -63,12 +68,17 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
       return m;
     }, {} as Record<string, SiteMap2>);
 
-    const sortedIDs = [...props.orderIDs];
-    const cutoffIdx = props.sysMap.idxCalcLimit ?? props.sysMap.sites.length;
+    const cutoffIdx = props.useIncomplete
+      ? props.orderIDs.length
+      : groupCompletedSitesByBody(map, props.orderIDs).cutoffIdx;
+    const sortedIDs = props.useIncomplete
+      ? groupAllSitesByBodyWithPlansLast(map, props.orderIDs)
+      : groupCompletedSitesByBody(map, props.orderIDs).sortedIDs;
     const calcIds = this.getNewCalcIDs(map, sortedIDs, cutoffIdx);
 
-    const { tierPoints } = sumTierPoints(props.sysMap.siteMaps, calcIds);
-    const { tierPoints: totalTierPoints } = sumTierPoints(props.sysMap.siteMaps, props.orderIDs);
+    const sortedSiteMaps = sortedIDs.map(id => map[id]);
+    const { tierPoints } = sumTierPoints(sortedSiteMaps, calcIds, undefined, sortedIDs[0]);
+    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, sortedIDs, undefined, sortedIDs[0]);
 
     this.state = {
       map: map,
@@ -80,6 +90,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
       cutoffIdx: cutoffIdx,
       calcIds: calcIds,
       invalidOrdering: this.isOrderingInvalid(map, sortedIDs),
+      useIncomplete: props.useIncomplete,
     };
   }
 
@@ -127,8 +138,8 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
 
     const newCalcIds = this.getNewCalcIDs(map, newSorted, newCutOffIdx);
 
-    const { tierPoints } = sumTierPoints(sortedSiteMaps, newCalcIds);
-    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, newSorted);
+    const { tierPoints } = sumTierPoints(sortedSiteMaps, newCalcIds, undefined, newSorted[0]);
+    const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, newSorted, undefined, newSorted[0]);
     this.setState({
       sortedIDs: newSorted,
       tierPoints, totalTierPoints,
@@ -139,7 +150,11 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
   }
 
   render() {
-    const { map, sortedIDs, dragId, dragging, tierPoints, totalTierPoints, targetId, targetValidity, cutoffIdx, calcIds, invalidOrdering } = this.state;
+    const { map, sortedIDs, dragId, dragging, tierPoints, totalTierPoints, targetId, targetValidity, cutoffIdx, calcIds, invalidOrdering, useIncomplete } = this.state;
+    const selectedModeButtonStyle: CSSProperties = {
+      backgroundColor: appTheme.palette.themeLighterAlt,
+      borderColor: appTheme.palette.themePrimary,
+    };
 
     const priorSiteMaps: SiteMap2[] = [];
     const tp: TierPoints = { tier2: 0, tier3: 0 };
@@ -159,6 +174,9 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
       const key = `bol${id.substring(1)}${i}`;
       const demolished = s.status === 'demolish';
       const isCutOff = !calcIds.includes(id) || demolished;
+      const isMarketLinkPrimary = s.body?.surfacePrimary?.id === s.id || s.body?.orbitalPrimary?.id === s.id;
+      const inversionHint = this.props.spanshInversionHints?.[s.id];
+      const inversionDirection = inversionHint && getSpanshInversionDirection(inversionHint, sortedIDs);
       if (s.status === 'plan') { foundPlanning = true; }
 
       return <tr
@@ -211,9 +229,15 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
 
           <span style={{ fontSize: 12 }}>{getSiteType(s.buildType, true)?.displayName2} ({s.buildType})</span>
           {i === 0 && <Icon iconName='CrownSolid' style={{ marginLeft: 8 }} title='Primary port' />}
+          {isMarketLinkPrimary && <Icon iconName='Link12' style={{ marginLeft: 4, color: isCutOff ? 'grey' : appTheme.palette.themeTertiary, fontSize: 12, position: 'relative', top: 1 }} title='Primary market link' />}
           {s.status === 'plan' && <Icon iconName='WebAppBuilderFragment' style={{ marginLeft: 4, color: appTheme.palette.yellowDark }} className='icon-inline' title='Planned site' />}
           {s.status === 'build' && <Icon iconName='ConstructionCone' style={{ marginLeft: 4, color: appTheme.palette.yellowDark }} className='icon-inline' title='Under construction' />}
           {demolished && <Icon iconName='Broom' style={{ marginLeft: 4, textDecorationLine: 'unset' }} className='icon-inline' title='Demolished' />}
+          {inversionHint && inversionDirection && <Icon
+            iconName={inversionDirection === 'up' ? 'ChevronUpSmall' : 'ChevronDownSmall'}
+            style={{ marginLeft: 4, color: isCutOff ? 'grey' : appTheme.palette.yellow, fontSize: 12, position: 'relative', top: 1 }}
+            title={formatSpanshInversionTitle(inversionHint, inversionDirection)}
+          />}
           {showValidityHint && !demolished && <IconButton
             id={key}
             className={cn.bBox}
@@ -279,7 +303,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
     // and add a totals row
     rows.push(<tr key='bol-totals' style={{ fontSize: 16 }}>
       <td className={cn.bt} />
-      <td className={`${cn.bt} ${cn.br}`} style={{ textAlign: 'right', color: 'grey' }} colSpan={2}>Total points:</td>
+      <td className={`${cn.bt} ${cn.br}`} style={{ textAlign: 'right', color: 'grey' }} colSpan={2}>All-site points:</td>
       <td className={`cc ${cn.bt} ${cn.br}`} style={{ fontWeight: 'bold', color: totalTierPoints.tier2 < 0 ? appTheme.palette.redDark : appTheme.palette.green }}>
         {asPosNegTxt(totalTierPoints.tier2)}
       </td>
@@ -401,7 +425,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
               iconProps={{ iconName: 'Accept' }}
               text='Okay'
               style={{ marginLeft: 40 }}
-              onClick={() => this.props.onClose(this.state.sortedIDs, this.state.cutoffIdx)}
+              onClick={() => this.props.onClose(this.state.sortedIDs, this.state.cutoffIdx, this.state.useIncomplete)}
             />
             <DefaultButton
               iconProps={{ iconName: 'Cancel' }}
@@ -433,24 +457,41 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
 
           <ActionButton
             className={cn.bBox2}
-            style={{ height: 30 }}
+            style={{ height: 30, ...(!useIncomplete ? selectedModeButtonStyle : {}) }}
             iconProps={{ iconName: 'TestBeaker' }}
             text="Completed sites only"
             title='Set cut line before the first non-complete site'
             onClick={() => {
-              const firstIncomplete = sortedIDs.findIndex(id => map[id].status !== 'complete');
-              this.setNewCalcIDs(sortedIDs, firstIncomplete);
+              const completeOnly = groupCompletedSitesByBody(map, sortedIDs);
+              this.setNewCalcIDs(completeOnly.sortedIDs, completeOnly.cutoffIdx);
+              this.setState({ useIncomplete: false });
+              this.props.onUseIncompleteChange?.(false);
             }}
           />
 
           <ActionButton
             className={cn.bBox2}
             style={{ height: 30 }}
+            iconProps={{ iconName: 'Sort' }}
+            text='Group by body'
+            title='Group sites by body while keeping the primary port first and preserving the cut line'
+            onClick={() => {
+              const groupedIDs = groupSitesByBody(map, sortedIDs, cutoffIdx);
+              this.setNewCalcIDs(groupedIDs, cutoffIdx);
+            }}
+          />
+
+          <ActionButton
+            className={cn.bBox2}
+            style={{ height: 30, ...(useIncomplete ? selectedModeButtonStyle : {}) }}
             iconProps={{ iconName: 'TestBeakerSolid' }}
             text='Use all Sites'
             title='Set cut line to the bottom'
             onClick={() => {
-              this.setNewCalcIDs(sortedIDs, sortedIDs.length);
+              const allSites = groupAllSitesByBodyWithPlansLast(map, sortedIDs);
+              this.setNewCalcIDs(allSites, allSites.length);
+              this.setState({ useIncomplete: true });
+              this.props.onUseIncompleteChange?.(true);
             }}
           />
         </Stack>
@@ -554,11 +595,11 @@ const getTierPointsDelta = (s: SiteMap2, tier: number, tp: TierPoints, first: bo
   if (tier === 2) {
     tp.tier2 += p;
     title = `Current total: ${tp.tier2}\n`;
-    deficit = p < 0 && tp.tier2 < 0;
+    deficit = s.status === 'plan' && p < 0 && tp.tier2 < 0;
   } else {
     tp.tier3 += p;
     title = `Current total: ${tp.tier3}\n`;
-    deficit = p < 0 && tp.tier3 < 0;
+    deficit = s.status === 'plan' && p < 0 && tp.tier3 < 0;
   }
 
   // exit early if nothing to render
@@ -581,6 +622,28 @@ const getTierPointsDelta = (s: SiteMap2, tier: number, tp: TierPoints, first: bo
   return <span style={style} title={title}>{asPosNegTxt(p)}</span>;
 }
 
+const getSpanshInversionDirection = (hint: SpanshInversionHint, sortedIDs: string[]) => {
+  const siteIdx = sortedIDs.indexOf(hint.siteId);
+  const partnerIdx = sortedIDs.indexOf(hint.swapWithSiteId);
+  if (siteIdx < 0 || partnerIdx < 0 || siteIdx === partnerIdx) {
+    return undefined;
+  }
+  const direction = partnerIdx < siteIdx ? 'up' : 'down';
+  return direction === hint.direction ? direction : undefined;
+};
+
+const formatSpanshInversionTitle = (hint: SpanshInversionHint, direction: 'up' | 'down') => {
+  const suggestedAction = direction === 'up'
+    ? 'move this site up'
+    : 'move this site down';
+  return [
+    `Possible Spansh inversion with ${hint.swapWithSiteName}.`,
+    `Confidence: ${hint.confidence}.`,
+    ...hint.reasons.map(reason => `Reason: ${reason}`),
+    `Suggested action: ${suggestedAction}.`,
+  ].join('\n');
+};
+
 const getStatusNum = (status: string) => {
   switch (status) {
     case 'complete': return 1;
@@ -590,6 +653,121 @@ const getStatusNum = (status: string) => {
     default: throw new Error(`Unexpected status: ${status}`);
   }
 }
+
+const groupSitesByBody = (map: Record<string, SiteMap2>, sortedIDs: string[], cutoffIdx: number) => {
+  const primaryId = sortedIDs[0];
+  const splitIdx = cutoffIdx >= 0 ? Math.min(cutoffIdx, sortedIDs.length) : sortedIDs.length;
+  const aboveCut = sortedIDs.slice(0, splitIdx);
+  const belowCut = sortedIDs.slice(splitIdx);
+
+  return [
+    ...groupSiteSegmentByBody(map, aboveCut, primaryId),
+    ...groupSiteSegmentByBody(map, belowCut, undefined),
+  ];
+};
+
+const groupCompletedSitesByBody = (map: Record<string, SiteMap2>, sortedIDs: string[]) => {
+  const primaryId = sortedIDs[0];
+  const completeIDs = sortedIDs.filter(id => map[id].status === 'complete');
+
+  if (!completeIDs.includes(primaryId)) {
+    return {
+      sortedIDs: groupSitesByBody(map, sortedIDs, 0),
+      cutoffIdx: 0,
+    };
+  }
+
+  const incompleteIDs = sortedIDs.filter(id => map[id].status !== 'complete');
+  const groupedCompleteIDs = groupSiteSegmentByBody(map, completeIDs, primaryId);
+  const groupedIncompleteIDs = groupSiteSegmentByBody(map, incompleteIDs, undefined);
+
+  return {
+    sortedIDs: [...groupedCompleteIDs, ...groupedIncompleteIDs],
+    cutoffIdx: groupedCompleteIDs.length,
+  };
+};
+
+const groupAllSitesByBodyWithPlansLast = (map: Record<string, SiteMap2>, sortedIDs: string[]) => {
+  const primaryId = sortedIDs[0];
+  const nonPlanIDs = sortedIDs.filter(id => map[id].status !== 'plan');
+  const planIDs = sortedIDs.filter(id => map[id].status === 'plan');
+
+  return [
+    ...groupSiteSegmentByBody(map, nonPlanIDs, nonPlanIDs.includes(primaryId) ? primaryId : undefined),
+    ...groupSiteSegmentByBody(map, planIDs, undefined),
+  ];
+};
+
+const groupSiteSegmentByBody = (map: Record<string, SiteMap2>, ids: string[], primaryId?: string) => {
+  const originalIndex = new Map(ids.map((id, i) => [id, i]));
+  const primaryIDs = primaryId && ids.includes(primaryId) ? [primaryId] : [];
+  const primarySite = primaryId ? map[primaryId] : undefined;
+  const primaryBodyKey = primarySite
+    ? getBodyGroupKey(primarySite)
+    : undefined;
+  const bodyGroups = ids
+    .filter(id => id !== primaryId)
+    .reduce((groups, id) => {
+      const site = map[id];
+      const key = getBodyGroupKey(site);
+      const group = groups.get(key) ?? [];
+      group.push(id);
+      groups.set(key, group);
+      return groups;
+    }, new Map<string, string[]>());
+
+  const primaryBodyIDs = primaryBodyKey
+    ? bodyGroups.get(primaryBodyKey) ?? []
+    : [];
+  if (primaryBodyKey) {
+    bodyGroups.delete(primaryBodyKey);
+  }
+
+  const groupedIDs = Array.from(bodyGroups.values())
+    .sort((a, b) => compareBodyGroups(map, a, b))
+    .flatMap(group => group.sort((a, b) => compareSitesWithinBody(map, originalIndex, a, b)));
+
+  return [
+    ...primaryIDs,
+    ...primaryBodyIDs.sort((a, b) => compareSitesWithinBody(map, originalIndex, a, b)),
+    ...groupedIDs,
+  ];
+};
+
+const getBodyGroupKey = (site: SiteMap2) =>
+  `${site.body?.num ?? site.bodyNum ?? Number.MAX_SAFE_INTEGER}:${site.body?.name ?? 'Unknown'}`;
+
+const compareBodyGroups = (map: Record<string, SiteMap2>, a: string[], b: string[]) => {
+  const siteA = map[a[0]];
+  const siteB = map[b[0]];
+  const bodyA = siteA.body?.num ?? siteA.bodyNum ?? Number.MAX_SAFE_INTEGER;
+  const bodyB = siteB.body?.num ?? siteB.bodyNum ?? Number.MAX_SAFE_INTEGER;
+  if (bodyA !== bodyB) { return bodyA - bodyB; }
+
+  return (siteA.body?.name ?? '').localeCompare(siteB.body?.name ?? '');
+};
+
+const compareSitesWithinBody = (map: Record<string, SiteMap2>, originalIndex: Map<string, number>, a: string, b: string) => {
+  const siteA = map[a];
+  const siteB = map[b];
+
+  const rankA = getBodyGroupRank(siteA);
+  const rankB = getBodyGroupRank(siteB);
+  if (rankA !== rankB) { return rankA - rankB; }
+
+  const indexA = originalIndex.get(a) ?? Number.MAX_SAFE_INTEGER;
+  const indexB = originalIndex.get(b) ?? Number.MAX_SAFE_INTEGER;
+  if (indexA !== indexB) { return indexA - indexB; }
+
+  return siteA.name.localeCompare(siteB.name) || siteA.id.localeCompare(siteB.id);
+};
+
+const getBodyGroupRank = (site: SiteMap2) => {
+  if (site.body?.orbitalPrimary?.id === site.id) { return 0; }
+  if (site.type.orbital) { return 1; }
+  if (site.body?.surfacePrimary?.id === site.id) { return 2; }
+  return 3;
+};
 
 const autoReOrderSites = (map: Record<string, SiteMap2>) => {
 
@@ -654,7 +832,7 @@ const autoReOrderSites = (map: Record<string, SiteMap2>) => {
     }
 
     // do we have a tier-point decifit?
-    const { tierPoints } = sumTierPoints(allSites, [...priorSiteIDs, id]);
+    const { tierPoints } = sumTierPoints(allSites, [...priorSiteIDs, id], undefined, sortedIDs[0]);
     let pointsDelta = site.type.needs.tier === 2 ? tierPoints.tier2 : tierPoints.tier3;
     if (i > 0 && pointsDelta < 0) {
       // find next site that can provide points for needed tier
