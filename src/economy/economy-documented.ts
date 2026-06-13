@@ -36,6 +36,8 @@ import type { SiteMap2 } from "./system-model2";
 import { BodyFeature } from "../types";
 import { BT } from "../types2";
 
+const FIXED_PORT_BIO_POST_LINK_AGRICULTURE_THRESHOLD = 1.0;
+
 export const applySpecializedPort = (map: EconomyMap, site: SiteMap2) => {
   if (!site.type.fixed || site.type.fixed === 'none' || site.type.fixed === 'colony') {
     console.warn(`Why are we in: applySpecializedPort?`);
@@ -63,7 +65,10 @@ export const applyFixedPortPostLinkBodyBuffs = (map: EconomyMap, site: SiteMap2)
     return;
   }
 
-  if (!matches([BodyFeature.bio], site.body?.features) || map.agriculture <= 0) {
+  if (
+    !matches([BodyFeature.bio], site.body?.features) ||
+    map.agriculture < FIXED_PORT_BIO_POST_LINK_AGRICULTURE_THRESHOLD
+  ) {
     return;
   }
 
