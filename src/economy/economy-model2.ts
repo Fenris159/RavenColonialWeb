@@ -1,6 +1,5 @@
 import { Economy, EconomyMap } from "../site-data";
 import { SiteMap2 } from "./system-model2";
-import { asPosNegTxt2 } from "../util";
 import {
   applyObservedPresetEconomies,
   applyAgricultureSettlementFloor,
@@ -26,8 +25,6 @@ import {
 import { calculateFacilityEconomies2 } from "./economy-facilities";
 
 export { calculateFacilityEconomies2, getFacilityFixedIntrinsic, isFacilityWithEconomy } from "./economy-facilities";
-
-let showConsoleAudit = Date.now() < 0;
 
 export type { EconomyModelOptions };
 export { stellarRemnants } from "./economy-core";
@@ -125,27 +122,6 @@ const finishUp = (map: EconomyMap, site: SiteMap2) => {
 
   site.economies = map;
   site.primaryEconomy = primaryEconomy;
-
-  const sorted = site.economyAudit!.sort((a, b) => a.inf.localeCompare(b.inf));
-  if (showConsoleAudit) {
-    const auditTxt = sorted
-      .map((x, i) => {
-        let t = `${x.inf.padStart(12)}: \t${asPosNegTxt2(x.delta).padEnd(4, '0')} \t ${x.reason}`;
-        if (sorted[i + 1]?.inf !== x.inf) {
-          t += `\n${x.inf.padStart(12)}: \t= ${x.after.toFixed(2)}\n`;
-        }
-        return t;
-      })
-      .join('\n');
-
-    var finalTally = Object.entries(map)
-      .filter(([k, v]) => v > 0)
-      .sort((a, b) => b[1] - a[1])
-      .map(([k, v]) => `\t${k.padEnd(12)}: ${v.toFixed(2)}`)
-      .join('\n');
-
-    console.log(`*** ${site.name} (${site.buildType}) ***\n\n${auditTxt}\n\nFinal tally:\n${finalTally}\n\n`);
-  }
 
   site.economyAudit!
     .sort((a, b) => map[b.inf as keyof EconomyMap] - map[a.inf as keyof EconomyMap]);

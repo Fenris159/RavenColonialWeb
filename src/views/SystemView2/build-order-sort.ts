@@ -46,21 +46,24 @@ export const groupSitesByActiveCut = (map: Record<string, SiteMap2>, sortedIDs: 
 export const groupCompletedSitesByBody = (map: Record<string, SiteMap2>, sortedIDs: string[]) => {
   const primaryId = getActivePrimaryId(map, sortedIDs);
   const completeIDs = sortedIDs.filter(id => map[id].status === 'complete' && !isBelowCutLineOnly(map[id]));
+  const incompleteIDs = sortedIDs.filter(id => map[id].status !== 'complete' && !isBelowCutLineOnly(map[id]));
+  const belowCutOnlyIDs = sortedIDs.filter(id => isBelowCutLineOnly(map[id]));
 
   if (!completeIDs.includes(primaryId)) {
-    const groupedUnknownIDs = groupSiteSegmentByBody(map, sortedIDs.filter(id => isBelowCutLineOnly(map[id])), undefined);
+    const groupedIncompleteIDs = groupSiteSegmentByBody(map, incompleteIDs, undefined);
+    const groupedBelowCutOnlyIDs = groupSiteSegmentByBody(map, belowCutOnlyIDs, undefined);
     return {
-      sortedIDs: [...groupSiteSegmentByBody(map, completeIDs, undefined), ...groupedUnknownIDs],
+      sortedIDs: [...groupSiteSegmentByBody(map, completeIDs, undefined), ...groupedIncompleteIDs, ...groupedBelowCutOnlyIDs],
       cutoffIdx: 0,
     };
   }
 
-  const incompleteIDs = sortedIDs.filter(id => map[id].status !== 'complete' || isBelowCutLineOnly(map[id]));
   const groupedCompleteIDs = groupSiteSegmentByBody(map, completeIDs, primaryId);
   const groupedIncompleteIDs = groupSiteSegmentByBody(map, incompleteIDs, undefined);
+  const groupedBelowCutOnlyIDs = groupSiteSegmentByBody(map, belowCutOnlyIDs, undefined);
 
   return {
-    sortedIDs: [...groupedCompleteIDs, ...groupedIncompleteIDs],
+    sortedIDs: [...groupedCompleteIDs, ...groupedIncompleteIDs, ...groupedBelowCutOnlyIDs],
     cutoffIdx: groupedCompleteIDs.length,
   };
 };

@@ -87,7 +87,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
     const calcIds = this.getNewCalcIDs(map, sortedIDs, cutoffIdx);
 
     const sortedSiteMaps = sortedIDs.map(id => map[id]);
-    const primaryId = props.sysMap.primaryPortId ?? getActivePrimaryId(map, sortedIDs);
+    const primaryId = getActivePrimaryId(map, sortedIDs);
     const { tierPoints } = sumTierPoints(sortedSiteMaps, calcIds, undefined, primaryId);
     const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, this.getModeTotalCalcIDs(map, sortedIDs, props.useIncomplete), undefined, primaryId);
 
@@ -143,7 +143,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
 
     const newCalcIds = this.getNewCalcIDs(map, newSorted, newCutOffIdx);
 
-    const primaryId = this.props.sysMap.primaryPortId ?? getActivePrimaryId(map, newSorted);
+    const primaryId = getActivePrimaryId(map, newSorted);
     const { tierPoints } = sumTierPoints(sortedSiteMaps, newCalcIds, undefined, primaryId);
     const { tierPoints: totalTierPoints } = sumTierPoints(sortedSiteMaps, this.getModeTotalCalcIDs(map, newSorted, useIncomplete), undefined, primaryId);
     this.setState({
@@ -176,13 +176,13 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
   }
 
   applyPrimaryPortChange() {
-    const { selectedPrimaryPortId, sortedIDs, cutoffIdx } = this.state;
+    const { map, selectedPrimaryPortId, sortedIDs, cutoffIdx, useIncomplete } = this.state;
     if (!selectedPrimaryPortId) { return; }
 
     const oldIdx = sortedIDs.indexOf(selectedPrimaryPortId);
     if (oldIdx < 0) { return; }
 
-    const newSorted = [
+    const primaryFirstIDs = [
       selectedPrimaryPortId,
       ...sortedIDs.filter(id => id !== selectedPrimaryPortId),
     ];
@@ -190,7 +190,11 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
       ? cutoffIdx
       : Math.min(sortedIDs.length, cutoffIdx + 1);
 
-    this.setNewCalcIDs(newSorted, newCutoffIdx);
+    const regroupedIDs = useIncomplete
+      ? groupSitesByBody(map, primaryFirstIDs, newCutoffIdx)
+      : groupCompletedSitesByBody(map, primaryFirstIDs).sortedIDs;
+
+    this.setNewCalcIDs(regroupedIDs, newCutoffIdx);
     this.setState({ showPrimaryPortPicker: false, selectedPrimaryPortId: undefined, showPrimaryPortOptions: false });
   }
 
@@ -232,7 +236,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
         }}
       >
         <td className={`cr ${cn.br}`} style={{}}>
-          {!useIncomplete && foundPlanning && s.status !== 'plan' && <Icon className='icon-inline' style={{ color: appTheme.palette.yellowDark, float: 'left' }} iconName='WarningSolid' title='Planning sites should be ordered last' />}
+          {!useIncomplete && foundPlanning && s.status !== 'plan' && !isBelowCutLineOnly(s) && <Icon className='icon-inline' style={{ color: appTheme.palette.yellowDark, float: 'left' }} iconName='WarningSolid' title='Planning sites should be ordered last' />}
           <div>{i + 1}</div>
         </td>
 
@@ -327,13 +331,13 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
         }}
         title='Rows below this line are excluded from calculations because they have missing or invalid modeling data.'
       >
-        <td className={cn.br} />
+        <td className={`cc ${cn.br}`}>
+          <Icon iconName='WarningSolid' style={{ color: appTheme.palette.redDark }} />
+        </td>
         <td className={`cc`} colSpan={1}>
           <div style={{ fontSize: 16, fontWeight: 'bold' }}>BROKEN BELOW</div>
         </td>
-        <td className={cn.br}>
-          <Icon iconName='WarningSolid' style={{ color: appTheme.palette.redDark }} />
-        </td>
+        <td className={cn.br} />
         <td className={`cc ${cn.br}`} />
         <td className={`cc ${cn.br}`} />
         <td />

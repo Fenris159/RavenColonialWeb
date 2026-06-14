@@ -1,14 +1,13 @@
 import { EconomyMap } from "../site-data";
 import {
   adjust,
-  bodyIsTidalToStar,
   matches,
 } from "./economy-core";
 import type { SiteMap2, SysMap2 } from "./system-model2";
 import { BodyFeature } from "../types";
 import { Bod, BT } from "../types2";
 
-/** Heuristic agriculture rules — not in the community colonization sheet. */
+/** Heuristic agriculture rules - not in the community colonization sheet. */
 
 /** Documented weak-link agriculture increment (community sheet). */
 export const WEAK_LINK_AGRICULTURE_DELTA = 0.05;
@@ -87,17 +86,6 @@ const getTidalOrbitalClusterAgWeakLinkBudget = (site: SiteMap2): number | undefi
     ? 0.55
     : 0.65;
 };
-
-/** Non-ag-specialized colony port (body BIO/ELW may still add agriculture to intrinsic). */
-const isColonyPortWithoutSameBodyAgStrong = (site: SiteMap2) =>
-  (site.type.buildClass === "starport" || site.type.buildClass === "outpost") &&
-  site.type.inf === "colony" &&
-  site.type.fixed !== "agriculture" &&
-  !site.agEconomyCalc?.sameBodyAgFacilityStrongLink &&
-  !site.agEconomyCalc?.sameBodyAgSettlementStrongLink;
-
-const hasObservedBuildTypeWeakLinkBudget = (site: SiteMap2) =>
-  site.buildType in AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE;
 
 const usesOrbitalClusterWeakLinkBudget = (site: SiteMap2) =>
   AG_WEAK_LINK_ORBITAL_CLUSTER_BUILD_TYPES.has(site.buildType) &&
@@ -223,113 +211,6 @@ export const isAgPrimaryHabWorldColony = (site: SiteMap2, map: EconomyMap) => {
   );
 };
 
-interface AgWeakLinkBudgetContext {
-  site: SiteMap2;
-  agPrimaryHabWorld: boolean;
-}
-
-interface AgWeakLinkBudgetRule {
-  label: string;
-  budget: number | ((ctx: AgWeakLinkBudgetContext) => number);
-  when: (ctx: AgWeakLinkBudgetContext) => boolean;
-}
-
-const resolveAgWeakLinkRuleBudget = (rule: AgWeakLinkBudgetRule, ctx: AgWeakLinkBudgetContext): number =>
-  typeof rule.budget === "function" ? rule.budget(ctx) : rule.budget;
-
-const AG_WEAK_LINK_BUDGET_RULES: AgWeakLinkBudgetRule[] = [
-  {
-    label: 'ELW/WW ag-primary hab colony with T1 colony ag strong link',
-    budget: AG_WEAK_LINK_BUDGET.HAB_WORLD_T1_COLONY,
-    when: ({ agPrimaryHabWorld }) => agPrimaryHabWorld,
-  },
-  {
-    label: 'Icy fixed non-ag port with organics or tidal penalty',
-    budget: AG_WEAK_LINK_BUDGET.ICY_FIXED,
-    when: ({ site }) =>
-      !!site.type.fixed &&
-      site.type.fixed !== 'agriculture' &&
-      matches([BT.ib, BT.ri], site.body?.type) &&
-      (
-        matches([BodyFeature.bio], site.body?.features) ||
-        bodyIsTidalToStar(site.sys, site.body)
-      ),
-  },
-  {
-    label: 'HMC/MRB surface outpost without agriculture intrinsic',
-    budget: AG_WEAK_LINK_BUDGET.HMC_OUTPOST,
-    when: ({ site }) =>
-      site.type.buildClass === 'outpost' &&
-      site.type.inf === 'colony' &&
-      !site.type.fixed &&
-      !site.intrinsic?.includes('agriculture') &&
-      matches([BT.hmc, BT.mrb], site.body?.type),
-  },
-  {
-    label: 'HMC/MRB colony starport without same-body agriculture strong link',
-    budget: AG_WEAK_LINK_BUDGET.HMC_STARPORT,
-    when: ({ site }) =>
-      site.type.buildClass === 'starport' &&
-      site.type.inf === 'colony' &&
-      !site.type.fixed &&
-      !site.intrinsic?.includes('agriculture') &&
-      matches([BT.hmc, BT.mrb], site.body?.type) &&
-      !site.agEconomyCalc?.sameBodyAgFacilityStrongLink &&
-      !site.agEconomyCalc?.sameBodyAgSettlementStrongLink,
-  },
-  {
-    label: 'Same-body large agriculture settlement strong link',
-    budget: AG_WEAK_LINK_BUDGET.SAME_BODY_SETTLEMENT,
-    when: ({ site }) => !!site.agEconomyCalc?.sameBodyAgSettlementStrongLink,
-  },
-  {
-    label: 'Same-body agriculture facility strong link',
-    budget: AG_WEAK_LINK_BUDGET.SAME_BODY_FACILITY,
-    when: ({ site }) =>
-      !!site.agEconomyCalc?.sameBodyAgFacilityStrongLink &&
-      !site.agEconomyCalc?.sameBodyAgSettlementStrongLink,
-  },
-  {
-    label: 'Orbital cluster colony port weak-link budget by subordinate count (plutus / vulcan / prometheus)',
-    budget: ({ site }) => getOrbitalClusterAgWeakLinkBudget(site),
-    when: ({ site }) =>
-      isColonyPortWithoutSameBodyAgStrong(site) &&
-      usesOrbitalClusterWeakLinkBudget(site),
-  },
-  {
-    label: 'Observed colony port weak-link budget by buildType',
-    budget: ({ site }) => AG_WEAK_LINK_BUDGET_BY_BUILD_TYPE[site.buildType],
-    when: ({ site }) =>
-      isColonyPortWithoutSameBodyAgStrong(site) &&
-      hasObservedBuildTypeWeakLinkBudget(site),
-  },
-  {
-    label: 'Colony port without same-body agriculture strong link',
-    budget: AG_WEAK_LINK_BUDGET.DEFAULT,
-    when: ({ site }) =>
-      isColonyPortWithoutSameBodyAgStrong(site) &&
-      !hasObservedBuildTypeWeakLinkBudget(site) &&
-      !usesOrbitalClusterWeakLinkBudget(site) &&
-      !matches([BT.hmc, BT.mrb], site.body?.type),
-  },
-  {
-    label: 'Same-body colony agriculture strong link (non-hab world)',
-    budget: AG_WEAK_LINK_BUDGET.NON_HAB_COLONY_STRONG,
-    when: ({ site, agPrimaryHabWorld }) =>
-      !!site.agEconomyCalc?.sameBodyColonyAgStrongLink &&
-      !agPrimaryHabWorld &&
-      !matches([BT.elw, BT.ww], site.body?.type),
-  },
-  {
-    label: 'Tidal hab-world ag colony',
-    budget: AG_WEAK_LINK_BUDGET.TIDAL_HAB,
-    when: ({ site }) =>
-      !!site.intrinsic?.includes('agriculture') &&
-      matches([BT.elw, BT.ww], site.body?.type) &&
-      bodyIsTidalToStar(site.sys, site.body),
-  },
-];
-
 /** Minimum agriculture economy strength contributed via weak links (game-facing % / 100). */
 export const getMaxAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWorld: boolean): number => {
   const tidalOrbitalClusterBudget = getTidalOrbitalClusterAgWeakLinkBudget(site);
@@ -349,18 +230,18 @@ export const getMaxAgricultureWeakLinks = (site: SiteMap2, agPrimaryHabWorld: bo
   return weakLinkBudgetToMaxSources(budget);
 };
 
-/** Diagnostics: which budget rules match and the tightest budget selected. */
+/**
+ * Diagnostics: historical budget-rule matching is disabled for the live model.
+ * The fitted rule table was useful for experiments, but it over-constrained
+ * otherwise valid systems. Keep this hook so future local diagnostics can
+ * restore rule explanations without wiring them into normal calculations.
+ */
 export const explainAgricultureWeakLinkBudget = (site: SiteMap2, agPrimaryHabWorld: boolean) => {
-  const ctx: AgWeakLinkBudgetContext = { site, agPrimaryHabWorld };
-  const matching = AG_WEAK_LINK_BUDGET_RULES.filter(rule => rule.when(ctx));
   const budget = getMaxAgricultureWeakLinkBudget(site, agPrimaryHabWorld);
   return {
     budget,
     maxSources: getMaxAgricultureWeakLinks(site, agPrimaryHabWorld),
-    matchingRules: matching.map(rule => ({
-      label: rule.label,
-      budget: resolveAgWeakLinkRuleBudget(rule, ctx),
-    })),
+    matchingRules: [] as { label: string; budget: number }[],
   };
 };
 

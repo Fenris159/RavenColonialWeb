@@ -7,8 +7,6 @@
 
 # testing
 /coverage
-src/economy/hip52675-fixture-compare.test.ts
-src/economy/compare/spansh-compare-reliability.test.ts
 
 # production build output
 /build
@@ -31,7 +29,7 @@ yarn-error.log*
 .vs/
 AGENT-HANDOFF.md
 
-# ─── Local-only (outside src/ so dev server does not compile it) ───
+# Local-only (outside src/ so dev server does not compile it)
 /local/
 
 # Local Spansh galaxy dumps and harvest caches (multi-GB; keep outside repo)

@@ -2,7 +2,7 @@ import { Site } from "../types2";
 import type { BodyMap2, SiteMap2 } from "./system-model2";
 
 export const isBadMarketId = (marketId: number | undefined) =>
-  typeof marketId === 'number' && marketId >= 0 && marketId < 10;
+  typeof marketId === 'number' && marketId > 0 && marketId < 10;
 
 export const hasBadBuildType = (buildType: string | undefined | null) =>
   !buildType || buildType === 'unknown' || buildType === 'null';

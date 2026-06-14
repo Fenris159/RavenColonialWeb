@@ -1,584 +1,385 @@
-# Economy model (production)
+# Economy Model
 
-How colonization economy percentages are calculated in `src/`. The architect UI shows per-port strengths; external market snapshots (Spansh) are used only for optional UI comparison.
+This document describes the current production economy model in `src/economy`.
+External market data from Spansh/EDSM is used only for comparison and inversion
+hints in the UI; it does not feed the calculation.
 
-**Plain-language companion (no code):** [economy-model-guide.md](./economy-model-guide.md)
+Plain-language companion: [economy-model-guide.md](./economy-model-guide.md)
 
-**Entry point:** `economy/index.ts` (re-exports `economy-model2.ts`).
+## Entry Points
 
-**System build:** `buildSystemModel2` in `economy/system-model2.ts` assigns body primaries, subordinate links, strong/weak candidate pools, then runs economy calc per site in `calcIds`.
+| Area | File |
+|------|------|
+| Public re-exports | `src/economy/index.ts` |
+| System assembly, link graph, tier points, system effects | `src/economy/system-model2.ts` |
+| Per-site economy pipeline | `src/economy/economy-model2.ts` |
+| Body intrinsics, buffs, strong/weak link application | `src/economy/economy-documented.ts` |
+| Agriculture modifiers and strong-link formulas | `src/economy/economy-ag-modifiers.ts` |
+| Agriculture heuristics, floors, diagnostic helpers | `src/economy/economy-ag-heuristics.ts` |
+| Facility fixed economies | `src/economy/economy-facilities.ts`, `src/economy/economy-facility-registry.ts` |
+| Spansh compare and inversion hints | `src/economy/compare/*` |
 
----
+## Included Sites
 
-## Table of contents
+`buildSystemModel2(sys, useIncomplete, buffNerf, economyModelOptions)` builds
+`calcIds` in `initializeSysMap`.
 
-1. [Which sites are included](#which-sites-are-included)
-2. [Calculation pipeline](#calculation-pipeline)
-3. [Body intrinsics](#body-intrinsics)
-4. [Body buffs (own docked row)](#body-buffs-own-docked-row)
-5. [Strong links](#strong-links)
-6. [Strong-link boosts](#strong-link-boosts)
-7. [Weak links](#weak-links)
-8. [Agriculture (three paths)](#agriculture-three-paths)
-9. [Agriculture weak-link budgets](#agriculture-weak-link-budgets)
-10. [Settlements and specialized ports](#settlements-and-specialized-ports)
-11. [Multi-port on one body](#multi-port-on-one-body)
-12. [Installations and special weak-link rules](#installations-and-special-weak-link-rules)
-13. [Hubs and facilities](#hubs-and-facilities)
-14. [Tourism and hightech buffs](#tourism-and-hightech-buffs)
-15. [Documented vs heuristic](#documented-vs-heuristic)
-16. [Link graph vs economy math](#link-graph-vs-economy-math)
-17. [Spansh compare](#spansh-compare)
-18. [Options](#options)
-19. [Module map](#module-map)
-20. [References](#references)
-21. [Verification](#verification)
+| Mode | Included in `calcIds` |
+|------|------------------------|
+| Completed only | Complete sites only |
+| Use all Sites | Non-demolished sites up to `sys.idxCalcLimit` |
 
----
+The following are forced below the cut line and excluded from calculations in
+both modes:
 
-## Which sites are included
+- Unknown body (`bodyNum < 0`, missing body, or body name `Unknown`)
+- Missing, `unknown`, or `null` build type
+- Positive single-digit `marketId` (`1` through `9`)
+- Demolished sites
 
-`calcIds` is built in `initializeSysMap`:
+The rules live in `site-calc-exclusions.ts`.
 
-| UI mode | `calcIds` |
-|---------|-----------|
-| Completed only (default) | `status === 'complete'` |
-| Include incomplete (beaker) | Non-demolished sites up to build-order `idxCalcLimit` (`plan`, `build`, `complete`) |
+## System Primary Port
 
-Economy, link graph, tier gives, and system unlocks all respect `calcIds`. Incomplete mode is for **planning**; Spansh comparisons should use completed-only.
+The system primary port is inferred from `system.sites[0]` for API compatibility.
+The model stores the inferred value on the in-memory `SysMap2.primaryPortId`.
+It is not a backend schema field.
 
----
+If `sites[0]` is invalid, the model falls back to the first valid complete
+starport/outpost, then finally to `sites[0]` as a last resort.
 
-## Calculation pipeline
+The Order for Calculations panel is informational. It groups rows for readability
+and lets the user choose a new primary port by moving an eligible orbital
+starport/outpost to row 0 in the saved site array. Drag/drop site ordering is no
+longer part of the UI.
 
-### System build (once per system view)
+## Calculation Order
 
-1. `initializeSysMap` — sites, bodies, `calcIds`
-2. Per body: `calcBodyLinks` — body primary (orbital wins over surface when both are dockable ports)
-3. `assignBodySubordinateLinks` — `parentLink` for tiered subordinates
-4. `shareColonyLinkPoolFromPrimary` — non-primary colony ports and fixed specialized outposts inherit the body primary’s link pools
-5. `calcSiteLinks` — per port: `strongSites`, `weakSites`, `sameBodyWeakSites`
-6. `calcSiteEconomies` — precalc source economies for weak-link ordering
+The model does not trust arbitrary `system.sites` order for tier-tax math.
+`sumTierPoints` builds a canonical tax order:
 
-### Per dockable site: `calculateColonyEconomies2`
+1. Exclude the system primary port.
+2. Include only valid starports with tier requirements.
+3. Sort higher tier first.
+4. Sort by body number.
+5. Sort orbital before surface.
+6. Sort by `marketId`, then name/id.
 
-| Step | Settlements | Specialized fixed ports | Colony ports |
-|------|-------------|-------------------------|--------------|
-| 1 | Fixed intrinsic (`getSettlementFixedEconomyValue`) | 0.5 surface / 1.0 orbital on `type.fixed` | `applyBodyType` (body intrinsics + BIO/GEO/RINGS) |
-| 2 | `applyBuffs(..., isSettlement=true)` | `applyBuffs` | `applyBuffs` |
-| 3 | `applyAgricultureSettlementFloor` (heuristic) | — | `applyObservedPresetEconomies` (heuristic) |
-| 4 | — | — | `applyStrongLinks2` → `applyParentHubSubStrongLink` |
-| 5 | — | — | `applyWeakLinks` |
-| 6 | — | — | Agriculture floors (heuristic) |
-| 7 | `finishUp` — `primaryEconomy`, sorted `economies` | same | same |
+This keeps tier math stable even when the table display is grouped by body.
 
-**Facilities** (hubs/installations) use `calculateFacilityEconomies2` instead; see [Hubs and facilities](#hubs-and-facilities).
+## System Build Pipeline
 
-**Audit trail:** every `adjust()` appends to `site.economyAudit` (shown in the economy table UI).
+`buildSystemModel2` performs these steps:
 
-**Precalc:** `calcSiteEconomies` runs `calculateColonyEconomies2` / `calculateFacilityEconomies2` on every weak-link **source** before receivers apply weak links, so colony sources expose `primaryEconomy` and relay ordering sees live `map.hightech`.
+1. Clone sites and build `siteMaps`, `bodyMap`, `calcIds`, and system score.
+2. Determine each body's surface and orbital primaries.
+3. Assign same-body subordinate links.
+4. Mark economy-capable sites as pending.
+5. Build each primary site's strong and weak link graph.
+6. Calculate economies and link summaries.
+7. Stabilize economy dependencies for up to five passes.
+8. Sum tier points, system effects, economy counts, and unlocks.
 
-**Finish:** `finishUp` sets `site.economies`, `site.primaryEconomy` (highest total; tie-break by economy name sort), and sorts `economyAudit` for display. Percentages in UI are `economy × 100` (e.g. `2.25` → 225%).
+Economy dependencies can be recursive because weak-link sources may need their
+own primary economy before a receiver can use them. The stabilization pass
+recalculates until signatures stop changing.
 
----
+## Body Primaries and Links
 
-## Body intrinsics
+Body primaries are selected from calculated sites only.
 
-Colony ports (`type.inf === 'colony'`) receive economies from **body type** in `applyBodyType`:
+- Dockable ports anchor link graphs.
+- Hubs can anchor a body only when the body has no dockable port.
+- Installations never act as a body primary.
+- Higher tier wins; dockable ports beat hubs at the same tier.
+- For star/asteroid-cluster bodies, sibling asteroid-cluster sites are considered
+  with the parent star body.
 
-| Body type | Economies added (+100% each) |
-|-----------|------------------------------|
-| ELW | agriculture, hightech, military, tourism |
-| WW | agriculture, tourism |
-| AW | hightech, tourism |
-| GG / WG | hightech, industrial |
-| HMC / MRB | extraction |
-| Rocky-ice | industrial, refinery |
-| Rocky | refinery |
-| Icy | industrial |
-| Asteroid | extraction |
-| Star | military |
-| BH / NS / WD | hightech, tourism |
+Subordinate links are assigned before weak-link sources are collected. Surface
+primaries cannot claim orbital ports when an orbital primary exists.
 
-**Feature adds** (when not redundant with body type):
+## Strong Links
 
-| Feature | Effect |
-|---------|--------|
-| BIO (organics) | +100% agriculture (except ELW/WW), +100% terraforming |
-| GEO | +100% extraction (except HMC/MRB), +100% industrial (except GG/WG/RI/IB) |
-| RINGS | +100% extraction (except HMC/MRB) |
-| Star + asteroids | +100% extraction on star-body ports |
+Strong links are applied by `applyStrongLinks2`.
 
-Recorded in `site.intrinsic` for weak-link and strong-link source logic.
+| Source tier/type | Base contribution |
+|------------------|-------------------|
+| Tier 1 | 0.4 |
+| Tier 2 | 0.8 |
+| Tier 3 | 1.2 |
+| Agriculture installation (`demeter`, `picumnus`) | 0.4 |
 
-**Atmosphere** affects build-slot prediction only; agriculture modifiers use **BIO**, not atmosphere.
+For non-colony sources, the source economy is applied at the base contribution.
+For colony sources, only intrinsic economies from the source are considered.
 
----
+Hub grandchildren are flattened into the primary's strong-source list so the UI
+and calculation can show the hub plus its children. The old parent-hub
+sub-strong pass is intentionally disabled in `applyParentHubSubStrongLink`
+because current observed data does not support adding that extra contribution to
+subordinate/converted ports.
 
-## Body buffs (own docked row)
+Gas-giant cluster farms (`demeter`, `picumnus` on sibling moons under the same
+gas giant) strong-link agriculture only to the body primary. They are not nested
+as sub-strong sources for subordinate ports.
 
-Applied in `applyBuffs` after intrinsics exist (`map[economy] > 0`).
+## Strong-Link Boosts
 
-### Reserve-sensitive (extraction, industrial, refinery)
+After a non-agriculture strong-link contribution is added,
+`applyStrongLinkBoost` may add another body/system adjustment.
 
-| System `reserveLevel` | Delta on own row |
-|----------------------|------------------|
-| MAJOR or PRISTINE | +40% each active economy |
-| LOW or DEPLETED | −40% each (colony ports; not settlements) |
+| Economy | Strong-link boosts |
+|---------|--------------------|
+| Extraction | Reserve level +/-0.4, volcanism +0.4 |
+| Industrial | Reserve level +/-0.4 |
+| Refinery | Reserve level +/-0.4 |
+| High Tech | AW/ELW/WW +0.4, BIO +0.4, GEO +0.4 |
+| Tourism | AW/ELW/WW +0.4, BIO +0.4, GEO +0.4, NS/BH/WD +0.4 |
 
-### Hightech (colony ports and settlements)
+The current live-compatible code lets these boosts apply per contribution.
 
-| Condition | +40% |
-|-----------|------|
-| Body has BIO | yes |
-| Body has GEO | yes |
-| Body is ELW or AW | yes |
+## Weak Links
 
-Hub rows use `skipHightechBodyBuffs` (registry path).
+Weak links are flat `+0.05` steps. They are processed alphabetically by source
+name. Strong-linked sources are skipped.
 
-### Extraction (settlements path)
+Current graph construction uses cross-body weak candidates. The `sameBodyWeakSites`
+field still exists, but same-body weak candidates are not populated in the live
+path.
 
-+40% if body has volcanism.
+Weak-link contributor rules live in `economy-weak-links.ts`.
 
-### Agriculture
+| Source | Weak-link behavior |
+|--------|--------------------|
+| Relay installations (`enodia`, `ichnaea`) | High Tech weak source. Outposts always receive it; starports receive it only if High Tech is already present or another High Tech weak anchor exists. |
+| Medical High Tech installations (`asclepius`, `eupraxia`) | High Tech weak source. |
+| Security installations (`dicaeosyne`, `eunomia`, `nomos`, `poena`) | Military weak source. |
+| Military hub installations (`alastor`, `vacuna`) | Currently allowed as weak contributors by the code. |
+| Demeter space farm | Agriculture weak source when it is a qualifying space farm. |
+| Economy-bearing hubs | Weak contributors. |
+| Subordinate tiered ports | Weak contributors. |
+| Body-primary non-colony tiered ports | Do not weak-link outward. |
+| Colony body primaries | Only agriculture is applied outward by the weak-link application path. |
+| Star-body primary tiered ports | Non-agriculture weak export is blocked. |
 
-See [Agriculture (three paths)](#agriculture-three-paths) — positive BIO/ELW/WW on own row only; no icy/tidal on own row.
+Colony weak sources use intrinsic economies. Body-primary colony sources are
+restricted to agriculture during the main weak-link pass.
 
----
+## Agriculture
 
-## Strong links
+Agriculture is split into own-row buffs, strong-link modifiers, and weak links.
 
-Implemented in `applyStrongLinks2`. Coefficients by source tier:
+### Own Row
 
-| Source tier | Coefficient |
-|-------------|-------------|
-| T1 (outpost / small hub / settlement) | 0.4 (+40%) |
-| T2 (medium hub) | 0.8 (+80%) |
-| T3 (large hub / starport) | 1.2 (+120%) |
+`applyAgricultureBodyBuffs` runs inside `applyBuffs` when agriculture is already
+above zero.
 
-**Demeter/picumnus** agriculture installations use T1 coefficient (0.4) when strong-linking, not the facility’s full intrinsic.
+Positive own-row buffs:
 
-### Facility / hub → port
+- BIO: +0.4
+- Terraformable: +0.4 only when `enableTerraformableAgricultureBonus` is enabled
+- ELW/WW: +0.4
 
-Applies `type.inf` at tier coefficient, then [strong-link boosts](#strong-link-boosts).
+Current code also applies an own-row `-0.4` when the site is on an icy body or
+is tidal to a star, with a settlement guard: settlements only receive this
+negative row when a positive agriculture body buff was applied.
 
-### Colony port → port (same body)
+ELW/WW agriculture is floored to at least 1.0.
 
-For each intrinsic economy on the **source** colony that passes `shouldApplyStrongLinkEconomy`:
+`shouldSkipPositiveAgricultureBodyBuffs` currently returns `false`, so the old
+"move orbital paired-port agriculture buffs to the strong link" behavior is not
+active.
 
-- Agriculture: `getColonyAgricultureStrongLinkSourceValue` using **intrinsic agriculture only** (`getColonyIntrinsicAgricultureBeforeWeakLinks`) — excludes `Buff:`, `Floor:`, and `Apply ` audit rows
-- Other intrinsics: flat tier coefficient (T1 0.4 / T2 0.8 / T3 1.2)
+### Strong-Link Agriculture
 
-**Colony agriculture source value** (`getColonyAgricultureStrongLinkSourceValue`):
-
-| Case | Formula |
-|------|---------|
-| Different body or non-colony source | Tier coefficient only |
-| Source tier **below** receiver | `tierCoef + max(0, sourceAg − tierCoef) × 0.75` |
-| Source tier ≥ receiver (default) | `max(tierCoef, sourceAg)` |
-| ELW/WW receiver + tierCoef > 1.0 | `max(value, sourceAg + (tierCoef − 1.0) × 1.125)` |
-
-Then `calculateAgricultureStrongLinkContribution` applies receiver-body modifiers and floor.
-
-**Ground–orbit pair** (`isGroundOrbitColonyPair`): surface colony without agriculture intrinsic can still pass agriculture to orbital colony when source has agriculture before weak links.
-
-**Fixed specialized receiver:** only inherits agriculture from same-body colony when `canInheritGroundOrbitColonyAgriculture`; other intrinsics require `ee === site.type.fixed`.
-
-### Sub-strong links
-
-When a strong source has `links.strongSites` children:
-
-- **Hub** children recurse with `subLink: '*'` (each grandchild keeps its own economy)
-- **Non-hub** children use `subLink: parent.type.inf`
-- `shouldApplyStrongLinkEconomy` filters by `subLink` — `'*'` allows all; otherwise only matching economy
-
-Prefix in audit: `sub-strong link` vs `Strong link`.
-
-### Parent hub sub-strong (`applyParentHubSubStrongLink`)
-
-After top-level strong links, a port **subordinate to an economy-bearing hub** (`parentLink` set, hub `type.inf !== none/colony`) receives one sub-strong at the **parent hub’s tier** (not the subordinate port’s tier).
-
-Applies to: fixed specialized outposts and non-fixed colony ports under the hub.
-
-### Gas-giant cluster agriculture
-
-Sibling-moon `demeter` / `picumnus` **strong-link the body primary port only** (orbital primary when both orbital and surface primaries exist). Subordinate colony ports on the body get agriculture via **weak links only**, not cluster strong links.
-
-`isGasGiantClusterAgStrongSourceOnly` blocks nested sub-strong from cluster farms on non-primary receivers.
-
----
-
-## Strong-link boosts
-
-`applyStrongLinkBoost` runs after each non-agriculture strong-link `adjust`, and after agriculture strong contributions use their own modifier path.
-
-### Per-contribution vs once-per-calc
-
-| Economy | Boost behavior |
-|---------|----------------|
-| **extraction**, **industrial**, **refinery** | MAJOR/PRISTINE (+40%) or LOW/DEPLETED (−40%) **per strong-link contribution** |
-| **extraction** | +40% volcanism **per strong-link contribution** (in addition to reserve) |
-| **hightech**, **tourism** | Body-type / BIO / GEO / stellar boosts **at most once per port calc** (`strongBoostApplied` set) |
-
-**Example (orbital starport, pristine rocky moon, surface partner + refinery hub):** rocky refinery intrinsic +40% body buff + colony strong from surface partner +40% strong reserve boost + sub-strong from hub child +80% + **second** +40% strong reserve boost = 340%.
-
-**Example (orbital starport, pristine, single refinery strong link):** one refinery strong link → one strong reserve boost → 260%.
-
----
-
-## Weak links
-
-- Strength: **+0.05 (+5%)** per applied link (`WEAK_LINK_AGRICULTURE_DELTA` for agriculture; same delta for other economies in `applyWeakLinksFromSources`)
-- **No modifiers** on weak-link strength (Mega Guide)
-- Sources processed in **name sort order**
-- Skip if source already in receiver’s `strongSites` (direct or hub grandchild)
-- Colony weak-link sources emit **`primaryEconomy` only** (not every intrinsic)
-
-### Agriculture weak-link budget
-
-The link graph lists all candidates; `getMaxAgricultureWeakLinkBudget` / `getMaxAgricultureWeakLinks` cap how many +5% steps **apply**. Rules in `economy-ag-heuristics.ts` — **tightest matching rule wins** (`Math.min` across all matching rules).
-
-`maxSources = floor(budget / 0.05)` (`weakLinkBudgetToMaxSources`).
-
-**Apply order:** `sameBodyWeakSites` first (**agriculture-only** pass), then `weakSites` (all economies). Non-agriculture weak links from same-body sources never run in pass 1; cross-body security/relay/military use pass 2 only.
-
-See [Agriculture weak-link budgets](#agriculture-weak-link-budgets) for the full rule table.
-
-### Foreign-star agriculture cap
-
-Surface colony ports without agriculture intrinsic (`shouldLimitForeignStarAgricultureWeakLinks`) accept **at most one** agriculture weak link per **foreign host star** (star root via `getBodyStarRoot`). Odyssey agriculture **settlements** are exempt. Diagnostics: `getForeignStarAgricultureWeakLinkRoot`.
-
-### Agriculture weak-link exclusions
-
-`shouldApplyAgricultureWeakLink` skips foreign **ag+tourism** colony sources weak-linking into **orbital T1** non-fixed colony receivers.
-
-### Who contributes weak links (`siteContributesWeakLinks`)
-
-| Site | Contributes? |
-|------|----------------|
-| **Relay** (`enodia` / `ichnaea`) | Yes — system-wide, no subordination |
-| **Security install** (`dicaeosyne`, `eunomia`, `nomos`, `poena`) | Yes — system-wide |
-| **Demeter space farm** (unanchored) | Yes — cross-body agriculture only |
-| **Anchored demeter** (same-body colony `parentLink`) | No outward weak |
-| **Military hub install** (`alastor`, `vacuna`) | No |
-| **Tiered port / hub** (starport/outpost) | Only when **subordinate** (`parentLink` set), **or** body primary (orbital/surface) |
-| **Standalone tiered port** (not body primary, no parent) | No |
-| **Body-primary hub** (no parent) | No |
-
-### Body-primary outward weak links
-
-| Primary type | Agriculture | Other economies |
-|--------------|-------------|-----------------|
-| Colony body primary (subordinate → orbital on another body) | Yes | No |
-| **Star-body** primary tiered port | Yes | **No** |
-
-### Relay weak link — economy apply (`relayWeakLinkAppliesEconomyTo`)
-
-| Receiver | +5% hightech from relay |
-|----------|-------------------------|
-| Outpost | Always |
-| Starport with `hightech > 0` when relay is processed | Yes (earlier weak/strong source in name sort) |
-| Starport with hightech 0 | No — link visible in Market Links only |
-
-### Security weak link — economy apply
-
-`securityWeakLinkAppliesEconomyTo` always returns true at apply time. **Effective scope:** security installs appear in the **cross-body** `weakSites` pool only (`calcSiteLinks` excludes same-body siblings from `weakSites`). Same-body pass 1 is agriculture-only, so military from a co-located security install does not apply — matching Mega Guide “outside local body” via pool split, not a per-receiver filter.
-
----
-
-## Agriculture (three paths)
-
-Documented rules align with Colonization Mega Guide: modifiers affect **strong-link strength**; weak links are flat +5%.
-
-### Path 1 — Own docked row (`applyAgricultureBodyBuffs`)
-
-After body intrinsics:
-
-| Modifier | On own row? |
-|----------|-------------|
-| BIO +40% | Yes, except orbital colony + same-body surface colony port pair (modifiers arrive via port-to-port strong link) |
-| ELW/WW +40% | Same skip rule |
-| Terraformable +40% | Only if `enableTerraformableAgricultureBonus` option |
-| ICY/rocky-ice −40% | **No** |
-| Tidal −40% | **No** |
-| ELW/WW floor at 100% | Yes, if body type ELW/WW and agriculture < 1.0 after buffs |
-
-### Path 2 — Strong-link output (`calculateAgricultureStrongLinkContribution`)
-
-Full modifier table on **receiver body**:
+`calculateAgricultureStrongLinkContribution` starts from the source value and
+then applies receiver-body modifiers:
 
 | Modifier | Delta |
 |----------|-------|
 | BIO | +0.4 |
-| ELW/WW | +0.4 (skipped for same-body ELW/WW colony source when flagged) |
-| Terraformable | +0.4 (optional flag) |
-| ICY/rocky-ice | −0.4 |
-| Tidal (moon/planet chain to star) | −0.4 |
+| Terraformable, option enabled | +0.4 |
+| ELW/WW | +0.4, except same-body ELW/WW colony source when skipped |
+| Icy/Rocky-Ice | -0.4 |
+| Tidal | -0.4 |
+
+If the final contribution is zero or lower, it is floored to
+`STRONG_LINK_CONTRIBUTION_FLOOR` (`0.1`).
+
+Colony agriculture strong-link source value currently uses the tier coefficient.
+Historical source-value amplification code is disabled.
 
-**Floor:** contribution cannot go below **0.1 (+10%)** (`STRONG_LINK_CONTRIBUTION_FLOOR`).
+### Weak-Link Agriculture
 
-Port-to-port sources use **intrinsic** agriculture value only (body `Body has: BIO` rows, not `Buff:` rows).
+Agriculture weak links are flat `+0.05` per applied source.
+
+Most historical agriculture budget rules are disabled for live calculations.
+`getMaxAgricultureWeakLinkBudget` returns `Infinity` except for tidal orbital
+cluster colony ports (`plutus`, `vulcan`, `prometheus`), which are capped:
 
-### Path 3 — Weak links
+| Case | Budget |
+|------|--------|
+| Tidal orbital cluster with same-body agriculture facility/settlement strong link | 0.55 |
+| Tidal orbital cluster without that same-body agriculture strong link | 0.65 |
 
-+5% per applied source; no modifiers; budget-limited.
+The old budget constants remain available for local hypothesis tests, and
+`explainAgricultureWeakLinkBudget` intentionally reports no matching rules.
 
-### Worked examples
+### Agriculture Heuristics Still Active
 
-| Port role | Agriculture breakdown |
-|-----------|----------------------|
-| **Subordinate surface colony** (organics, tidal moon) | +100 BIO intrinsic, +40 BIO own buff, +5 farm weak → **145%** |
-| **Orbital primary** (same body as surface colony, cluster farm) | +100 BIO intrinsic, +85 colony strong (surface partner, modifiers on link), +40 farm strong → **225%**; no BIO/tidal own-row buffs (surface colony pair skip) |
-| **Orbital primary** (no surface colony port on body) | +100 BIO intrinsic, +40 BIO own buff, +5 subordinate weak → **145%** |
+The following heuristics are active:
 
----
+- Icy subordinate `atropos` preset:
+  - Extraction +0.65
+  - Agriculture +0.55
+  - Refinery +0.35
+  - Military +0.30
+  - Industrial +0.25
+  - High Tech +0.15
+- Foreign-star agriculture weak links: surface colony ports without agriculture
+  intrinsic accept at most one agriculture weak link per foreign star root.
+- Agriculture settlement floor: tier-1 agriculture settlements are floored to
+  their fixed settlement value.
+- Fixed surface/orbital non-agriculture ports can receive agriculture floors
+  after links in specific cases.
 
-## Agriculture weak-link budgets
+## Body Intrinsics
 
-Heuristic layer (`economy-ag-heuristics.ts`). Budget is max **economy strength** from weak agriculture (+5% per applied source). Multiple rules may match; **lowest budget** applies.
+`applyBodyType` applies intrinsic economies to colony ports.
 
-| Rule label | Budget (strength) | When |
-|------------|-------------------|------|
-| ELW/WW ag-primary hab + T1 colony ag strong | 0.55 (55%) | `isAgPrimaryHabWorldColony` |
-| Icy fixed non-ag port (BIO or tidal) | 0.25 | Fixed non-ag on icy/rocky-ice |
-| HMC/MRB surface outpost, no ag intrinsic | 0.30 | Outpost colony on HMC/MRB |
-| HMC/MRB starport, no same-body ag strong | 1.60 | Starport colony on HMC/MRB |
-| Same-body large ag settlement strong | 1.10 | `sameBodyAgSettlementStrongLink` |
-| Same-body ag facility strong (no settlement) | 0.15 | `sameBodyAgFacilityStrongLink` |
-| plutus / vulcan / prometheus orbital cluster | 1.40 / 1.15 / 1.15 | By strong subordinate count (≥1 / ≥3) |
-| Observed buildType table | 1.25–1.60 | `hestia`, `poseidon`, `apollo`, `clotho`, `chronos`, `atropos`, … |
-| Colony port, no same-body ag strong (default) | 0.90 | Fallback non-HMC |
-| Same-body colony ag strong, non-hab | 0.05 | `sameBodyColonyAgStrongLink` on non-ELW/WW |
-| Tidal hab-world ag colony | 0.50 | ELW/WW + ag intrinsic + tidal to star |
+| Body | Intrinsics |
+|------|------------|
+| BH/NS/WD | High Tech, Tourism |
+| Star | Military |
+| ELW | Agriculture, High Tech, Military, Tourism |
+| WW | Agriculture, Tourism |
+| Ammonia world | High Tech, Tourism |
+| Gas giant / water giant | High Tech, Industrial |
+| HMC / metal-rich | Extraction |
+| Rocky-Ice | Industrial, Refinery |
+| Rocky | Refinery |
+| Icy | Industrial |
+| Asteroid cluster | Extraction |
 
-**Flags** (`site.agEconomyCalc`, set during strong-link apply): `sameBodyColonyAgStrongLink`, `sameBodyAgFacilityStrongLink`, `sameBodyAgSettlementStrongLink`, `tier1ColonyAgStrongLink` — drive budget rules without parsing audit text.
+Feature intrinsics:
 
-**Floors** (after weak links): `applyFixedSurfaceAgricultureFloor`, `applyOrbitalFixedNonAgAgricultureFloor`, `applyAgricultureSettlementFloor`.
+- Rings: Extraction unless HMC/metal-rich already supplies it.
+- BIO: Agriculture unless ELW/WW already supplies it, plus Terraforming.
+- GEO: Extraction unless HMC/metal-rich already supplies it, and Industrial
+  unless gas/water/rocky-ice/icy already supplies it.
+- Star/remnant bodies with asteroid clusters add Extraction.
 
-Debug: `explainAgricultureWeakLinkBudget(site, agPrimaryHabWorld)`.
+## Own-Row Buffs
 
----
+`applyBuffs` applies after intrinsic or fixed economy rows exist.
 
-## Settlements and specialized ports
+| Economy | Own-row buffs |
+|---------|---------------|
+| Extraction, Industrial, Refinery | Major/Pristine +0.4; Low/Depleted -0.4 except settlements |
+| Agriculture | See Agriculture section |
+| High Tech | BIO/GEO or ELW/AW; settlements in the new model can receive BIO, GEO, and ELW/AW checks separately |
+| Extraction | Volcanism +0.4 |
+| Tourism | BH, NS, WD, BIO/GEO, or ELW/WW/AW |
 
-### Odyssey settlements (`buildClass === 'settlement'`)
+Facility rows call `applyBuffs` with `skipHightechBodyBuffs` so scientific and
+medical hub fixed High Tech does not also receive BIO/GEO body buffs.
 
-| Step | Behavior |
-|------|----------|
-| Fixed intrinsic | `getSettlementFixedEconomyValue`: **60%** for `picumnus` / `annona` / `consus`; else **100%** |
-| Buffs | `applyBuffs(..., isSettlement=true)` — reserve penalties skipped for industry on settlements |
-| Floor | `applyAgricultureSettlementFloor` |
-| Links | **No** strong/weak link apply in `calculateColonyEconomies2` |
+## Site-Type Pipelines
 
-Settlements still appear as weak-link **sources** when subordinate and in `calcIds`.
+### Colony Starports and Outposts
 
-### Fixed specialized ports (`type.fixed` set, not `colony`)
+1. Apply body intrinsics unless the site is a fixed specialized port.
+2. Apply own-row buffs.
+3. Apply observed presets.
+4. Apply strong links.
+5. Apply weak links.
+6. Apply agriculture floors/post-link fixed-port BIO behavior.
+7. Sort audit rows and set `primaryEconomy`.
 
-| Location | Intrinsic |
-|----------|-----------|
-| Orbital | +100% on `type.fixed` |
-| Surface | +50% on `type.fixed` |
+### Fixed Specialized Ports
 
-Then `applyBuffs`. Strong/weak links apply normally. Ground–orbit inheritance: specialized orbital receives agriculture from same-body surface **colony** when `canInheritGroundOrbitColonyAgriculture`; other intrinsics require matching `type.fixed`.
+Specialized ports receive:
 
-### General colony ports
+- Orbital fixed economy: +1.0
+- Surface fixed economy: +0.5
 
-`applyBodyType` + `applyBuffs` + `applyObservedPresetEconomies` (icy **atropos** subordinate preset only). Orbital primary may skip `applyBodyType` when paired with surface colony and legacy flag — see `USE_NEW_MODEL` branch in `economy/economy-model2.ts`.
+They then receive own-row buffs, strong/weak links, and post-link agriculture
+floor/BIO handling where applicable.
 
----
+### Odyssey Settlements
 
-## Multi-port on one body
+Settlements receive a fixed economy of `1.0` for `site.type.inf`, then own-row
+buffs. They do not receive strong or weak links as receivers in the current
+pipeline. Agriculture tier-1 settlements can be floored back to their fixed
+value.
 
-Mega Guide: multiple ports on one body are a special case; RC models:
+### Hubs and Installations
 
-1. **Body primary** — orbital port wins when both orbital and surface dockable ports exist
-2. **Subordinate ports** — `parentLink` to primary; share primary’s weak-link candidate pools
-3. **Converted port behavior** — subordinate surface colony strong-links orbital primary; agriculture body buffs on orbital primary skipped when surface primary is a colony port
-4. **Cluster farm strong** — body primary only; subordinates use weak agriculture steps
-5. **Weak-link emission** — subordinate tiered ports weak-link outward; primaries weak-link agriculture outward (non-ag restricted for star-body primary)
+Hubs/installations with `type.inf !== "none"` use the facility registry.
 
----
+- Most fixed facility rows are 100%.
+- `eunostus` is 140% Industrial.
+- `athena` is 100% High Tech by default and 140% when operational comms
+  (`aletheia`, `pistis`, `soter`) exists on the same body or an ancestor body.
+- Some facilities are link-only (`type.inf === "none"`) and have no economy row.
 
-## Installations and special weak-link rules
+Facility rows still receive applicable non-High-Tech own-row buffs through
+`applyBuffs`.
 
-| Build types | Role |
-|-------------|------|
-| `enodia`, `ichnaea` | Relay — weak hightech system-wide |
-| `dicaeosyne`, `eunomia`, `nomos`, `poena` | Security — weak military system-wide |
-| `demeter`, `picumnus` | Space farm — strong local/cluster; weak cross-body if unanchored |
-| `alastor`, `vacuna` | Military hub — strong local only; no outward weak |
-| `aletheia`, `pistis`, `soter` | Comms — link-only; unlock athena 140% |
+## System Effects Buff/Nerf
 
----
+The user-facing experimental checkbox was removed. The system effects model can
+still be toggled through commander/developer settings.
 
-## Hubs and facilities
+When enabled, the system primary port gets buffs while other facilities get
+nerfs for affected system stats:
 
-| Role | Behavior |
-|------|----------|
-| **Economy-bearing hub** (`type.inf` set) | Fixed intrinsic via `economy-facility-registry.ts` + `economy-facilities.ts`. No strong/weak math on the hub row itself. |
-| **athena** | 100% hightech default; **140%** when comms complete on host body or any **ancestor** body. **Exception:** athena on HMC with star parent stays 100%. Operational `marketId` ≥ 4_200_000_001 or player prefix 395–397, 42, 43. |
-| **Link-only** (`type.inf === none`, e.g. `aletheia`) | No economy row; subordinate under body primary; unlocks hub intrinsics / port strong links. |
+| Stat | Primary | Non-primary |
+|------|---------|-------------|
+| Development | +40% | -10% |
+| Security | +40% | -10% |
+| Standard of Living | +40% | -20% |
+| Technology | +20% | -25% |
+| Wealth | +40% | -25% |
+| Population / Max population | unchanged | unchanged |
 
-Registry: `FACILITY_ECONOMY_REGISTRY` (`linkOnly`, `fixed`, `athenaComms`).
+## Spansh Compare
 
----
+Spansh compare is UI-only.
 
-## Tourism and hightech buffs
+Resolution order:
 
-### Own docked row (`applyBuffs`)
+1. Use journal/RC `marketId` if it resolves to an operational Spansh economy row.
+2. Fall back to EDSM station-name matching when the journal id is missing,
+   stale, or a construction placeholder.
 
-| Economy | Conditions (+40% each when economy > 0) |
-|---------|------------------------------------------|
-| **Hightech** | BIO, GEO, or ELW/AW body (settlements: separate BIO/GEO/ELW checks; hubs: `skipHightechBodyBuffs`) |
-| **Tourism** | BH / NS / WD in system; BIO+GEO or ELW/WW/AW on body (stellar tourism uses `site.bodyBuffed` guard) |
-| **Extraction** | Volcanism on body |
+Sites with no landing pads are excluded from hard Spansh comparison and display
+a caveat because their journal market ids can remain construction-era snapshots.
 
-### Strong-link boosts (`applyStrongLinkBoost`)
+The compare panel can detect likely same-body market inversions. Exact swaps are
+flagged when each site's modeled economy is a better match for the partner's
+Spansh row. A secondary strong heuristic uses economy-count improvement when
+external data appears stale. Order for Calculations can show up/down hints and
+Auto re-order markets can apply the recommended inversion swaps.
 
-| Economy | Stacking |
-|---------|----------|
-| **Hightech** | AW/ELW/WW, BIO, GEO — **once per port calc** |
-| **Tourism** | AW/ELW/WW, BIO, GEO, NS, BH, WD — **once per port calc** |
+## Order for Calculations Panel
 
-Strong-link tourism/hightech boosts use the same body/system conditions but fire on each strong-link `adjust` only until `strongBoostApplied` records the economy.
+The panel shows the order used up to the cut line, but rows are not draggable.
 
----
-
-## Documented vs heuristic
-
-| Layer | Modules | Contents |
-|-------|---------|----------|
-| **Documented** | `economy-documented.ts`, `economy-ag-modifiers.ts`, `economy-weak-links.ts`, `economy-link-sources.ts` | Body intrinsics, buffs, strong tiers, weak +5%, subordinate rules, agriculture three-path model, relay/security/farm rules |
-| **Heuristic** | `economy-ag-heuristics.ts` | Agriculture weak-link **budgets**, floors, preset colonies (Atropos), foreign-star caps — empirical fit |
-
-Prefer extending documented modules; add heuristics only when empirical fit requires it.
-
-### Known documented gap
-
-Industrial/extraction/refinery **LOW/DEPLETED** penalties still apply on the **own docked row** via `applyBuffs`. Mega Guide lists those decreases under strong-link modifiers; agriculture icy/tidal were split to strong-link-only — reserve decreases may follow the same pattern in a future change.
-
-`site.agEconomyCalc` flags (`economy-core.ts`) drive cap logic without parsing audit strings.
-
----
-
-## Link graph vs economy math
-
-| Concept | Where |
-|---------|--------|
-| Candidate pools | `site.links.strongSites`, `weakSites`, `sameBodyWeakSites` in `calcSiteLinks` |
-| Link graph bar (UI) | `MarketLinks.tsx` — display; may show candidates not all applied (agriculture budget) |
-| Weak-link application | `applyWeakLinks` — sorted; agriculture budget; skips strong-linked sources |
-| Hub grandchild strong | `flattenHubGrandchildStrongSites` — settlements keep own economy in strong pool |
-| Optional filter | `Site.weakLinkIds` restricts weak candidates in `calcSiteLinks` |
-
-Debug: `explainAgricultureWeakLinkBudget()`, `getImpliedAgricultureWeakLinkBudget()`.
-
----
-
-## Spansh compare
-
-**UI only** — does not affect calculation.
-
-`economy/compare/spansh-economy-resolve.ts`: journal `marketId` first; fallback EDSM name index. Completed **ports, outposts, settlements** only.
-
-Hubs/installations excluded (`isSpanshCompareExcluded`). Does not affect economy calculation.
-
----
-
-## Options
-
-```typescript
-interface EconomyModelOptions {
-  enableTerraformableAgricultureBonus?: boolean; // default false
-}
-```
-
-From `SystemView2` → `buildSystemModel2`. Persisted as `terraformableAgriBonus` in local storage.
-
-### Terraformable agriculture what-if toggle
-
-SystemView2 includes a top command-bar button titled **Enable/Disable Terraformable Agri Bonuses**. It toggles `enableTerraformableAgricultureBonus` and immediately rebuilds the system model with the new option.
-
-Purpose: Elite Dangerous currently appears not to apply the expected terraformable agriculture modifier consistently. The toggle keeps production estimates conservative by default, while allowing planners to preview what the numbers would look like if/when terraformable agriculture bonuses are fixed in-game.
-
-When enabled:
-
-- Terraformable receiver bodies add **+0.4 agriculture** to strong-link agriculture contribution formulas.
-- Terraformable bodies with an existing own-row agriculture value add **+0.4 agriculture** through `applyAgricultureBodyBuffs`.
-- The setting is saved in browser local storage as `terraformableAgriBonus`.
-
-When disabled:
-
-- Terraformable is ignored for agriculture scoring.
-- Other agriculture modifiers still apply normally: BIO, ELW/WW, icy/rocky-ice, and tidal rules are unchanged.
-
----
-
-## Module map
-
-| File | Purpose |
-|------|---------|
-| `economy/index.ts` | Public re-exports |
-| `economy/economy-model2.ts` | Pipeline + public API |
-| `economy/system-model2.ts` | Link graph + `buildSystemModel2` |
-| `economy/economy-documented.ts` | Body intrinsics, buffs, strong/weak apply |
-| `economy/economy-ag-modifiers.ts` | Agriculture modifier tables + own-row vs strong-link split |
-| `economy/economy-ag-heuristics.ts` | Weak-link budgets, floors, presets |
-| `economy/economy-weak-links.ts` | Weak-link contributor rules, relay/security apply filters |
-| `economy/economy-link-sources.ts` | Cluster farms, hub flattening, anchored farm detection |
-| `economy/economy-facility-registry.ts` | Per–build-type facility intrinsics |
-| `economy/economy-facilities.ts` | `calculateFacilityEconomies2` |
-| `economy/economy-core.ts` | `adjust`, constants, `bodyIsTidalToStar`, ag flags |
-| `economy/compare/spansh-economy-resolve.ts` | Spansh compare resolution (UI) |
-| `economy/compare/spansh-compare-reliability.ts` | Compare confidence helpers (UI) |
-
-### Where to change behavior
-
-| Goal | File |
-|------|------|
-| Facility intrinsic / athena comms | `economy-facility-registry.ts` |
-| Body intrinsic / buffs / links | `economy-documented.ts` |
-| Agriculture modifiers | `economy-ag-modifiers.ts` |
-| Weak-link source rules | `economy/economy-weak-links.ts`, `economy/economy-link-sources.ts`, `economy/system-model2.ts` |
-| Gas-giant cluster ag strong | `economy/economy-link-sources.ts`, `economy/system-model2.ts` |
-| Agriculture weak-link budgets | `economy/economy-ag-heuristics.ts` |
-| Pipeline order | `economy/economy-model2.ts` |
-| Spansh compare | `economy/compare/spansh-economy-resolve.ts`, `economy/compare/spansh-compare-reliability.ts` |
-
-### Types (`economy/system-model2.ts`)
-
-| Field | Meaning |
-|-------|---------|
-| `SiteMap2.economies` / `primaryEconomy` | Output percentages (0–3+ as decimals) |
-| `SiteMap2.economyAudit` | Step trail for economy table |
-| `SiteMap2.intrinsic` | Colony economies from body/features |
-| `SiteMap2.links` | strong/weak inputs |
-| `SiteMap2.agEconomyCalc` | Per-run agriculture cap flags |
-| `SiteMap2.parentLink` | Subordinate → primary on same body |
-
----
-
-## References
-
-| Source | Used for |
-|--------|----------|
-| Colonization Mega Guide (community sheet) | Body intrinsics, ±0.4 agriculture modifiers, strong/weak sizes, subordinate behavior |
-| Update 3 supporting facilities | Relay, security, space farm roles |
-| Observed in-game markets | Star-body primary weak export, relay on ornamental starports, agriculture budgets |
-
-When Mega Guide and observed markets disagree, documented rules define intent; heuristics (`economy-ag-heuristics.ts`) close empirical gaps.
-
----
+- Completed/all mode mirrors the main System View toggle.
+- Group by body preserves the active cut line.
+- Use all Sites keeps planned sites after complete/build sites.
+- Broken/invalid sites are forced below `BROKEN BELOW`.
+- Primary market-link sites show a link icon.
+- Primary port can be changed through a picker of eligible orbital starports or
+  outposts; saving keeps the chosen site at `system.sites[0]`.
 
 ## Verification
 
-Tracked PR smoke regressions live under `src/economy/`; run `npm run test:economy` from the repo root. The broader fixture/Spansh verification suite lives under `local/economy/tests/` (not in PR). Scenarios exercised across those suites include:
+Live repo verification should use:
 
-| Scenario | What it validates |
-|----------|-------------------|
-| Holistic system compare | Completed dockable ports vs external snapshots |
-| Agriculture three-path | Tidal/icy penalties on strong links only; own-row buffs on subordinate surface |
-| Relay on starport | +5% hightech only when hightech already > 0 at apply time |
-| Pristine refinery stacking | Reserve boost per refinery strong-link contribution |
-| Security install | Cross-body military weak links; star-body primary non-ag export |
-| Ornamental starport | Relay visible in link graph without hightech economy row |
+```bash
+npm run build
+```
+
+Local-only regression and fixture tests live under `local/economy/tests/` and
+are not part of the deployed site or tracked package scripts.

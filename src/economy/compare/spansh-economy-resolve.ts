@@ -176,7 +176,7 @@ export interface SpanshCompareSite {
 
 /**
  * Resolve Spansh compare row for a completed RC site.
- * Uses journal marketId first; falls back to EDSM name → marketId when the id row is missing or colony-only.
+ * Uses journal marketId first; falls back to EDSM name -> marketId when the id row is missing or colony-only.
  */
 export const resolveSpanshEconomyForSite = (
   site: SpanshCompareSite,
@@ -256,7 +256,7 @@ export const getSpanshCompareFailureReason = (
     const row = findRealEconomiesRow(realEconomies, edsmMarketId);
     if (!row) {
       return (
-        `“${site.name}” is on EDSM (market ${edsmMarketId}) but that station is missing from the loaded Spansh list — ` +
+        `"${site.name}" is on EDSM (market ${edsmMarketId}) but that station is missing from the loaded Spansh list - ` +
         "click Compare again to refresh Spansh data."
       );
     }
@@ -272,13 +272,13 @@ export const getSpanshCompareFailureReason = (
         ? " (EDSM returned no stations for this system name)"
         : "";
     return noJournalId
-      ? `No journal marketId — EDSM station list did not load${edsmHint}, so name matching could not run.`
+      ? `No journal marketId - EDSM station list did not load${edsmHint}, so name matching could not run.`
       : `EDSM station list did not load${edsmHint}.`;
   }
 
   if (noJournalId) {
     return (
-      `No journal marketId — “${site.name}” was not found in the EDSM index for this system ` +
+      `No journal marketId - "${site.name}" was not found in the EDSM index for this system ` +
       `(${options?.edsmStationCount ?? Object.keys(edsmMarketIdByName!).length} stations loaded). ` +
       "Check the name matches EDSM exactly, then click Compare again."
     );

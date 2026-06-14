@@ -23,7 +23,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:economy": "react-scripts test --watchAll=false --testPathPattern=src/economy",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

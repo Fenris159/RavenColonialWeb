@@ -2,8 +2,8 @@ import type { SiteType } from "../../site-data";
 
 /**
  * Spansh/journal compare confidence for a site.
- * - dockable: post-completion docking can refresh journal → EDDN → Spansh.
- * - limited: sites with no pads — journal id often frozen at construction;
+ * - dockable: post-completion docking can refresh journal -> EDDN -> Spansh.
+ * - limited: sites with no pads - journal id often frozen at construction;
  *   Spansh economies are third-party snapshots, not live verification of RC rules.
  */
 export type SpanshCompareReliability = "dockable" | "limited";
@@ -15,7 +15,7 @@ export const SPANSH_COMPARE_LIMITED_BODY =
   "This site has no landing pads, so you usually cannot dock it again after completion. " +
   "The journal marketId is often captured at the construction depot and may keep a construction-depot " +
   "station type in Spansh even when the facility is finished. Spansh percentages come from aggregated " +
-  "journal dumps (predetermined snapshots), not from RC’s economy model — they can lag in-game changes " +
+  "journal dumps (predetermined snapshots), not from RC's economy model - they can lag in-game changes " +
   "(e.g. comms unlocking 140% High Tech) or disagree with planning rules. Use RC for expected ratios; " +
   "treat Spansh as a historical reference, not ground truth.";
 
