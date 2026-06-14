@@ -1022,6 +1022,22 @@ export interface SiteTypeValidity {
   unlocks?: string[];
 }
 
+const usesTaxedTierNeed = (type: SiteType | undefined) =>
+  !!type && type.buildClass === 'starport' && type.tier > 1 && type.needs.tier > 1;
+
+const getProjectedTierNeedCount = (sysMap: SysMap2, type: SiteType, priorType: SiteType | undefined) => {
+  if (!usesTaxedTierNeed(type)) {
+    return type.needs.count;
+  }
+
+  let taxCount = sysMap.taxCount ?? 0;
+  if (!usesTaxedTierNeed(priorType)) {
+    taxCount++;
+  }
+
+  return applyTax(type.needs.tier, type.needs.count, taxCount);
+};
+
 export const isTypeValid2 = (sysMap: SysMap2 | undefined, type: SiteType | undefined, priorType: SiteType | undefined): SiteTypeValidity => {
   if (!type) { return { isValid: true }; }
 
@@ -1030,11 +1046,13 @@ export const isTypeValid2 = (sysMap: SysMap2 | undefined, type: SiteType | undef
     let neededT2 = sysMap.tierPoints.tier2;
     let neededT3 = sysMap.tierPoints.tier3;
     if (priorType) {
-      if (priorType.needs.tier === 2) { neededT2 += priorType.needs.count; }
-      if (priorType.needs.tier === 3) { neededT3 += priorType.needs.count; }
+      const priorNeedCount = getProjectedTierNeedCount(sysMap, priorType, priorType);
+      if (priorType.needs.tier === 2) { neededT2 += priorNeedCount; }
+      if (priorType.needs.tier === 3) { neededT3 += priorNeedCount; }
     }
+    const needCount = getProjectedTierNeedCount(sysMap, type, priorType);
 
-    if (type.needs.tier === 2 && neededT2 < type.needs.count) {
+    if (type.needs.tier === 2 && neededT2 < needCount) {
       return {
         isValid: false,
         msg: 'Not enough Tier 2 points',
@@ -1042,7 +1060,7 @@ export const isTypeValid2 = (sysMap: SysMap2 | undefined, type: SiteType | undef
       };
     }
 
-    if (type.needs.tier === 3 && neededT3 < type.needs.count) {
+    if (type.needs.tier === 3 && neededT3 < needCount) {
       return {
         isValid: false,
         msg: 'Not enough Tier 3 points',

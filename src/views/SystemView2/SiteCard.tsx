@@ -78,6 +78,7 @@ export const SiteCard: FunctionComponent<{ targetId: string, site: SiteMap2, sys
           <ViewEditBuildType
             buildType={site.buildType}
             sysMap={props.sysView.state.sysMap}
+            bodyType={site.body?.type}
             onChange={(newType) => {
               site.original.buildType = newType;
               props.sysView.siteChanged(site.original);

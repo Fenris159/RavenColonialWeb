@@ -144,6 +144,7 @@ export const SitesTableView: FunctionComponent<SitesViewProps> = (props) => {
           <ViewEditBuildType
             buildType={site.buildType}
             sysMap={sysMap}
+            bodyType={site.body?.type}
             dim={!inCalcIds}
             onChange={(newType) => {
               site.original.buildType = newType;

@@ -1,4 +1,4 @@
-import { Icon, Stack, Link, Panel, PanelType } from "@fluentui/react";
+import { ActionButton, Icon, Stack, Link, Panel, PanelType } from "@fluentui/react";
 import { FunctionComponent, useState } from "react";
 import { EconomyBlock } from "../../components/EconomyBlock";
 import { EconomyMap, mapName } from "../../site-data";
@@ -219,7 +219,7 @@ export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: System
   const systemFeatures = systemFeatureStarTypes.map(t => mapBodyTypeNames[t]).join(', ').toUpperCase();
   const sotlLink = getSotlLink(props.site.economies);
   let flip = false;
-  return <div style={{ minWidth: 380 }}>
+  return <div style={{ maxWidth: '100%', overflowX: 'hidden' }}>
 
     {props.site.economies && <div style={{ position: 'relative' }}>
       <h3 className={cn.h3}>
@@ -228,19 +228,33 @@ export const EconomyTable2: FunctionComponent<{ site: SiteMap2; sysView?: System
           {sotlLink && <Link href={sotlLink} target='sotl' style={{ marginLeft: 8, fontSize: 10, fontWeight: 'normal' }} title='See estimated commodities at: cdb.sotl.org.uk'>Estimate commodities<Icon className="icon-inline" iconName='OpenInNewWindow' style={{ textDecoration: 'none', marginLeft: 4 }} /></Link>}
         </>}
         {!!props.noTableHeader && <>&nbsp;</>}
-        <div style={{ fontSize: 10, fontWeight: 'normal', float: 'right', marginTop: 6 }}>
-          {!!props.site.economyAudit && <Link
+        <div style={{ fontSize: 10, fontWeight: 'normal', float: 'right', marginTop: 2, marginRight: 12 }}>
+          {!!props.site.economyAudit && <ActionButton
+            iconProps={{ iconName: 'SearchData' }}
+            className={cn.bBox}
+            styles={{
+              root: {
+                height: 22,
+                padding: '0 6px',
+                minWidth: 0,
+                fontSize: 11,
+              },
+              icon: {
+                fontSize: 12,
+                marginRight: 3,
+              },
+            }}
             title='See a breakdown of economy calculations'
             onClick={() => { setShowAudit(true); }}
           >
             Audit?
-          </Link>}
+          </ActionButton>}
         </div>
       </h3>
 
       {!props.noChart && <Stack horizontal verticalAlign='baseline' style={{ position: 'relative', marginBottom: 2 }}>
         <Icon iconName='FinancialSolid' style={{ marginRight: 4, color: appTheme.palette.themeTertiary }} />
-        <EconomyBlocks economies={props.site.economies} width={370} height={14} />
+        <EconomyBlocks economies={props.site.economies} width={360} height={14} />
       </Stack>}
       {!props.noChart && <div className='small' style={{ color: 'grey', marginBottom: 8 }}>
         Bar width is each economy&apos;s share of the total on this port. Percentages are absolute strengths (may exceed 100%).

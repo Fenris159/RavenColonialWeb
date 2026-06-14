@@ -32,7 +32,7 @@ export const MarketLinks: FunctionComponent<{ site: SiteMap2, showName?: boolean
     }
   }
   const blockHeight = 14;
-  const colorBlocks = generateColorBlocks(props.site, 370, blockHeight);
+  const colorBlocks = generateColorBlocks(props.site, 360, blockHeight);
 
   // table rows for strong/weak links
   const linkRows = [];
@@ -174,7 +174,7 @@ export const MarketLinkBlocks: FunctionComponent<{ site: SiteMap2, width: number
 
   const colorBlocks = generateColorBlocks(props.site, props.width, props.height);
 
-  return <div style={{ position: 'relative', lineHeight: `${props.height}px`, minWidth: props.width + 4 }}>
+  return <div style={{ position: 'relative', lineHeight: `${props.height}px`, maxWidth: '100%', overflow: 'hidden' }}>
     {colorBlocks}
   </div>
 }
@@ -213,7 +213,7 @@ export const EconomyBlocks: FunctionComponent<{ economies: Record<string, number
     colorBlocks.push(block);
   };
 
-  return <div style={{ position: 'relative', lineHeight: `${props.height}px`, minWidth: props.width + 4 }}>
+  return <div style={{ position: 'relative', lineHeight: `${props.height}px`, maxWidth: '100%', overflow: 'hidden' }}>
     {colorBlocks}
   </div>
 }

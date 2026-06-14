@@ -2097,6 +2097,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
           knownNames={knownNames}
           bodies={this.state.sysMap.bodies}
           bodyMap={this.state.sysMap.bodyMap}
+          sysMap={this.state.sysMap}
           onCancel={() => {
             this.setState({ showCreateBuildProject: false });
           }}
