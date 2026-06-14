@@ -1,0 +1,277 @@
+{
+  "generatedAt": "2026-06-13T19:08:19.633Z",
+  "systemName": "Col 285 Sector BW-U c3-1",
+  "id64": 358462100138,
+  "matchedFresh": 6,
+  "modelCompared": 6,
+  "modelFullMatch": 4,
+  "modelFullMatchDockable": 4,
+  "modelComparedDockable": 6,
+  "informationalMismatchRows": 0,
+  "noSpansh": 7,
+  "staleSkipped": 0,
+  "spanshOnlyFresh": 2,
+  "rows": [
+    {
+      "name": "Snail's Safe Harbor",
+      "marketId": 0,
+      "spanshMarketId": 4364514051,
+      "matchKind": "name",
+      "buildType": "dodec",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "Col 285 Sector BW-U c3-1 5 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 180,
+          "spansh": 225,
+          "diff": -45
+        }
+      ],
+      "matches": [
+        "hightech",
+        "military",
+        "refinery",
+        "terraforming"
+      ]
+    },
+    {
+      "name": "Pelagic Holdfast Hyggekrog",
+      "marketId": 0,
+      "spanshMarketId": 4365358339,
+      "matchKind": "name",
+      "buildType": "lachesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "Col 285 Sector BW-U c3-1 5 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 105,
+          "spansh": 145,
+          "diff": -40
+        }
+      ],
+      "matches": [
+        "hightech",
+        "military",
+        "refinery",
+        "terraforming"
+      ]
+    },
+    {
+      "name": "Fort Snailing",
+      "marketId": 0,
+      "spanshMarketId": 4364923907,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "Col 285 Sector BW-U c3-1",
+        "bodyType": "star",
+        "features": [],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "hightech",
+        "military",
+        "refinery"
+      ]
+    },
+    {
+      "name": "Camp Helix",
+      "marketId": 0,
+      "spanshMarketId": 4365722115,
+      "matchKind": "name",
+      "buildType": "ioke",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "Col 285 Sector BW-U c3-1 2",
+        "bodyType": "hmc",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Whelk Industrial Labs and Science LLC",
+      "marketId": 0,
+      "spanshMarketId": 4366019331,
+      "matchKind": "name",
+      "buildType": "atropos",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "Col 285 Sector BW-U c3-1 9 c",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery"
+      ]
+    },
+    {
+      "name": "Pelagic Search and Rescue Dispatch Station",
+      "marketId": 0,
+      "spanshMarketId": 4367118595,
+      "matchKind": "name",
+      "buildType": "enyo",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "Col 285 Sector BW-U c3-1 2",
+        "bodyType": "hmc",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    }
+  ],
+  "byEconomy": {
+    "agriculture": {
+      "match": 2,
+      "mismatch": 2,
+      "sumDiff": -85
+    },
+    "extraction": {
+      "match": 0,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "hightech": {
+      "match": 4,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "industrial": {
+      "match": 1,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "military": {
+      "match": 6,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "refinery": {
+      "match": 4,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "terraforming": {
+      "match": 2,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "tourism": {
+      "match": 0,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "service": {
+      "match": 0,
+      "mismatch": 0,
+      "sumDiff": 0
+    }
+  },
+  "byBuildType": {
+    "dodec": {
+      "ports": 1,
+      "fullMatch": 0,
+      "mismatchRows": 1,
+      "modelSkipped": 0
+    },
+    "lachesis": {
+      "ports": 1,
+      "fullMatch": 0,
+      "mismatchRows": 1,
+      "modelSkipped": 0
+    },
+    "nemesis": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "ioke": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "atropos": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "enyo": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    }
+  }
+}

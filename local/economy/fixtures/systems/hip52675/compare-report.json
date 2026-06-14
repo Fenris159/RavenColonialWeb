@@ -1,0 +1,3868 @@
+{
+  "generatedAt": "2026-06-14T02:21:16.709Z",
+  "systemName": "HIP 52675",
+  "id64": 319731861851,
+  "matchedFresh": 126,
+  "modelCompared": 126,
+  "modelFullMatch": 114,
+  "modelFullMatchDockable": 114,
+  "modelComparedDockable": 126,
+  "informationalMismatchRows": 0,
+  "noSpansh": 49,
+  "staleSkipped": 12,
+  "spanshOnlyFresh": 0,
+  "rows": [
+    {
+      "name": "Shoujing Terminal",
+      "marketId": 4312884995,
+      "spanshMarketId": 4312884995,
+      "matchKind": "name",
+      "buildType": "vulcan",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 0,
+          "spansh": 145,
+          "diff": -145
+        },
+        {
+          "economy": "extraction",
+          "model": 0,
+          "spansh": 75,
+          "diff": -75
+        },
+        {
+          "economy": "hightech",
+          "model": 0,
+          "spansh": 280,
+          "diff": -280
+        },
+        {
+          "economy": "industrial",
+          "model": 140,
+          "spansh": 595,
+          "diff": -455
+        },
+        {
+          "economy": "military",
+          "model": 0,
+          "spansh": 195,
+          "diff": -195
+        },
+        {
+          "economy": "refinery",
+          "model": 0,
+          "spansh": 110,
+          "diff": -110
+        },
+        {
+          "economy": "terraforming",
+          "model": 0,
+          "spansh": 40,
+          "diff": -40
+        },
+        {
+          "economy": "tourism",
+          "model": 0,
+          "spansh": 10,
+          "diff": -10
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Duan Industries",
+      "marketId": 4304380675,
+      "spanshMarketId": 4304380675,
+      "matchKind": "name",
+      "buildType": "clotho",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 c a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 0,
+          "spansh": 105,
+          "diff": -105
+        },
+        {
+          "economy": "extraction",
+          "model": 180,
+          "spansh": 370,
+          "diff": -190
+        },
+        {
+          "economy": "hightech",
+          "model": 0,
+          "spansh": 50,
+          "diff": -50
+        },
+        {
+          "economy": "industrial",
+          "model": 140,
+          "spansh": 285,
+          "diff": -145
+        },
+        {
+          "economy": "military",
+          "model": 0,
+          "spansh": 270,
+          "diff": -270
+        },
+        {
+          "economy": "refinery",
+          "model": 0,
+          "spansh": 110,
+          "diff": -110
+        },
+        {
+          "economy": "tourism",
+          "model": 0,
+          "spansh": 10,
+          "diff": -10
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Zuniga Platform",
+      "marketId": 4304072195,
+      "spanshMarketId": 4304072195,
+      "matchKind": "name",
+      "buildType": "decima",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 0,
+          "spansh": 105,
+          "diff": -105
+        },
+        {
+          "economy": "extraction",
+          "model": 180,
+          "spansh": 485,
+          "diff": -305
+        },
+        {
+          "economy": "hightech",
+          "model": 0,
+          "spansh": 50,
+          "diff": -50
+        },
+        {
+          "economy": "industrial",
+          "model": 140,
+          "spansh": 360,
+          "diff": -220
+        },
+        {
+          "economy": "military",
+          "model": 0,
+          "spansh": 195,
+          "diff": -195
+        },
+        {
+          "economy": "refinery",
+          "model": 140,
+          "spansh": 400,
+          "diff": -260
+        },
+        {
+          "economy": "tourism",
+          "model": 0,
+          "spansh": 10,
+          "diff": -10
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Biswas Horizon",
+      "marketId": 4307418115,
+      "spanshMarketId": 4307418115,
+      "matchKind": "name",
+      "buildType": "lachesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 0,
+          "spansh": 105,
+          "diff": -105
+        },
+        {
+          "economy": "extraction",
+          "model": 0,
+          "spansh": 75,
+          "diff": -75
+        },
+        {
+          "economy": "hightech",
+          "model": 0,
+          "spansh": 50,
+          "diff": -50
+        },
+        {
+          "economy": "industrial",
+          "model": 0,
+          "spansh": 70,
+          "diff": -70
+        },
+        {
+          "economy": "military",
+          "model": 0,
+          "spansh": 195,
+          "diff": -195
+        },
+        {
+          "economy": "refinery",
+          "model": 140,
+          "spansh": 325,
+          "diff": -185
+        },
+        {
+          "economy": "tourism",
+          "model": 0,
+          "spansh": 10,
+          "diff": -10
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Preuss Platform",
+      "marketId": 4311172867,
+      "spanshMarketId": 4311172867,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 0,
+          "spansh": 105,
+          "diff": -105
+        },
+        {
+          "economy": "extraction",
+          "model": 0,
+          "spansh": 75,
+          "diff": -75
+        },
+        {
+          "economy": "hightech",
+          "model": 0,
+          "spansh": 50,
+          "diff": -50
+        },
+        {
+          "economy": "industrial",
+          "model": 0,
+          "spansh": 70,
+          "diff": -70
+        },
+        {
+          "economy": "military",
+          "model": 100,
+          "spansh": 365,
+          "diff": -265
+        },
+        {
+          "economy": "refinery",
+          "model": 0,
+          "spansh": 110,
+          "diff": -110
+        },
+        {
+          "economy": "tourism",
+          "model": 0,
+          "spansh": 10,
+          "diff": -10
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Barron Town",
+      "marketId": 4312432387,
+      "spanshMarketId": 4312432387,
+      "matchKind": "name",
+      "buildType": "plutus",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 12 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "agriculture",
+          "model": 0,
+          "spansh": 105,
+          "diff": -105
+        },
+        {
+          "economy": "extraction",
+          "model": 0,
+          "spansh": 150,
+          "diff": -150
+        },
+        {
+          "economy": "hightech",
+          "model": 0,
+          "spansh": 50,
+          "diff": -50
+        },
+        {
+          "economy": "industrial",
+          "model": 0,
+          "spansh": 70,
+          "diff": -70
+        },
+        {
+          "economy": "military",
+          "model": 0,
+          "spansh": 195,
+          "diff": -195
+        },
+        {
+          "economy": "refinery",
+          "model": 140,
+          "spansh": 325,
+          "diff": -185
+        },
+        {
+          "economy": "tourism",
+          "model": 0,
+          "spansh": 10,
+          "diff": -10
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Buhle Territories",
+      "marketId": 4306472195,
+      "spanshMarketId": 4306472195,
+      "matchKind": "name",
+      "buildType": "atropos",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "extraction",
+          "model": 485,
+          "spansh": 180,
+          "diff": 305
+        },
+        {
+          "economy": "industrial",
+          "model": 360,
+          "spansh": 140,
+          "diff": 220
+        },
+        {
+          "economy": "refinery",
+          "model": 400,
+          "spansh": 140,
+          "diff": 260
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Savchenko Vista",
+      "marketId": 4304379395,
+      "spanshMarketId": 4304379395,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 c a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "extraction",
+          "model": 370,
+          "spansh": 180,
+          "diff": 190
+        },
+        {
+          "economy": "industrial",
+          "model": 285,
+          "spansh": 140,
+          "diff": 145
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Dara Garden",
+      "marketId": 4307416835,
+      "spanshMarketId": 4307416835,
+      "matchKind": "name",
+      "buildType": "decima",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "refinery",
+          "model": 325,
+          "spansh": 140,
+          "diff": 185
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Laumer Platform",
+      "marketId": 4311445251,
+      "spanshMarketId": 4311445251,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "military",
+          "model": 365,
+          "spansh": 100,
+          "diff": 265
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Marvin Landing",
+      "marketId": 4312825859,
+      "spanshMarketId": 4312825859,
+      "matchKind": "name",
+      "buildType": "plutus",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 12 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "refinery",
+          "model": 325,
+          "spansh": 140,
+          "diff": 185
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Braun Depot",
+      "marketId": 4211674627,
+      "spanshMarketId": 4211674627,
+      "matchKind": "name",
+      "buildType": "vulcan",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [
+        {
+          "economy": "industrial",
+          "model": 595,
+          "spansh": 140,
+          "diff": 455
+        }
+      ],
+      "matches": []
+    },
+    {
+      "name": "Escobar Gateway",
+      "marketId": 4254538755,
+      "spanshMarketId": 4254538755,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Maruyama Biological Expedition",
+      "marketId": 4217822979,
+      "spanshMarketId": 4217822979,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "Markey Complex",
+      "marketId": 4260276739,
+      "spanshMarketId": 4260276739,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - Refinery/agri 13a",
+      "marketId": 4273588739,
+      "spanshMarketId": 4273588739,
+      "matchKind": "name",
+      "buildType": "artemis",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 13 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Rousseau Sanctuary",
+      "marketId": 4270273539,
+      "spanshMarketId": 4270273539,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 a",
+        "bodyType": "rocky-ice",
+        "features": [
+          "landable"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - Emergency Power Cells",
+      "marketId": 4273435139,
+      "spanshMarketId": 4273435139,
+      "matchKind": "name",
+      "buildType": "zeus",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 13 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Brunt Constructions",
+      "marketId": 4258585347,
+      "spanshMarketId": 4258585347,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Oyekan Mineralogic Base",
+      "marketId": 4263039235,
+      "spanshMarketId": 4263039235,
+      "matchKind": "name",
+      "buildType": "erebus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 3 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Diesel Sanctuary",
+      "marketId": 4274701827,
+      "spanshMarketId": 4274701827,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 5 b",
+        "bodyType": "rocky",
+        "features": [
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Bunche Point",
+      "marketId": 4274735875,
+      "spanshMarketId": 4274735875,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 5 b",
+        "bodyType": "rocky",
+        "features": [
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "[frht] - Alpha Ground Port",
+      "marketId": 4258586883,
+      "spanshMarketId": 4258586883,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 11 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Bahcall Vista",
+      "marketId": 4276331011,
+      "spanshMarketId": 4276331011,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Beethoven's Progress",
+      "marketId": 4277714179,
+      "spanshMarketId": 4277714179,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 h",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Ramaty Sanctuary",
+      "marketId": 4277801219,
+      "spanshMarketId": 4277801219,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 h",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "[FRHT] - Kappa Colony",
+      "marketId": 4278952451,
+      "spanshMarketId": 4278952451,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 11 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - Epsilon Beaujolais Base",
+      "marketId": 4279550467,
+      "spanshMarketId": 4279550467,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 11 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - Ceramics And Cmm's",
+      "marketId": 4215725315,
+      "spanshMarketId": 4215725315,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 13 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Kotsuba Astrophysics Enterprise",
+      "marketId": 4303050243,
+      "spanshMarketId": 4303050243,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "Tutunnyk Genetics Enterprise",
+      "marketId": 4303048963,
+      "spanshMarketId": 4303048963,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "Carrasco's Liberty",
+      "marketId": 4302230019,
+      "spanshMarketId": 4302230019,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 i",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Guo Manufacturing Exchange",
+      "marketId": 4303052035,
+      "spanshMarketId": 4303052035,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Myeni Analytics Site",
+      "marketId": 4303271427,
+      "spanshMarketId": 4303271427,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "[FRHT] - AGRI/TOURISM/MIL 7",
+      "marketId": 4303959555,
+      "spanshMarketId": 4303959555,
+      "matchKind": "name",
+      "buildType": "artemis",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 7",
+        "bodyType": "ww",
+        "features": [
+          "volcanism",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Dawes Analytics Laboratory",
+      "marketId": 4303269635,
+      "spanshMarketId": 4303269635,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "Morelli Industrial Hub",
+      "marketId": 4303052547,
+      "spanshMarketId": 4303052547,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Corner Defence Site",
+      "marketId": 4302231299,
+      "spanshMarketId": 4302231299,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 i",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Bernard Sanctuary",
+      "marketId": 4302722051,
+      "spanshMarketId": 4302722051,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 h",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Kulkarni Munitions Enterprise",
+      "marketId": 4302232579,
+      "spanshMarketId": 4302232579,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 h",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Berger Military Camp",
+      "marketId": 4303993859,
+      "spanshMarketId": 4303993859,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 h",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Kovalenko Command Base",
+      "marketId": 4303274499,
+      "spanshMarketId": 4303274499,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 g",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Walachnia's Fort",
+      "marketId": 4303273731,
+      "spanshMarketId": 4303273731,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 g",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Naudiyal Fortification",
+      "marketId": 4303887363,
+      "spanshMarketId": 4303887363,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Zadzisai Resolve",
+      "marketId": 4303885827,
+      "spanshMarketId": 4303885827,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 f",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Winter Agricultural",
+      "marketId": 4303888899,
+      "spanshMarketId": 4303888899,
+      "matchKind": "name",
+      "buildType": "picumnus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Soh Agricultural Exchange",
+      "marketId": 4303890691,
+      "spanshMarketId": 4303890691,
+      "matchKind": "name",
+      "buildType": "picumnus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Theofelus Visitor Hostel",
+      "marketId": 4304359171,
+      "spanshMarketId": 4304359171,
+      "matchKind": "name",
+      "buildType": "fufluns",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 d",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "tourism"
+      ]
+    },
+    {
+      "name": "Matsuda Visitor Lodge",
+      "marketId": 4304363011,
+      "spanshMarketId": 4304363011,
+      "matchKind": "name",
+      "buildType": "fufluns",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 d",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - HITECH/INDUSTRIAL 13E",
+      "marketId": 4305197059,
+      "spanshMarketId": 4305197059,
+      "matchKind": "name",
+      "buildType": "apollo",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 13 e",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Saccone Cultivation Collection",
+      "marketId": 4304659203,
+      "spanshMarketId": 4304659203,
+      "matchKind": "name",
+      "buildType": "fornax",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 c",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Ferreira Botanical Collection",
+      "marketId": 4304658179,
+      "spanshMarketId": 4304658179,
+      "matchKind": "name",
+      "buildType": "ceres",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 c",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Neumann Nutrition Complex",
+      "marketId": 4305294339,
+      "spanshMarketId": 4305294339,
+      "matchKind": "name",
+      "buildType": "fornax",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 c",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Lange Botanical Market",
+      "marketId": 4305295363,
+      "spanshMarketId": 4305295363,
+      "matchKind": "name",
+      "buildType": "ceres",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 c",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Frimout Legacy",
+      "marketId": 4305127683,
+      "spanshMarketId": 4305127683,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 14 c",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Joshi's Dock",
+      "marketId": 4305296899,
+      "spanshMarketId": 4305296899,
+      "matchKind": "name",
+      "buildType": "bellona",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 b a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Okada Arms Installation",
+      "marketId": 4305298179,
+      "spanshMarketId": 4305298179,
+      "matchKind": "name",
+      "buildType": "enyo",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 b a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Espinoza Honour",
+      "marketId": 4305300227,
+      "spanshMarketId": 4305300227,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 b",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Faucher Munitions Base",
+      "marketId": 4305553667,
+      "spanshMarketId": 4305553667,
+      "matchKind": "name",
+      "buildType": "bellona",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 b",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Pianzola Mineralogic Exploration",
+      "marketId": 4305554947,
+      "spanshMarketId": 4305554947,
+      "matchKind": "name",
+      "buildType": "erebus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 a a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Rutten Mining Exploration",
+      "marketId": 4305555971,
+      "spanshMarketId": 4305555971,
+      "matchKind": "name",
+      "buildType": "aerecura",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 a a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Zivai's Prospect",
+      "marketId": 4305557507,
+      "spanshMarketId": 4305557507,
+      "matchKind": "name",
+      "buildType": "erebus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 14 a",
+        "bodyType": "rocky-ice",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Sharpe Chemical Works",
+      "marketId": 4305559043,
+      "spanshMarketId": 4305559043,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 c",
+        "bodyType": "rocky-ice",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Bedi Excavation Hub",
+      "marketId": 4305740035,
+      "spanshMarketId": 4305740035,
+      "matchKind": "name",
+      "buildType": "mantus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 2 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Ricci Industrial Enterprise",
+      "marketId": 4306860035,
+      "spanshMarketId": 4306860035,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 c",
+        "bodyType": "rocky-ice",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Alarie's Garden",
+      "marketId": 4305732867,
+      "spanshMarketId": 4305732867,
+      "matchKind": "name",
+      "buildType": "annona",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 d",
+        "bodyType": "rocky-ice",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Kohler Botanical Holding",
+      "marketId": 4305734659,
+      "spanshMarketId": 4305734659,
+      "matchKind": "name",
+      "buildType": "picumnus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 13 d",
+        "bodyType": "rocky-ice",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Dhawan Prospecting",
+      "marketId": 4303933955,
+      "spanshMarketId": 4303933955,
+      "matchKind": "name",
+      "buildType": "aerecura",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 1 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Aloisio Drilling Station",
+      "marketId": 4304005635,
+      "spanshMarketId": 4304005635,
+      "matchKind": "name",
+      "buildType": "erebus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 2 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Theofelus Plant",
+      "marketId": 4306469635,
+      "spanshMarketId": 4306469635,
+      "matchKind": "name",
+      "buildType": "lachesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction",
+        "industrial",
+        "refinery"
+      ]
+    },
+    {
+      "name": "Patel Platform",
+      "marketId": 4306473475,
+      "spanshMarketId": 4306473475,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Nakano Station",
+      "marketId": 4306474755,
+      "spanshMarketId": 4306474755,
+      "matchKind": "name",
+      "buildType": "nona",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Prohasko Depot",
+      "marketId": 4306476803,
+      "spanshMarketId": 4306476803,
+      "matchKind": "name",
+      "buildType": "clotho",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Richelieu Consulting",
+      "marketId": 4306863619,
+      "spanshMarketId": 4306863619,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "refinery"
+      ]
+    },
+    {
+      "name": "Otanez Collection",
+      "marketId": 4306866435,
+      "spanshMarketId": 4306866435,
+      "matchKind": "name",
+      "buildType": "atropos",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Zhou Resolve",
+      "marketId": 4306867971,
+      "spanshMarketId": 4306867971,
+      "matchKind": "name",
+      "buildType": "clotho",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "refinery"
+      ]
+    },
+    {
+      "name": "[FRHT] - Omega HQ",
+      "marketId": 4314925571,
+      "spanshMarketId": 4314925571,
+      "matchKind": "name",
+      "buildType": "apollo",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 11 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Tracy Hub",
+      "marketId": 4307419651,
+      "spanshMarketId": 4307419651,
+      "matchKind": "name",
+      "buildType": "nona",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Krisjanis Territories",
+      "marketId": 4307420675,
+      "spanshMarketId": 4307420675,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "refinery"
+      ]
+    },
+    {
+      "name": "Ramis Horizons",
+      "marketId": 4311112195,
+      "spanshMarketId": 4311112195,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8",
+        "bodyType": "gas-giant",
+        "features": [
+          "rings"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Deprez Terminal",
+      "marketId": 4311333891,
+      "spanshMarketId": 4311333891,
+      "matchKind": "name",
+      "buildType": "vesta",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 8",
+        "bodyType": "gas-giant",
+        "features": [
+          "rings"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction",
+        "hightech",
+        "industrial"
+      ]
+    },
+    {
+      "name": "Rodriguez Jurisdiction",
+      "marketId": 4307421955,
+      "spanshMarketId": 4307421955,
+      "matchKind": "name",
+      "buildType": "ioke",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 9 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Amis's Folly",
+      "marketId": 4311217923,
+      "spanshMarketId": 4311217923,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 9 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Heinrich Military Hub",
+      "marketId": 4307787267,
+      "spanshMarketId": 4307787267,
+      "matchKind": "name",
+      "buildType": "enyo",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 10 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Lockett Keep",
+      "marketId": 4307791363,
+      "spanshMarketId": 4307791363,
+      "matchKind": "name",
+      "buildType": "bellona",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 10 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Trier Relay",
+      "marketId": 4311418883,
+      "spanshMarketId": 4311418883,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Meucci's Pride",
+      "marketId": 4312197123,
+      "spanshMarketId": 4312197123,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Nguesso's Fortress",
+      "marketId": 4307792899,
+      "spanshMarketId": 4307792899,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 10 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Champollion Relay",
+      "marketId": 4311777027,
+      "spanshMarketId": 4311777027,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Stott Command Point",
+      "marketId": 4307982083,
+      "spanshMarketId": 4307982083,
+      "matchKind": "name",
+      "buildType": "enyo",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 10 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Kozak Munitions Installation",
+      "marketId": 4307982595,
+      "spanshMarketId": 4307982595,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 10 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Kachanov City",
+      "marketId": 4312028675,
+      "spanshMarketId": 4312028675,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Watson's Liberty",
+      "marketId": 4308685059,
+      "spanshMarketId": 4308685059,
+      "matchKind": "name",
+      "buildType": "bellona",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 10 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "MacCurdy Sanctuary",
+      "marketId": 4311917571,
+      "spanshMarketId": 4311917571,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Kamiyama Prospect",
+      "marketId": 4311734787,
+      "spanshMarketId": 4311734787,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 10 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "[FRHT] - Omega Ground Port",
+      "marketId": 4305738755,
+      "spanshMarketId": 4305738755,
+      "matchKind": "name",
+      "buildType": "nona",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 11 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Xiang Military Camp",
+      "marketId": 4308687107,
+      "spanshMarketId": 4308687107,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 j",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Mori's Armoury",
+      "marketId": 4308689667,
+      "spanshMarketId": 4308689667,
+      "matchKind": "name",
+      "buildType": "enyo",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 j",
+        "bodyType": "icy",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Suarez Metallurgic Territory",
+      "marketId": 4308692995,
+      "spanshMarketId": 4308692995,
+      "matchKind": "name",
+      "buildType": "mantus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 i",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Navarrete Prospecting Complex",
+      "marketId": 4308694531,
+      "spanshMarketId": 4308694531,
+      "matchKind": "name",
+      "buildType": "orcus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 i",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Si-myung Legacy",
+      "marketId": 4312122371,
+      "spanshMarketId": 4312122371,
+      "matchKind": "name",
+      "buildType": "plutus",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 12 i",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Quinn's Nursery",
+      "marketId": 4309025539,
+      "spanshMarketId": 4309025539,
+      "matchKind": "name",
+      "buildType": "picumnus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 h",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Chung Horticultural Base",
+      "marketId": 0,
+      "spanshMarketId": 4309026307,
+      "matchKind": "name",
+      "buildType": "annona",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 h",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Christy Beacon",
+      "marketId": 4312115459,
+      "spanshMarketId": 4312115459,
+      "matchKind": "name",
+      "buildType": "plutus",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 12 h",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Benedetti Extraction Complex",
+      "marketId": 4309027587,
+      "spanshMarketId": 4309027587,
+      "matchKind": "name",
+      "buildType": "mantus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 g",
+        "bodyType": "rocky",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Naidu Prospecting Station",
+      "marketId": 4309028355,
+      "spanshMarketId": 4309028355,
+      "matchKind": "name",
+      "buildType": "orcus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "[FRHT] Tau Settlement",
+      "marketId": 4309030147,
+      "spanshMarketId": 4309030147,
+      "matchKind": "name",
+      "buildType": "hestia",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "HIP 52675 11 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Hawkins Depot",
+      "marketId": 4305524483,
+      "spanshMarketId": 4305524483,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 5 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Bennett Industrial Forge",
+      "marketId": 4305916931,
+      "spanshMarketId": 4305916931,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 5 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "geo",
+          "volcanism",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Newberry Military Camp",
+      "marketId": 4306140163,
+      "spanshMarketId": 4306140163,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Banyard Service",
+      "marketId": 4310088707,
+      "spanshMarketId": 4310088707,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Rudenko Nutrition Facility",
+      "marketId": 4310090243,
+      "spanshMarketId": 4310090243,
+      "matchKind": "name",
+      "buildType": "fornax",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Harland Watch",
+      "marketId": 4310092035,
+      "spanshMarketId": 4310092035,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Mannan Arms Installation",
+      "marketId": 4310093827,
+      "spanshMarketId": 4310093827,
+      "matchKind": "name",
+      "buildType": "minerva",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Dzsejt Horticultural Biome",
+      "marketId": 4310095619,
+      "spanshMarketId": 4310095619,
+      "matchKind": "name",
+      "buildType": "ceres",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    },
+    {
+      "name": "Valenzuela Astrophysics Facility",
+      "marketId": 4310410499,
+      "spanshMarketId": 4310410499,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "Aubert Analysis Forum",
+      "marketId": 4310411267,
+      "spanshMarketId": 4310411267,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "Golub Biochemical Laboratory",
+      "marketId": 4310412035,
+      "spanshMarketId": 4310412035,
+      "matchKind": "name",
+      "buildType": "chronos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "hightech"
+      ]
+    },
+    {
+      "name": "[FRHT] - Tau Command",
+      "marketId": 4318047491,
+      "spanshMarketId": 4318047491,
+      "matchKind": "name",
+      "buildType": "apollo",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 11 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Shore Chemical Site",
+      "marketId": 4289041411,
+      "spanshMarketId": 4289041411,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 3 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Indongo Chemical Workshop",
+      "marketId": 4305272067,
+      "spanshMarketId": 4305272067,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 3 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "[FRHT] - Kappa Command",
+      "marketId": 4314117379,
+      "spanshMarketId": 4314117379,
+      "matchKind": "name",
+      "buildType": "no_truss",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 11 c",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - Alpha HQ",
+      "marketId": 4314431747,
+      "spanshMarketId": 4314431747,
+      "matchKind": "name",
+      "buildType": "no_truss",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 11 b",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "[FRHT] - Epsilon Barrelhouse Terminal",
+      "marketId": 4315719171,
+      "spanshMarketId": 4315719171,
+      "matchKind": "name",
+      "buildType": "no_truss",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "HIP 52675 11 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming",
+        "tourism"
+      ]
+    },
+    {
+      "name": "Braun Command Garrison",
+      "marketId": 4332102147,
+      "spanshMarketId": 4332102147,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 12 a",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "tidal"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Petrenko Hydroponics Estate",
+      "marketId": 4332105731,
+      "spanshMarketId": 4332105731,
+      "matchKind": "name",
+      "buildType": "picumnus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "HIP 52675 11 d",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture"
+      ]
+    }
+  ],
+  "byEconomy": {
+    "agriculture": {
+      "match": 48,
+      "mismatch": 6,
+      "sumDiff": -670
+    },
+    "extraction": {
+      "match": 48,
+      "mismatch": 8,
+      "sumDiff": -375
+    },
+    "hightech": {
+      "match": 44,
+      "mismatch": 6,
+      "sumDiff": -530
+    },
+    "industrial": {
+      "match": 46,
+      "mismatch": 9,
+      "sumDiff": -210
+    },
+    "military": {
+      "match": 66,
+      "mismatch": 7,
+      "sumDiff": -1050
+    },
+    "refinery": {
+      "match": 39,
+      "mismatch": 9,
+      "sumDiff": -330
+    },
+    "terraforming": {
+      "match": 18,
+      "mismatch": 1,
+      "sumDiff": -40
+    },
+    "tourism": {
+      "match": 37,
+      "mismatch": 6,
+      "sumDiff": -60
+    },
+    "service": {
+      "match": 0,
+      "mismatch": 0,
+      "sumDiff": 0
+    }
+  },
+  "byBuildType": {
+    "vulcan": {
+      "ports": 2,
+      "fullMatch": 0,
+      "mismatchRows": 2,
+      "modelSkipped": 0
+    },
+    "clotho": {
+      "ports": 3,
+      "fullMatch": 2,
+      "mismatchRows": 1,
+      "modelSkipped": 0
+    },
+    "decima": {
+      "ports": 2,
+      "fullMatch": 0,
+      "mismatchRows": 2,
+      "modelSkipped": 0
+    },
+    "lachesis": {
+      "ports": 2,
+      "fullMatch": 1,
+      "mismatchRows": 1,
+      "modelSkipped": 0
+    },
+    "nemesis": {
+      "ports": 13,
+      "fullMatch": 11,
+      "mismatchRows": 2,
+      "modelSkipped": 0
+    },
+    "plutus": {
+      "ports": 4,
+      "fullMatch": 2,
+      "mismatchRows": 2,
+      "modelSkipped": 0
+    },
+    "atropos": {
+      "ports": 2,
+      "fullMatch": 1,
+      "mismatchRows": 1,
+      "modelSkipped": 0
+    },
+    "hestia": {
+      "ports": 11,
+      "fullMatch": 10,
+      "mismatchRows": 1,
+      "modelSkipped": 0
+    },
+    "vesta": {
+      "ports": 7,
+      "fullMatch": 7,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "chronos": {
+      "ports": 8,
+      "fullMatch": 8,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "artemis": {
+      "ports": 2,
+      "fullMatch": 2,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "zeus": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "erebus": {
+      "ports": 4,
+      "fullMatch": 4,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "minerva": {
+      "ports": 8,
+      "fullMatch": 8,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "gaea": {
+      "ports": 8,
+      "fullMatch": 8,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "polemos": {
+      "ports": 9,
+      "fullMatch": 9,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "picumnus": {
+      "ports": 5,
+      "fullMatch": 5,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "fufluns": {
+      "ports": 2,
+      "fullMatch": 2,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "apollo": {
+      "ports": 3,
+      "fullMatch": 3,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "fornax": {
+      "ports": 3,
+      "fullMatch": 3,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "ceres": {
+      "ports": 3,
+      "fullMatch": 3,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "bellona": {
+      "ports": 4,
+      "fullMatch": 4,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "enyo": {
+      "ports": 4,
+      "fullMatch": 4,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "aerecura": {
+      "ports": 2,
+      "fullMatch": 2,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "mantus": {
+      "ports": 3,
+      "fullMatch": 3,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "annona": {
+      "ports": 2,
+      "fullMatch": 2,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "nona": {
+      "ports": 3,
+      "fullMatch": 3,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "ioke": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "orcus": {
+      "ports": 2,
+      "fullMatch": 2,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "no_truss": {
+      "ports": 3,
+      "fullMatch": 3,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    }
+  }
+}

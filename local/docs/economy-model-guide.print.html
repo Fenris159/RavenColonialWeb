@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>How colonization economies work</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Calibri, sans-serif;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 24px 28px;
+      line-height: 1.55;
+      color: #1a1a1a;
+      font-size: 11pt;
+    }
+    h1 { font-size: 22pt; border-bottom: 2px solid #333; padding-bottom: 0.25em; margin-top: 0; }
+    h2 { font-size: 15pt; margin-top: 1.4em; page-break-after: avoid; }
+    h3 { font-size: 12pt; margin-top: 1.1em; page-break-after: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 9.5pt; page-break-inside: avoid; }
+    th, td { border: 1px solid #bbb; padding: 0.4em 0.55em; text-align: left; vertical-align: top; }
+    th { background: #eee; }
+    tr:nth-child(even) td { background: #fafafa; }
+    code { background: #f2f2f2; padding: 0.1em 0.25em; font-size: 0.92em; }
+    pre code { display: block; padding: 0; background: none; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
+    strong { font-weight: 600; }
+
+    .economy-flow {
+      margin: 1.2em 0 1.4em;
+      page-break-inside: avoid;
+    }
+    .economy-flow__sources {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .economy-flow__box {
+      border: 1.5px solid #888;
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #fafafa;
+      font-size: 9.5pt;
+    }
+    .economy-flow__box--own { border-color: #4a7c59; background: #f4faf6; }
+    .economy-flow__box--strong { border-color: #3d6b8c; background: #f2f7fb; }
+    .economy-flow__box--weak { border-color: #8c6b3d; background: #fbf8f2; }
+    .economy-flow__title {
+      margin: 0 0 0.45em;
+      font-weight: 600;
+      font-size: 9.5pt;
+      line-height: 1.3;
+    }
+    .economy-flow__box ul {
+      margin: 0;
+      padding-left: 1.1em;
+    }
+    .economy-flow__box li {
+      margin: 0.2em 0;
+    }
+    .economy-flow__arrows {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      text-align: center;
+      font-size: 16pt;
+      line-height: 1;
+      color: #555;
+      margin: 6px 0 4px;
+    }
+    .economy-flow__result {
+      margin: 0 auto;
+      max-width: 220px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 11pt;
+      padding: 10px 16px;
+      border: 2px solid #333;
+      border-radius: 6px;
+      background: #fff;
+    }
+</style>
+</head>
+<body>
+<h1>How Colonization Economies Work</h1>
+<p>A player-facing guide for <strong>Elite Dangerous</strong> CMDRs using Raven Colonial to plan
+colonization ports, Odyssey settlements, hubs, and installations. It explains
+the same model as the technical economy model (companion: economy-model.md), but without
+code terms.</p>
+<p><strong>What you see in Raven Colonial:</strong> every dockable port, settlement, hub, or
+installation with a market can show percentages for Agriculture, Refinery,
+Military, High Tech, Tourism, and the other economy types. A value like <strong>225%</strong>
+means the market has economy strength <code>2.25</code> in the data.</p>
+<p>Those percentages come from three places:</p>
+<ul>
+<li>The site&#39;s <strong>host location</strong>: planet type, moon type, star, asteroid cluster,
+Biological/Geological signals, volcanism, rings, and similar conditions.</li>
+<li>The system&#39;s <strong>reserve level</strong>: Pristine, Major, Low, Depleted, and related
+resource states.</li>
+<li><strong>Market links</strong> from other valid builds in the same system.</li>
+</ul>
+<p><strong>Spansh check:</strong> for completed in-game stations, Raven Colonial can compare its
+estimate with Spansh/EDSM market snapshots. Spansh is comparison-only; it does
+not change the calculation.</p>
+<hr>
+<h2>Surface and Orbital Terms</h2>
+<p>Raven Colonial uses these terms throughout this guide:</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Surface port</strong></td>
+<td>A dockable starport or outpost built on the surface of a landable planet or moon</td>
+</tr>
+<tr>
+<td><strong>Orbital port</strong></td>
+<td>A dockable starport or outpost in space, including ports around a planet, moon, star, or asteroid cluster</td>
+</tr>
+<tr>
+<td><strong>Settlement</strong></td>
+<td>An Odyssey surface settlement</td>
+</tr>
+<tr>
+<td><strong>Hub / installation</strong></td>
+<td>A supporting build such as a relay, security post, space farm, comms installation, refinery hub, or science hub</td>
+</tr>
+<tr>
+<td><strong>System primary port</strong></td>
+<td>The first port the game has you build when you colonize a system. It should only be changed in Raven Colonial if that primary port is wrong</td>
+</tr>
+<tr>
+<td><strong>Body primary port</strong></td>
+<td>The main local market-link receiver for a body. When both orbital and surface ports share a body, the orbital port usually leads the pair</td>
+</tr>
+<tr>
+<td><strong>Subordinate port</strong></td>
+<td>An extra port attached under a body primary port or hub</td>
+</tr>
+</tbody></table>
+<p>When this guide says <strong>same body</strong>, it means builds on the same planet, moon,
+star, or asteroid cluster. When it says <strong>other bodies</strong>, it means different
+locations in the same system.</p>
+<hr>
+<h2>The Big Picture</h2>
+<p>Think of each market row as a ledger. Raven Colonial adds every line that
+applies, then shows the total.</p>
+<div class="economy-flow" role="img" aria-label="Three mechanisms combine into the market percentage"><div class="economy-flow__sources"><div class="economy-flow__box economy-flow__box--own">
+<p class="economy-flow__title">What the site gets locally</p>
+<ul>
+<li>Planet, moon, star, or asteroid type</li>
+<li>Biological, Geological, Volcanism, Rings, and similar signals</li>
+<li>System reserve level for industry economies</li>
+</ul>
+</div><div class="economy-flow__box economy-flow__box--strong">
+<p class="economy-flow__title">Strong links - big slices</p>
+<ul>
+<li>Same-body hubs and settlements</li>
+<li>Surface-to-orbital port pairs</li>
+<li>Some gas-giant cluster farms</li>
+</ul>
+</div><div class="economy-flow__box economy-flow__box--weak">
+<p class="economy-flow__title">Weak links - +5% each</p>
+<ul>
+<li>Relays, medical support, security, farms, hubs, and subordinate ports</li>
+</ul>
+</div></div><div class="economy-flow__arrows" aria-hidden="true">
+<span>v</span><span>v</span><span>v</span>
+</div><p class="economy-flow__result">Market % on the System Map</p></div><table>
+<thead>
+<tr>
+<th>Mechanism</th>
+<th>Typical amount</th>
+<th>Do local conditions change it?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Local row</strong></td>
+<td>+100%, +50%, or +40% chunks</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Strong link</strong></td>
+<td>+40%, +80%, or +120% per source</td>
+<td>Yes, especially Agriculture and reserve-level industry</td>
+</tr>
+<tr>
+<td><strong>Weak link</strong></td>
+<td>+5% per source</td>
+<td>No, weak links stay flat</td>
+</tr>
+</tbody></table>
+<p><strong>Market Links</strong> shows candidates that can link into a port. The audit table
+shows which candidates actually changed the market row.</p>
+<p><strong>Who counts:</strong> by default, only builds marked <strong>Complete</strong> affect the economy
+model. <strong>Use all Sites</strong> adds planned and in-progress builds for what-if
+planning, but invalid rows still stay below <strong>BROKEN BELOW</strong>.</p>
+<hr>
+<h2>What To Build For Each Economy</h2>
+<p>This is the short CMDR version. Later sections explain the edge cases.</p>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Typical helpers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Agriculture</strong></td>
+<td>Biological bodies, Earth-like / Water worlds, space farms, Agriculture settlements</td>
+</tr>
+<tr>
+<td><strong>Refinery / Industrial / Extraction</strong></td>
+<td>Rocky, Rocky-Ice, Icy, HMC, Metal-rich, rings, Geological / Volcanism, refinery / industrial / extraction hubs</td>
+</tr>
+<tr>
+<td><strong>High Tech</strong></td>
+<td>Relays, medical installations, scientific settlements/hubs, Ammonia / Earth-like / Biological / Geological bodies</td>
+</tr>
+<tr>
+<td><strong>Military</strong></td>
+<td>Security installations for weak links, military hubs for local strong links, star-based ports</td>
+</tr>
+<tr>
+<td><strong>Tourism</strong></td>
+<td>Tourist builds, Earth-like / Water / Ammonia bodies, Biological / Geological signals, black holes, neutron stars, white dwarfs</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>What Counts In The Model</h2>
+<p>The System View has two calculation modes:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>What counts</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Completed sites only</strong></td>
+<td>Complete sites only</td>
+</tr>
+<tr>
+<td><strong>Use all Sites</strong></td>
+<td>Complete, building, and planned sites up to the cut line</td>
+</tr>
+</tbody></table>
+<p>Rows with missing or unsafe modeling data are forced below <strong>BROKEN BELOW</strong> and
+never feed the model:</p>
+<ul>
+<li>Unknown body</li>
+<li>Missing, <code>unknown</code>, or <code>null</code> build type</li>
+<li>Positive single-digit <code>marketId</code> values (<code>1</code> through <code>9</code>)</li>
+<li>Demolished site</li>
+</ul>
+<p>A new or planned site with placeholder <code>marketId: 0</code> is not automatically
+broken. If it has a valid body and build type, it belongs below the normal cut
+line in completed-only mode.</p>
+<hr>
+<h2>Ports, Settlements, Hubs, And Installations</h2>
+<p><strong>Dockable ports</strong> are the main market rows most CMDRs care about. General
+colony ports use the full model: local row, strong links, weak links, then
+primary economy selection.</p>
+<p><strong>Surface ports</strong> and <strong>Orbital ports</strong> can behave differently when they share a
+body. If a Surface colony port and an Orbital colony port are both present, the
+Surface port can push its local economies into the Orbital port as a strong
+link.</p>
+<p><strong>Specialized ports</strong> start with their specialty:</p>
+<table>
+<thead>
+<tr>
+<th>Specialized port location</th>
+<th>Starting specialty</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Surface</strong></td>
+<td>+50%</td>
+</tr>
+<tr>
+<td><strong>Orbital</strong></td>
+<td>+100%</td>
+</tr>
+</tbody></table>
+<p>Examples: Refinery outpost, Tourism starport, Extraction outpost.</p>
+<p><strong>Odyssey settlements</strong> have a shorter path. They get a fixed settlement
+economy, local buffs, and any settlement floors. Strong and weak links do <strong>not</strong>
+apply to the settlement&#39;s own market row, but settlements can still send links
+outward when the link graph makes them a source.</p>
+<p><strong>Hubs and installations</strong> mostly feed links into ports. If they have their own
+market economy, Raven Colonial gives them a fixed facility row instead of
+running the full port model. Link-only facilities do not get their own market
+percentage.</p>
+<hr>
+<h2>How A Colony Port Gets Its Numbers</h2>
+<ol>
+<li><p><strong>Local body or orbital location</strong></p>
+<p>The port starts with economies from where it is built. Rocky bodies add
+Refinery, Metal-rich and HMC bodies add Extraction, Earth-like worlds add
+Agriculture / High Tech / Military / Tourism, stars add Military, black holes
+/ neutron stars / white dwarfs add High Tech and Tourism, and asteroid
+clusters add Extraction.</p>
+</li>
+<li><p><strong>Signals and reserve level</strong></p>
+<p>Biological and Geological signals add local rows where they apply. In
+<strong>Pristine</strong> or <strong>Major</strong> systems, Refinery, Industrial, and Extraction can
+gain <strong>+40%</strong>. In <strong>Low</strong> or <strong>Depleted</strong> systems, those same industry rows
+can lose <strong>-40%</strong> on non-settlement rows.</p>
+</li>
+<li><p><strong>Strong links</strong></p>
+<p>Same-body facilities, hub children, settlements, and Surface-to-Orbital port
+pairs can add large economy slices into a primary port.</p>
+</li>
+<li><p><strong>Weak links</strong></p>
+<p>Eligible sources add <strong>+5%</strong> each. Weak links are intentionally small and do
+not get extra Pristine, Biological, Terraformable, tidal, or icy modifiers.</p>
+</li>
+<li><p><strong>Primary economy</strong></p>
+<p>The highest total becomes the site&#39;s <strong>primary economy</strong>, which is the main
+economy tag the game highlights. Other non-zero economies still remain on the
+market row.</p>
+</li>
+</ol>
+<hr>
+<h2>Local Rows And Body Intrinsics</h2>
+<p>Common body/feature rows:</p>
+<table>
+<thead>
+<tr>
+<th>Body or feature</th>
+<th>Common local economy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Earth-like world</td>
+<td>Agriculture, High Tech, Military, Tourism</td>
+</tr>
+<tr>
+<td>Water world</td>
+<td>Agriculture, Tourism</td>
+</tr>
+<tr>
+<td>Ammonia world</td>
+<td>High Tech, Tourism</td>
+</tr>
+<tr>
+<td>Gas giant / water giant</td>
+<td>High Tech, Industrial</td>
+</tr>
+<tr>
+<td>HMC / metal-rich</td>
+<td>Extraction</td>
+</tr>
+<tr>
+<td>Rocky-Ice</td>
+<td>Industrial, Refinery</td>
+</tr>
+<tr>
+<td>Rocky</td>
+<td>Refinery</td>
+</tr>
+<tr>
+<td>Icy</td>
+<td>Industrial</td>
+</tr>
+<tr>
+<td>Asteroid cluster</td>
+<td>Extraction</td>
+</tr>
+<tr>
+<td>Star</td>
+<td>Military</td>
+</tr>
+<tr>
+<td>Black hole / neutron star / white dwarf</td>
+<td>High Tech, Tourism</td>
+</tr>
+<tr>
+<td>Rings</td>
+<td>Extraction</td>
+</tr>
+<tr>
+<td>Biological signal</td>
+<td>Agriculture and Terraforming</td>
+</tr>
+<tr>
+<td>Geological signal</td>
+<td>Extraction and Industrial</td>
+</tr>
+</tbody></table>
+<p>Reserve level affects Extraction, Industrial, and Refinery:</p>
+<table>
+<thead>
+<tr>
+<th>Reserve level</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Major / Pristine</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Low / Depleted</td>
+<td>-40% on non-settlement own rows</td>
+</tr>
+</tbody></table>
+<p>Other common local buffs:</p>
+<ul>
+<li>Volcanism can add <strong>+40% Extraction</strong>.</li>
+<li>BIO/GEO or ELW/AW can add <strong>+40% High Tech</strong>.</li>
+<li>Black holes, neutron stars, white dwarfs, BIO/GEO, and ELW/WW/AW can add
+<strong>+40% Tourism</strong>.</li>
+</ul>
+<hr>
+<h2>Strong Links</h2>
+<p>Strong links are the main way to specialize a port. They are large because they
+represent local infrastructure directly feeding the port.</p>
+<h3>Strong Link Size</h3>
+<p>Strong link size follows <strong>construction tier</strong>, not pad size.</p>
+<table>
+<thead>
+<tr>
+<th>Source tier</th>
+<th>Strong link contribution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>T1</strong></td>
+<td>+40%</td>
+</tr>
+<tr>
+<td><strong>T2</strong></td>
+<td>+80%</td>
+</tr>
+<tr>
+<td><strong>T3</strong></td>
+<td>+120%</td>
+</tr>
+</tbody></table>
+<p>A T2 bio research settlement is a +80% strong-link source even if its pad is
+small.</p>
+<h3>Surface + Orbital Pairs</h3>
+<p>If a Surface colony port and an Orbital colony port share the same planet or
+moon, the Surface port&#39;s local economies can strong-link into the Orbital port.</p>
+<p>Body primary behavior is calculated from the current valid site order for that
+body. The system primary port remains the original port the game had you build
+first for the system.</p>
+<h3>Hub Children</h3>
+<p>A hub can bring its children along as <strong>sub-strong</strong> links. For example, a
+Refinery hub with settlements underneath can show the hub plus each child as
+strong-link contributors into the primary port.</p>
+<p>In a <strong>Pristine</strong> or <strong>Major</strong> system, each Refinery / Industrial / Extraction
+strong-link contribution can also receive its own +40% reserve boost.</p>
+<h3>Gas-Giant Cluster Farms</h3>
+<p>A space farm on a sibling moon under the same gas giant can strong-link
+Agriculture into that moon&#39;s <strong>primary</strong> port only. If a second port exists on
+that moon, it gets Agriculture through weak +5% steps instead of the farm&#39;s
+strong link.</p>
+<hr>
+<h2>Weak Links</h2>
+<p>Weak links are background support from elsewhere in the system. Each applied
+weak link is <strong>+5%</strong>.</p>
+<h3>Who Sends Weak Links</h3>
+<table>
+<thead>
+<tr>
+<th>Sender</th>
+<th>What it sends</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Relay installation</strong></td>
+<td>High Tech +5% to eligible ports on other bodies</td>
+</tr>
+<tr>
+<td><strong>Medical installation</strong></td>
+<td>High Tech +5% support, and can help relays count for starports</td>
+</tr>
+<tr>
+<td><strong>Security installation</strong></td>
+<td>Military +5% to eligible ports on other bodies</td>
+</tr>
+<tr>
+<td><strong>Demeter space farm</strong></td>
+<td>Agriculture +5% when it is a qualifying space farm</td>
+</tr>
+<tr>
+<td><strong>Economy-bearing hub</strong></td>
+<td>Its primary economy outward</td>
+</tr>
+<tr>
+<td><strong>Subordinate starport / outpost / hub</strong></td>
+<td>Its primary economy outward</td>
+</tr>
+<tr>
+<td><strong>Colony body primary</strong></td>
+<td>Agriculture outward through the main weak-link path</td>
+</tr>
+<tr>
+<td><strong>Primary port at the central star</strong></td>
+<td>Agriculture outward only; Military and other local rows stay on that port</td>
+</tr>
+</tbody></table>
+<h3>Relay And Medical High Tech</h3>
+<p>Relays are straightforward on outposts: if the relay is eligible and it is not
+on the same body as the receiver, it adds <strong>+5% High Tech</strong>.</p>
+<p>Starports are pickier. A relay adds <strong>+5% High Tech</strong> to a starport only when the
+starport has a High Tech reason to receive it. That reason can be:</p>
+<ul>
+<li>High Tech already exists on the starport&#39;s market row, or</li>
+<li>Another non-relay High Tech weak source is linked, such as medical or
+scientific support.</li>
+</ul>
+<p>If a starport has no High Tech row and no non-relay High Tech support, the relay
+may still appear in <strong>Market Links</strong>, but it does not add +5% to the economy
+total.</p>
+<h3>Agriculture From Distant Stars</h3>
+<p>A Surface colony with no local Agriculture may accept only <strong>one</strong> Agriculture
+weak link per distant star&#39;s subtree. Farms and Agriculture ports around another
+star count once for that receiver. Agriculture settlements are exempt from that
+distant-star cap.</p>
+<hr>
+<h2>Agriculture</h2>
+<p>Agriculture is the special case because local agriculture, strong-link
+agriculture, and weak-link agriculture use different rules.</p>
+<h3>Local Agriculture Row</h3>
+<p>On the site&#39;s own market row:</p>
+<ul>
+<li>Biological signals can add <strong>+100% Agriculture</strong> if the world type does not
+already grant Agriculture.</li>
+<li>Biological, Earth-like, and Water world conditions can add <strong>+40%</strong> Agriculture
+buffs.</li>
+<li>The optional <strong>Terraformable Agri Bonuses</strong> button can add a +40% what-if
+buff.</li>
+<li>Icy bodies or tidal conditions can apply <strong>-40%</strong> Agriculture. Settlements
+only receive that negative row when a positive Agriculture body buff was
+applied.</li>
+</ul>
+<h3>Agriculture Strong Links</h3>
+<p>Strong-link Agriculture uses the receiver&#39;s conditions:</p>
+<table>
+<thead>
+<tr>
+<th>Receiver condition</th>
+<th>Strong-link Agriculture effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Biological</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Earth-like / Water world</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Terraformable toggle enabled</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Icy / Rocky-Ice</td>
+<td>-40%</td>
+</tr>
+<tr>
+<td>Tidal to the star</td>
+<td>-40%</td>
+</tr>
+</tbody></table>
+<p>A tidal or icy penalty cannot reduce an Agriculture strong link below <strong>+10%</strong>.</p>
+<h3>Agriculture Weak Links</h3>
+<p>Weak Agriculture is always <strong>+5%</strong> per applied farm, Agriculture port, or
+Agriculture settlement source. These +5% steps do not receive Biological,
+Terraformable, icy, tidal, or reserve modifiers.</p>
+<p>Most ports can receive any number of valid weak Agriculture links. Tidal orbital
+cluster colony ports are the notable capped case:</p>
+<table>
+<thead>
+<tr>
+<th>Tidal orbital cluster case</th>
+<th>Weak Agriculture budget</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Same-body Agriculture facility/settlement strong link exists</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>No same-body Agriculture strong link</td>
+<td>65%</td>
+</tr>
+</tbody></table>
+<h3>Terraformable Agri Bonuses</h3>
+<p>The System page has a <strong>Terraformable Agri Bonuses</strong> button. It is off by
+default because current Elite Dangerous market behavior does not consistently
+confirm the expected Terraformable Agriculture modifier.</p>
+<p>Turn it on to preview what Agriculture numbers would look like if that in-game
+behavior is fixed later. The setting is saved in your browser.</p>
+<hr>
+<h2>Refinery, Industrial, And Extraction In Pristine Systems</h2>
+<p>In <strong>Pristine</strong> or <strong>Major</strong> systems, reserve level matters in two places:</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Reserve effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Port&#39;s local Refinery / Industrial / Extraction row</td>
+<td>+40% once</td>
+</tr>
+<tr>
+<td>Each Refinery / Industrial / Extraction strong link</td>
+<td>+40% per strong-link contribution</td>
+</tr>
+</tbody></table>
+<p>In <strong>Low</strong> or <strong>Depleted</strong> systems, the same rows can receive <strong>-40%</strong> instead.</p>
+<p>Example: Orbital starport over a rocky moon in a Pristine system.</p>
+<table>
+<thead>
+<tr>
+<th>Ledger line</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Rocky body gives Refinery</td>
+<td>+100%</td>
+</tr>
+<tr>
+<td>Pristine buff on local row</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Strong link from Surface colony partner</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Pristine buff on that strong link</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Sub-strong link from Refinery hub child</td>
+<td>+80%</td>
+</tr>
+<tr>
+<td>Pristine buff on that sub-strong link</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td><strong>Total Refinery</strong></td>
+<td><strong>340%</strong></td>
+</tr>
+</tbody></table>
+<p>High Tech and Tourism body bonuses on strong links can apply as their own
+contributions. Reserve-level industry boosts are especially visible because they
+stack per Refinery / Industrial / Extraction strong-link contribution.</p>
+<hr>
+<h2>Multiple Ports On One Body</h2>
+<p>Frontier&#39;s colonization rules make multiple dockable ports around one planet,
+moon, star, or asteroid cluster awkward. Raven Colonial models the behavior this
+way:</p>
+<ol>
+<li>The model chooses a body primary from valid calculated sites.</li>
+<li>Orbital ports normally outrank surface ports for the same body.</li>
+<li>Other same-body ports become subordinates.</li>
+<li>Subordinates can send their primary economy outward as weak support.</li>
+<li>Same-body partner ports can create strong links into the body primary.</li>
+</ol>
+<p>The Order for Calculations panel groups rows by body for readability, but the
+math does not depend on arbitrary visual row dragging.</p>
+<hr>
+<h2>Tier Points And The Order Panel</h2>
+<p>Tier-point math uses a canonical tax order so the grouped display cannot change
+the result.</p>
+<ol>
+<li>Skip the system primary port.</li>
+<li>Consider valid starports with tier requirements.</li>
+<li>Sort higher tier before lower tier.</li>
+<li>Sort by body order.</li>
+<li>Sort orbital before surface.</li>
+<li>Sort by market/name fallback.</li>
+</ol>
+<p>The Order for Calculations panel is now informational:</p>
+<ul>
+<li><strong>Completed sites only</strong> and <strong>Use all Sites</strong> mirror the main System View
+toggle.</li>
+<li><strong>Group by body</strong> regroups the visible information without changing the model
+facts.</li>
+<li><strong>Auto re-order markets</strong> applies current Spansh inversion hints only.</li>
+<li>Users no longer drag table rows.</li>
+<li><strong>Change Primary Port?</strong> is a correction tool for cases where Raven Colonial
+has the wrong system primary port.</li>
+</ul>
+<p>Warnings about insufficient Tier 2/Tier 3 points appear for planned sites.
+Complete and building sites are already locked in.</p>
+<hr>
+<h2>Broken Below</h2>
+<p>Rows below <strong>BROKEN BELOW</strong> are visible but excluded. This protects the model
+from imports or stale data that cannot be safely interpreted.</p>
+<table>
+<thead>
+<tr>
+<th>Broken reason</th>
+<th>Why it is excluded</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unknown body</td>
+<td>Body order, local rows, and body links cannot be trusted</td>
+</tr>
+<tr>
+<td>Missing/unknown/null build type</td>
+<td>The site has no valid economy pipeline</td>
+</tr>
+<tr>
+<td>Positive single-digit market id</td>
+<td>Treated as bad imported placeholder data</td>
+</tr>
+<tr>
+<td>Demolished</td>
+<td>The site should not affect current calculations</td>
+</tr>
+</tbody></table>
+<p>Valid planned sites belong below the normal cut line in completed-only mode, not
+below <strong>BROKEN BELOW</strong>.</p>
+<hr>
+<h2>Spansh Compare And Market Inversions</h2>
+<p>The compare panel tries to match completed dockable sites against Spansh:</p>
+<ol>
+<li>Use journal/Raven Colonial <code>marketId</code> if it resolves to an operational Spansh
+economy row.</li>
+<li>Fall back to EDSM station-name matching when the journal id is missing,
+stale, or a construction placeholder.</li>
+</ol>
+<p>Sites with no landing pads are treated as lower-reliability comparisons because
+their public market ids can remain stuck on construction-era snapshots.</p>
+<p>If two same-body sites appear swapped in Spansh, Raven Colonial can show up/down
+hints in Order for Calculations. <strong>Auto re-order markets</strong> applies those
+recommended market inversion swaps only; it does not perform a general site
+regroup.</p>
+<hr>
+<h2>System Effects Buff/Nerf</h2>
+<p>Raven Colonial applies the system effects model by default. A
+commander/developer setting can still disable it for testing comparisons.</p>
+<p>When enabled, the system primary port receives buffs while other facilities
+receive nerfs for affected system stats:</p>
+<table>
+<thead>
+<tr>
+<th>Stat</th>
+<th>Primary</th>
+<th>Non-primary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Development</td>
+<td>+40%</td>
+<td>-10%</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>+40%</td>
+<td>-10%</td>
+</tr>
+<tr>
+<td>Standard of Living</td>
+<td>+40%</td>
+<td>-20%</td>
+</tr>
+<tr>
+<td>Technology</td>
+<td>+20%</td>
+<td>-25%</td>
+</tr>
+<tr>
+<td>Wealth</td>
+<td>+40%</td>
+<td>-25%</td>
+</tr>
+<tr>
+<td>Population / Max population</td>
+<td>unchanged</td>
+<td>unchanged</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Quick Answers</h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>How big is a weak link?</td>
+<td>Always +5%.</td>
+</tr>
+<tr>
+<td>How big is a strong link?</td>
+<td>+40%, +80%, or +120% by source tier.</td>
+</tr>
+<tr>
+<td>Does Spansh change calculations?</td>
+<td>No, it is comparison-only.</td>
+</tr>
+<tr>
+<td>Can users drag the calculation order?</td>
+<td>No. The panel is informational; primary port correction is explicit.</td>
+</tr>
+<tr>
+<td>What is the system primary port?</td>
+<td>The first port the game has you build when you colonize a system.</td>
+</tr>
+<tr>
+<td>Do invalid imported sites count?</td>
+<td>No. They go below <strong>BROKEN BELOW</strong>.</td>
+</tr>
+<tr>
+<td>Is <code>marketId: 0</code> broken by itself?</td>
+<td>No. Positive single-digit ids <code>1</code> through <code>9</code> are the bad-id case.</td>
+</tr>
+<tr>
+<td>Are Agriculture weak links usually capped?</td>
+<td>No. Tidal orbital cluster colony ports are the capped case.</td>
+</tr>
+</tbody></table>
+
+</body>
+</html>

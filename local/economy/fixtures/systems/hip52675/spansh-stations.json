@@ -1,0 +1,1489 @@
+{
+  "source": "galaxy-dump",
+  "fetchedAt": "2026-06-10T04:43:43.985Z",
+  "systemName": "HIP 52675",
+  "id64": 319731861851,
+  "stationCount": 154,
+  "stations": [
+    {
+      "marketId": 4303933955,
+      "name": "Dhawan Prospecting",
+      "updated": "2026-06-06 23:21:54+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4305740035,
+      "name": "Bedi Excavation Hub",
+      "updated": "2026-06-06 23:31:39+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4304005635,
+      "name": "Aloisio Drilling Station",
+      "updated": "2026-06-06 23:58:01+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4263039235,
+      "name": "Oyekan Mineralogic Base",
+      "updated": "2026-06-07 00:03:25+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4289041411,
+      "name": "Shore Chemical Site",
+      "updated": "2026-06-10 02:37:01+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4305272067,
+      "name": "Indongo Chemical Workshop",
+      "updated": "2026-06-07 02:56:22+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4305524483,
+      "name": "Hawkins Depot",
+      "updated": "2026-06-07 03:05:00+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4305916931,
+      "name": "Bennett Industrial Forge",
+      "updated": "2026-06-07 03:08:59+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4304072195,
+      "name": "Zuniga Platform",
+      "updated": "2026-06-08 09:47:42+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 485,
+        "hightech": 50,
+        "industrial": 360,
+        "military": 195,
+        "refinery": 400,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4306469635,
+      "name": "Theofelus Plant",
+      "updated": "2026-06-07 03:53:59+00",
+      "economies": {
+        "extraction": 180,
+        "industrial": 140,
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4306472195,
+      "name": "Buhle Territories",
+      "updated": "2026-06-07 03:59:40+00",
+      "economies": {
+        "extraction": 180,
+        "industrial": 140,
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4306473475,
+      "name": "Patel Platform",
+      "updated": "2026-06-07 04:05:56+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 250,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4306474755,
+      "name": "Nakano Station",
+      "updated": "2026-06-07 04:11:52+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 250,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4306476803,
+      "name": "Prohasko Depot",
+      "updated": "2026-06-07 13:31:22+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 325,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4306863619,
+      "name": "Richelieu Consulting",
+      "updated": "2026-06-07 13:27:32+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4306866435,
+      "name": "Otanez Collection",
+      "updated": "2026-06-07 13:35:45+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 325,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4306867971,
+      "name": "Zhou Resolve",
+      "updated": "2026-06-07 13:40:36+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4307416835,
+      "name": "Dara Garden",
+      "updated": "2026-06-07 13:45:21+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4307418115,
+      "name": "Biswas Horizon",
+      "updated": "2026-06-07 13:48:44+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 325,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4307419651,
+      "name": "Tracy Hub",
+      "updated": "2026-06-07 13:52:57+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 325,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4307420675,
+      "name": "Krisjanis Territories",
+      "updated": "2026-06-07 13:56:39+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4307421955,
+      "name": "Rodriguez Jurisdiction",
+      "updated": "2026-06-07 14:05:50+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4307787267,
+      "name": "Heinrich Military Hub",
+      "updated": "2026-06-07 14:14:22+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4307791363,
+      "name": "Lockett Keep",
+      "updated": "2026-06-09 06:16:43+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4307792899,
+      "name": "Nguesso's Fortress",
+      "updated": "2026-06-07 14:39:22+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4307982083,
+      "name": "Stott Command Point",
+      "updated": "2026-06-07 14:49:48+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4307982595,
+      "name": "Kozak Munitions Installation",
+      "updated": "2026-06-07 16:11:44+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4308685059,
+      "name": "Watson's Liberty",
+      "updated": "2026-06-07 16:28:34+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4258585347,
+      "name": "Brunt Constructions",
+      "updated": "2026-06-08 02:32:11+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 185,
+        "refinery": 480,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4259067907,
+      "name": "Planetary Construction Site: Nowak's Pride",
+      "updated": "2025-06-19 12:00:50+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4259068419,
+      "name": "Lewis Prospect",
+      "updated": "2025-10-28 02:22:33+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4305738755,
+      "name": "[frht] - Omega Ground Port",
+      "updated": "2026-06-10 02:45:56+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 480,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4258586883,
+      "name": "[frht] - Alpha Ground Port",
+      "updated": "2026-06-08 10:14:48+00",
+      "economies": {
+        "agriculture": 240,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 480,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4260227587,
+      "name": "Planetary Construction Site: Hausdorff Horizons",
+      "updated": "2025-06-22 16:31:43+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4260228355,
+      "name": "Dickson's Progress",
+      "updated": "2025-10-27 23:09:40+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4278952451,
+      "name": "[frht] - Kappa Colony",
+      "updated": "2026-06-10 02:54:53+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 480,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4278953987,
+      "name": "Marshall Enterprise",
+      "updated": "2025-10-27 23:21:10+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4278957315,
+      "name": "Planetary Construction Site: Schachner Relay",
+      "updated": "2025-08-26 04:01:52+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4332105731,
+      "name": "Petrenko Hydroponics Estate",
+      "updated": "2026-06-08 03:20:45+00",
+      "economies": {
+        "agriculture": 140
+      }
+    },
+    {
+      "marketId": 4332146435,
+      "name": "Burrows Agricultural",
+      "updated": "2026-01-19 07:05:00+00",
+      "economies": {
+        "agriculture": 140
+      }
+    },
+    {
+      "marketId": 4332146691,
+      "name": "Fahnbulleh Horticultural Garden",
+      "updated": "2026-01-19 06:20:55+00",
+      "economies": {
+        "agriculture": 140
+      }
+    },
+    {
+      "marketId": 4279550467,
+      "name": "[frht] - Epsilon Beaujolais Base",
+      "updated": "2026-06-10 03:30:40+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 480,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4279556099,
+      "name": "Matheson Legacy",
+      "updated": "2025-10-27 17:45:48+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4279557635,
+      "name": "Vavrova Sanctuary",
+      "updated": "2025-10-27 03:35:49+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4309030147,
+      "name": "[frht] Tau Settlement",
+      "updated": "2026-06-10 03:40:55+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 480,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4309099523,
+      "name": "Downey Point",
+      "updated": "2025-11-24 18:56:25+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4309101059,
+      "name": "Chaffee Legacy",
+      "updated": "2025-11-12 19:15:13+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4332102147,
+      "name": "Braun Command Garrison",
+      "updated": "2026-06-08 06:34:56+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4310410499,
+      "name": "Valenzuela Astrophysics Facility",
+      "updated": "2026-06-08 03:56:18+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4310411267,
+      "name": "Aubert Analysis Forum",
+      "updated": "2026-06-08 03:59:23+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4310412035,
+      "name": "Golub Biochemical Laboratory",
+      "updated": "2026-06-08 04:03:37+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4310093827,
+      "name": "Mannan Arms Installation",
+      "updated": "2026-06-08 04:07:54+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4310095619,
+      "name": "Dzsejt Horticultural Biome",
+      "updated": "2026-06-08 04:11:31+00",
+      "economies": {
+        "agriculture": 140
+      }
+    },
+    {
+      "marketId": 4310088707,
+      "name": "Banyard Service",
+      "updated": "2026-06-08 04:29:03+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4310090243,
+      "name": "Rudenko Nutrition Facility",
+      "updated": "2026-06-08 04:21:30+00",
+      "economies": {
+        "agriculture": 140
+      }
+    },
+    {
+      "marketId": 4310092035,
+      "name": "Harland Watch",
+      "updated": "2026-06-08 04:15:32+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4306140163,
+      "name": "Newberry Military Camp",
+      "updated": "2026-06-08 04:33:34+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4309028355,
+      "name": "Naidu Prospecting Station",
+      "updated": "2026-06-08 04:40:11+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4309027587,
+      "name": "Benedetti Extraction Complex",
+      "updated": "2026-06-08 05:22:30+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4309025539,
+      "name": "Quinn's Nursery",
+      "updated": "2026-06-08 06:29:29+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4309026307,
+      "name": "Chung Horticultural Base",
+      "updated": "2026-06-08 05:31:31+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4308692995,
+      "name": "Suarez Metallurgic Territory",
+      "updated": "2026-06-08 05:39:18+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4308694531,
+      "name": "Navarrete Prospecting Complex",
+      "updated": "2026-06-08 05:43:54+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4308687107,
+      "name": "Xiang Military Camp",
+      "updated": "2026-06-08 05:56:05+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4308689667,
+      "name": "Mori's Armoury",
+      "updated": "2026-06-08 05:52:19+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4215725315,
+      "name": "[frht] - Ceramics And Cmm's",
+      "updated": "2026-06-10 03:49:24+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 595,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4215746051,
+      "name": "Hottot Platform",
+      "updated": "2025-12-24 12:23:04+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4215749379,
+      "name": "Chaskin Hub",
+      "updated": "2025-11-02 13:30:24+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4215929347,
+      "name": "Pribylov Sanctuary",
+      "updated": "2025-10-30 21:42:24+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4263040771,
+      "name": "Agnihotri Dredging Complex",
+      "updated": "2025-08-08 12:08:28+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4263042563,
+      "name": "Teklehaimanot Drilling Base",
+      "updated": "2025-10-27 23:40:44+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4263043843,
+      "name": "Galitzki Metallurgic Hub",
+      "updated": "2025-10-28 00:01:16+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4305559043,
+      "name": "Sharpe Chemical Works",
+      "updated": "2026-06-09 02:02:13+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4306860035,
+      "name": "Ricci Industrial Enterprise",
+      "updated": "2026-06-09 02:05:55+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4305732867,
+      "name": "Alarie's Garden",
+      "updated": "2026-06-09 03:25:31+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4305734659,
+      "name": "Kohler Botanical Holding",
+      "updated": "2026-06-09 02:11:49+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4217822979,
+      "name": "Maruyama Biological Expedition",
+      "updated": "2026-06-09 02:24:32+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4273410563,
+      "name": "Miyamoto Extraction Exchange",
+      "updated": "2025-10-27 23:50:26+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4273435139,
+      "name": "[frht] - Emergency Power Cells",
+      "updated": "2026-06-09 06:55:39+00",
+      "economies": {
+        "agriculture": 205,
+        "extraction": 75,
+        "hightech": 395,
+        "industrial": 210,
+        "military": 195,
+        "refinery": 110,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4274811395,
+      "name": "Planetary Construction Site: Davies Dredging Complex",
+      "updated": "2025-08-17 14:01:55+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4303048963,
+      "name": "Tutunnyk Genetics Enterprise",
+      "updated": "2026-06-09 02:29:25+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4303050243,
+      "name": "Kotsuba Astrophysics Enterprise",
+      "updated": "2026-06-09 02:33:26+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4260276739,
+      "name": "Markey Complex",
+      "updated": "2026-06-09 02:39:00+00",
+      "economies": {
+        "agriculture": 205,
+        "extraction": 75,
+        "hightech": 280,
+        "industrial": 435,
+        "military": 195,
+        "refinery": 110,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4260963843,
+      "name": "Planetary Construction Site: Agrawal Extraction Prospect",
+      "updated": "2025-07-01 18:21:44+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4260966147,
+      "name": "Planetary Construction Site: Foster Prospecting",
+      "updated": "2025-07-01 19:33:56+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4260967683,
+      "name": "Planetary Construction Site: Alvarado Mining Complex",
+      "updated": "2025-07-02 01:46:54+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4260968451,
+      "name": "Planetary Construction Site: Painter Prospecting Exchange",
+      "updated": "2025-07-02 02:12:29+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4303052035,
+      "name": "Guo Manufacturing Exchange",
+      "updated": "2026-06-09 03:03:36+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4303052547,
+      "name": "Morelli Industrial Hub",
+      "updated": "2026-06-09 03:07:23+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4303269635,
+      "name": "Dawes Analytics Laboratory",
+      "updated": "2026-06-09 02:56:59+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4303271427,
+      "name": "Myeni Analytics Site",
+      "updated": "2026-06-09 02:59:57+00",
+      "economies": {
+        "hightech": 140
+      }
+    },
+    {
+      "marketId": 4305557507,
+      "name": "Zivai's Prospect",
+      "updated": "2026-06-09 03:42:21+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4305554947,
+      "name": "Pianzola Mineralogic Exploration",
+      "updated": "2026-06-09 03:51:54+00",
+      "economies": {
+        "extraction": 180
+      }
+    },
+    {
+      "marketId": 4305555971,
+      "name": "Rutten Mining Exploration",
+      "updated": "2026-06-09 03:49:02+00",
+      "economies": {
+        "extraction": 180
+      }
+    },
+    {
+      "marketId": 4305300227,
+      "name": "Espinoza Honour",
+      "updated": "2026-06-09 03:57:57+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4305553667,
+      "name": "Faucher Munitions Base",
+      "updated": "2026-06-09 06:07:51+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4305296899,
+      "name": "Joshi's Dock",
+      "updated": "2026-06-09 07:22:17+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4305298179,
+      "name": "Okada Arms Installation",
+      "updated": "2026-06-09 04:12:23+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4304658179,
+      "name": "Ferreira Botanical Collection",
+      "updated": "2026-06-09 04:17:29+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4304659203,
+      "name": "Saccone Cultivation Collection",
+      "updated": "2026-06-09 04:22:11+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4305294339,
+      "name": "Neumann Nutrition Complex",
+      "updated": "2026-06-09 04:24:27+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4305295363,
+      "name": "Lange Botanical Market",
+      "updated": "2026-06-09 04:28:11+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4304379395,
+      "name": "Savchenko Vista",
+      "updated": "2026-06-10 04:00:56+00",
+      "economies": {
+        "extraction": 180,
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4304380675,
+      "name": "Duan Industries",
+      "updated": "2026-06-09 04:43:12+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 370,
+        "hightech": 50,
+        "industrial": 285,
+        "military": 270,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4304359171,
+      "name": "Theofelus Visitor Hostel",
+      "updated": "2026-06-09 04:57:16+00",
+      "economies": {
+        "tourism": 100
+      }
+    },
+    {
+      "marketId": 4304363011,
+      "name": "Matsuda Visitor Lodge",
+      "updated": "2026-06-09 04:54:47+00",
+      "economies": {
+        "tourism": 100
+      }
+    },
+    {
+      "marketId": 4303888899,
+      "name": "Winter Agricultural",
+      "updated": "2026-06-09 05:04:03+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4303890691,
+      "name": "Soh Agricultural Exchange",
+      "updated": "2026-06-09 05:01:11+00",
+      "economies": {
+        "agriculture": 100
+      }
+    },
+    {
+      "marketId": 4303885827,
+      "name": "Zadzisai Resolve",
+      "updated": "2026-06-09 05:22:38+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4303887363,
+      "name": "Naudiyal Fortification",
+      "updated": "2026-06-09 05:19:50+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4303273731,
+      "name": "Walachnia's Fort",
+      "updated": "2026-06-10 02:31:04+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4303274499,
+      "name": "Kovalenko Command Base",
+      "updated": "2026-06-09 07:29:47+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4302232579,
+      "name": "Kulkarni Munitions Enterprise",
+      "updated": "2026-06-09 05:28:12+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4303993859,
+      "name": "Berger Military Camp",
+      "updated": "2026-06-09 05:34:40+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4302230019,
+      "name": "Carrasco's Liberty",
+      "updated": "2026-06-09 05:53:29+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4302231299,
+      "name": "Corner Defence Site",
+      "updated": "2026-06-09 05:56:02+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 3956176386,
+      "name": "Orbital Construction Site: Cowan Relay",
+      "updated": "2025-06-12 00:27:24+00",
+      "economies": {}
+    },
+    {
+      "marketId": 3956178690,
+      "name": "Orbital Construction Site: Hines City",
+      "updated": "2025-06-11 04:50:58+00",
+      "economies": {}
+    },
+    {
+      "marketId": 3959212034,
+      "name": "Orbital Construction Site: Shoujing Terminal",
+      "updated": "2025-11-20 03:52:41+00",
+      "economies": {}
+    },
+    {
+      "marketId": 3960747266,
+      "name": "Orbital Construction Site: Cousin's Folly",
+      "updated": "2025-10-31 11:07:15+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4211674627,
+      "name": "Braun Depot",
+      "updated": "2026-06-09 03:14:09+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4254538755,
+      "name": "Escobar Gateway",
+      "updated": "2026-06-08 02:36:16+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 265,
+        "refinery": 560,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4270273539,
+      "name": "Rousseau Sanctuary",
+      "updated": "2026-06-09 03:45:17+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 190,
+        "hightech": 50,
+        "industrial": 210,
+        "military": 195,
+        "refinery": 250,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4273588739,
+      "name": "[frht] - Refinery/agri 13a",
+      "updated": "2026-06-10 03:31:35+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 675,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4274701827,
+      "name": "Diesel Sanctuary",
+      "updated": "2026-06-07 03:17:45+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 330,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4274735875,
+      "name": "Bunche Point",
+      "updated": "2026-06-07 03:23:20+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4276331011,
+      "name": "Bahcall Vista",
+      "updated": "2026-06-09 05:06:20+00",
+      "economies": {
+        "agriculture": 115,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 295,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4277714179,
+      "name": "Beethoven's Progress",
+      "updated": "2026-06-09 05:40:32+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 285,
+        "military": 340,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4277801219,
+      "name": "Ramaty Sanctuary",
+      "updated": "2026-06-09 05:43:18+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4302722051,
+      "name": "Bernard Sanctuary",
+      "updated": "2026-06-09 05:48:03+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4303959555,
+      "name": "[frht] - Agri/tourism/mil 7",
+      "updated": "2026-06-08 07:14:40+00",
+      "economies": {
+        "agriculture": 245,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 110,
+        "tourism": 150
+      }
+    },
+    {
+      "marketId": 4305127683,
+      "name": "Frimout Legacy",
+      "updated": "2026-06-09 04:31:38+00",
+      "economies": {
+        "agriculture": 540,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 210,
+        "military": 195,
+        "refinery": 110,
+        "terraforming": 100,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4305197059,
+      "name": "[frht] - Hitech/industrial 13e",
+      "updated": "2026-06-10 03:59:10+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 395,
+        "industrial": 370,
+        "military": 195,
+        "refinery": 110,
+        "terraforming": 220,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4311112195,
+      "name": "Ramis Horizons",
+      "updated": "2026-06-08 03:20:05+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 290,
+        "hightech": 185,
+        "industrial": 285,
+        "military": 195,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4311172867,
+      "name": "Preuss Platform",
+      "updated": "2026-06-07 14:20:27+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 365,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4311217923,
+      "name": "Amis's Folly",
+      "updated": "2026-06-07 14:09:09+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 330,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4311333891,
+      "name": "Deprez Terminal",
+      "updated": "2026-06-07 03:39:01+00",
+      "economies": {
+        "extraction": 140,
+        "hightech": 100,
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4311418883,
+      "name": "Trier Relay",
+      "updated": "2026-06-07 14:31:12+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 365,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4311445251,
+      "name": "Laumer Platform",
+      "updated": "2026-06-07 14:17:33+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4311734787,
+      "name": "Kamiyama Prospect",
+      "updated": "2026-06-08 02:42:03+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4311777027,
+      "name": "Champollion Relay",
+      "updated": "2026-06-07 14:42:27+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 330,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4311917571,
+      "name": "MacCurdy Sanctuary",
+      "updated": "2026-06-08 02:38:40+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4312028675,
+      "name": "Kachanov City",
+      "updated": "2026-06-07 16:14:09+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 330,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4312115459,
+      "name": "Christy Beacon",
+      "updated": "2026-06-08 05:34:43+00",
+      "economies": {
+        "agriculture": 115,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 210,
+        "military": 195,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4312122371,
+      "name": "Si-myung Legacy",
+      "updated": "2026-06-08 05:47:29+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 225,
+        "hightech": 50,
+        "industrial": 210,
+        "military": 195,
+        "refinery": 110,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4312197123,
+      "name": "Meucci's Pride",
+      "updated": "2026-06-07 14:28:28+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4312432387,
+      "name": "Barron Town",
+      "updated": "2026-06-08 05:13:44+00",
+      "economies": {
+        "agriculture": 105,
+        "extraction": 150,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 325,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4312825859,
+      "name": "Marvin Landing",
+      "updated": "2026-06-08 05:18:23+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4312884995,
+      "name": "Shoujing Terminal",
+      "updated": "2026-06-09 03:10:52+00",
+      "economies": {
+        "agriculture": 145,
+        "extraction": 75,
+        "hightech": 280,
+        "industrial": 595,
+        "military": 195,
+        "refinery": 110,
+        "terraforming": 40,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4314117379,
+      "name": "[frht] - Kappa Command",
+      "updated": "2026-06-08 03:15:13+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 560,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4314431747,
+      "name": "[frht] - Alpha Hq",
+      "updated": "2026-06-08 10:35:02+00",
+      "economies": {
+        "agriculture": 400,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 560,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4314925571,
+      "name": "[frht] - Omega Hq",
+      "updated": "2026-06-08 02:57:07+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 560,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4315719171,
+      "name": "[frht] - Epsilon Barrelhouse Terminal",
+      "updated": "2026-06-09 09:26:12+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 560,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    },
+    {
+      "marketId": 4318047491,
+      "name": "[frht] - Tau Command",
+      "updated": "2026-06-10 03:36:35+00",
+      "economies": {
+        "agriculture": 325,
+        "extraction": 75,
+        "hightech": 50,
+        "industrial": 70,
+        "military": 195,
+        "refinery": 560,
+        "terraforming": 140,
+        "tourism": 10
+      }
+    }
+  ]
+}

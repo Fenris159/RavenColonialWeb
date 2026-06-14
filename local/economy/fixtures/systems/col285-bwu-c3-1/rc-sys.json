@@ -1,0 +1,876 @@
+{
+  "v": 6,
+  "rev": 98,
+  "cmdr": "William Xacharon",
+  "name": "Col 285 Sector BW-U c3-1",
+  "id64": 358462100138,
+  "architect": "William Xacharon",
+  "pos": [
+    -152.78125,
+    106.8125,
+    -215.90625
+  ],
+  "reserveLevel": "pristine",
+  "bodies": [
+    {
+      "name": "Col 285 Sector BW-U c3-1",
+      "num": 0,
+      "distLS": 0,
+      "parents": [],
+      "type": "st",
+      "subType": "K (Yellow-Orange) Star",
+      "features": [],
+      "radius": -1,
+      "temp": 4545,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 A Belt",
+      "num": 100000,
+      "distLS": 3.492082512629454,
+      "parents": [
+        0
+      ],
+      "type": "ac",
+      "subType": "Rocky",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 1",
+      "num": 5,
+      "distLS": 23.99972,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "landable",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 832.006287,
+      "gravity": 1.80169980626083
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 2",
+      "num": 6,
+      "distLS": 41.979452,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 629.079285,
+      "gravity": 1.98691801774243
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 3",
+      "num": 7,
+      "distLS": 75.063543,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 470.45105,
+      "gravity": 1.89801060467013
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 4",
+      "num": 8,
+      "distLS": 131.600363,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "volcanism",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 1186.471313,
+      "gravity": 1.52346181299072
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 4 a",
+      "num": 9,
+      "distLS": 131.404731,
+      "parents": [
+        8,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 355.302155,
+      "gravity": 0.0512214744570205
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 5",
+      "num": 12,
+      "distLS": 232.079899,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Class III gas giant",
+      "features": [
+        "rings",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 262.902893,
+      "gravity": 0.722793310900377
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 5 a",
+      "num": 14,
+      "distLS": 231.464091,
+      "parents": [
+        12,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 436.092743,
+      "gravity": 0.0497467115325788
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 5 b",
+      "num": 15,
+      "distLS": 233.058852,
+      "parents": [
+        12,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 456.243134,
+      "gravity": 0.0612381972060773
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 B Belt",
+      "num": 100001,
+      "distLS": 424.42695473012867,
+      "parents": [
+        0
+      ],
+      "type": "ac",
+      "subType": "Rocky",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 6",
+      "num": 24,
+      "distLS": 1691.42971,
+      "parents": [
+        0
+      ],
+      "type": "st",
+      "subType": "Y (Brown dwarf) Star",
+      "features": [],
+      "radius": -1,
+      "temp": 343,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 6 a",
+      "num": 25,
+      "distLS": 1689.361289,
+      "parents": [
+        24,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 153.330612,
+      "gravity": 0.217357703681044
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 6 b",
+      "num": 26,
+      "distLS": 1690.968157,
+      "parents": [
+        24,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "volcanism",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 313.678223,
+      "gravity": 0.194355154481493
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 6 c",
+      "num": 27,
+      "distLS": 1684.626454,
+      "parents": [
+        24,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 127.591019,
+      "gravity": 0.267664015499133
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 barycentre 28",
+      "num": 28,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 6 d",
+      "num": 29,
+      "distLS": 1680.210849,
+      "parents": [
+        28,
+        24,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 122.955231,
+      "gravity": 0.207409503415927
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 6 e",
+      "num": 30,
+      "distLS": 1680.211751,
+      "parents": [
+        28,
+        24,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 122.955231,
+      "gravity": 0.19185102477822
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 barycentre 36",
+      "num": 36,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 7",
+      "num": 37,
+      "distLS": 2406.754653,
+      "parents": [
+        36,
+        0
+      ],
+      "type": "st",
+      "subType": "Y (Brown dwarf) Star",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 442,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 7 a",
+      "num": 40,
+      "distLS": 2313.785188,
+      "parents": [
+        37,
+        36,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 153.379333,
+      "gravity": 0.174298154379525
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 7 b",
+      "num": 41,
+      "distLS": 2320.265808,
+      "parents": [
+        37,
+        36,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 291.505432,
+      "gravity": 0.192329560517997
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 7 c",
+      "num": 42,
+      "distLS": 2312.936283,
+      "parents": [
+        37,
+        36,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 129.203735,
+      "gravity": 0.17836790047925
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 8",
+      "num": 43,
+      "distLS": 2318.710893,
+      "parents": [
+        36,
+        0
+      ],
+      "type": "st",
+      "subType": "Y (Brown dwarf) Star",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 423,
+      "gravity": -1
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 8 a",
+      "num": 46,
+      "distLS": 2429.906274,
+      "parents": [
+        43,
+        36,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 160.051895,
+      "gravity": 0.206731926175181
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 8 b",
+      "num": 47,
+      "distLS": 2424.790998,
+      "parents": [
+        43,
+        36,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "volcanism",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 312.278381,
+      "gravity": 0.180377383501581
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 8 c",
+      "num": 48,
+      "distLS": 2435.74873,
+      "parents": [
+        43,
+        36,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 128.033539,
+      "gravity": 0.284359029264811
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 9",
+      "num": 49,
+      "distLS": 3148.583069,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Class III gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 568.388062,
+      "gravity": 19.4487177526257
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 9 a",
+      "num": 51,
+      "distLS": 3148.270692,
+      "parents": [
+        49,
+        0
+      ],
+      "type": "ri",
+      "subType": "Rocky Ice world",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 111.132027,
+      "gravity": 0.128353421025798
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 9 b",
+      "num": 52,
+      "distLS": 3155.919441,
+      "parents": [
+        49,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 98.230698,
+      "gravity": 0.196328744774141
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 9 b a",
+      "num": 53,
+      "distLS": 3155.933774,
+      "parents": [
+        52,
+        49,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 98.230698,
+      "gravity": 0.0663235444070562
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 9 c",
+      "num": 54,
+      "distLS": 3135.5959,
+      "parents": [
+        49,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 90.05426,
+      "gravity": 0.18402233098807
+    },
+    {
+      "name": "Col 285 Sector BW-U c3-1 9 d",
+      "num": 55,
+      "distLS": 3176.708734,
+      "parents": [
+        49,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 85.381142,
+      "gravity": 0.187600999286224
+    }
+  ],
+  "sites": [
+    {
+      "id": "x1779767042726",
+      "name": "Snail's Safe Harbor",
+      "bodyNum": 14,
+      "buildType": "dodec",
+      "status": "complete"
+    },
+    {
+      "id": "x1779767090672",
+      "name": "Fort Snailing",
+      "bodyNum": 0,
+      "buildType": "nemesis",
+      "status": "complete"
+    },
+    {
+      "id": "x1779890027795",
+      "name": "Nautilus Network Facility",
+      "bodyNum": 12,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1779899629529",
+      "name": "Radula Relay Hub",
+      "bodyNum": 47,
+      "buildType": "enodia",
+      "status": "complete"
+    },
+    {
+      "id": "x1779899962766",
+      "name": "Pelagic Port Authority HQ",
+      "bodyNum": 0,
+      "buildType": "nomos",
+      "status": "complete"
+    },
+    {
+      "id": "x1779975466581",
+      "name": "Conch Listening Post",
+      "bodyNum": 55,
+      "buildType": "poena",
+      "status": "complete"
+    },
+    {
+      "id": "x1779900880558",
+      "name": "Pelagic Holdfast Hyggekrog",
+      "bodyNum": 14,
+      "buildType": "lachesis",
+      "status": "complete"
+    },
+    {
+      "id": "x1780103290394",
+      "name": "Camp Helix",
+      "bodyNum": 6,
+      "buildType": "ioke",
+      "status": "complete"
+    },
+    {
+      "id": "x1780344500347",
+      "name": "Whelk Industrial Labs and Science LLC",
+      "bodyNum": 54,
+      "buildType": "atropos",
+      "status": "complete"
+    },
+    {
+      "id": "x1780149254998",
+      "name": "Osphradium Research Station",
+      "bodyNum": 54,
+      "buildType": "chronos",
+      "status": "complete"
+    },
+    {
+      "id": "x1780259984785",
+      "name": "Snail's Kelp Farm",
+      "bodyNum": 15,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1780275127552",
+      "name": "Pelagic Nacre Works",
+      "bodyNum": 14,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1780328473182",
+      "name": "Pelagic Search and Rescue Dispatch Station",
+      "bodyNum": 6,
+      "buildType": "enyo",
+      "status": "complete"
+    },
+    {
+      "id": "x1780627081169",
+      "name": "Eyestalk Observatory",
+      "bodyNum": 54,
+      "buildType": "enodia",
+      "status": "build"
+    }
+  ],
+  "deleteIDs": [],
+  "updateIDs": [],
+  "revs": [
+    {
+      "rev": 98,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-05T02:39:15.1366798+00:00"
+    },
+    {
+      "rev": 97,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-05T02:38:28.4546889+00:00"
+    },
+    {
+      "rev": 96,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-04T04:41:05.11861+00:00"
+    },
+    {
+      "rev": 95,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-03T19:38:04.6372937+00:00"
+    },
+    {
+      "rev": 94,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-03T19:37:57.7724093+00:00"
+    },
+    {
+      "rev": 93,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-03T00:17:04.5371051+00:00"
+    },
+    {
+      "rev": 92,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-02T23:54:27.7186017+00:00"
+    },
+    {
+      "rev": 91,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-02T22:02:04.2375924+00:00"
+    },
+    {
+      "rev": 90,
+      "cmdr": "William Xacharon",
+      "time": "2026-06-01T20:59:52.0505013+00:00"
+    }
+  ],
+  "slots": {
+    "0": [
+      3,
+      -1
+    ],
+    "5": [
+      3,
+      0
+    ],
+    "6": [
+      1,
+      6
+    ],
+    "7": [
+      2,
+      6
+    ],
+    "8": [
+      2,
+      -1
+    ],
+    "9": [
+      1,
+      1
+    ],
+    "12": [
+      2,
+      -1
+    ],
+    "14": [
+      2,
+      3
+    ],
+    "15": [
+      1,
+      -1
+    ],
+    "24": [
+      1,
+      -1
+    ],
+    "25": [
+      0,
+      3
+    ],
+    "26": [
+      1,
+      -1
+    ],
+    "27": [
+      0,
+      2
+    ],
+    "29": [
+      1,
+      2
+    ],
+    "30": [
+      1,
+      2
+    ],
+    "37": [
+      3,
+      -1
+    ],
+    "40": [
+      1,
+      2
+    ],
+    "41": [
+      1,
+      -1
+    ],
+    "42": [
+      1,
+      1
+    ],
+    "43": [
+      2,
+      -1
+    ],
+    "46": [
+      1,
+      3
+    ],
+    "47": [
+      1,
+      -1
+    ],
+    "48": [
+      1,
+      2
+    ],
+    "49": [
+      2,
+      -1
+    ],
+    "51": [
+      0,
+      1
+    ],
+    "52": [
+      1,
+      2
+    ],
+    "53": [
+      1,
+      2
+    ],
+    "54": [
+      2,
+      2
+    ],
+    "55": [
+      1,
+      2
+    ],
+    "100000": [
+      1,
+      -1
+    ],
+    "100001": [
+      1,
+      -1
+    ]
+  },
+  "pop": {
+    "pop": 0,
+    "timeSpansh": "2025-11-27T01:07:44+00:00",
+    "timeSaved": "2026-05-27T16:47:49.1859292+00:00"
+  },
+  "open": false,
+  "savedNames": [],
+  "idxCalcLimit": 14
+}

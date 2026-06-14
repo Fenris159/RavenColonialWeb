@@ -1,0 +1,93 @@
+{
+  "source": "galaxy-dump",
+  "fetchedAt": "2026-06-05T02:48:56.466Z",
+  "systemName": "Synuefai CX-V c18-6",
+  "id64": 1732784263842,
+  "stationCount": 9,
+  "stations": [
+    {
+      "marketId": 4310855427,
+      "name": "Grover's Claim",
+      "updated": "2026-05-31 15:44:05+00",
+      "economies": {
+        "extraction": 140
+      }
+    },
+    {
+      "marketId": 4357021699,
+      "name": "Aristotle's Folly",
+      "updated": "2026-04-29 20:25:01+00",
+      "economies": {
+        "refinery": 140
+      }
+    },
+    {
+      "marketId": 4357024259,
+      "name": "Saez Synthetics Facility",
+      "updated": "2026-06-01 02:34:48+00",
+      "economies": {
+        "industrial": 140
+      }
+    },
+    {
+      "marketId": 4311544579,
+      "name": "Emem Munitions Hub",
+      "updated": "2026-06-01 03:23:45+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 3955244546,
+      "name": "Orbital Construction Site: Linteris's Pride",
+      "updated": "2026-04-25 17:41:03+00",
+      "economies": {}
+    },
+    {
+      "marketId": 3963024386,
+      "name": "Orbital Construction Site: Dampier Gateway",
+      "updated": "2026-06-01 01:43:39+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4310842115,
+      "name": "Gold Enterprise",
+      "updated": "2026-06-01 01:38:39+00",
+      "economies": {
+        "agriculture": 145,
+        "extraction": 80,
+        "industrial": 120,
+        "military": 10,
+        "refinery": 260,
+        "terraforming": 100
+      }
+    },
+    {
+      "marketId": 4356990467,
+      "name": "Stafford Town",
+      "updated": "2026-06-01 03:28:57+00",
+      "economies": {
+        "agriculture": 220,
+        "extraction": 5,
+        "hightech": 5,
+        "industrial": 5,
+        "military": 10,
+        "refinery": 145,
+        "terraforming": 100
+      }
+    },
+    {
+      "marketId": 4365252099,
+      "name": "Scobee Platform",
+      "updated": "2026-06-01 02:42:15+00",
+      "economies": {
+        "agriculture": 5,
+        "extraction": 5,
+        "hightech": 5,
+        "industrial": 5,
+        "military": 220,
+        "refinery": 5
+      }
+    }
+  ]
+}

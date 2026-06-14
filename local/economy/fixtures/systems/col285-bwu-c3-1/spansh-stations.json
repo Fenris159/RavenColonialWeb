@@ -1,0 +1,86 @@
+{
+  "source": "galaxy-dump",
+  "fetchedAt": "2026-06-05T02:48:58.867Z",
+  "systemName": "Col 285 Sector BW-U c3-1",
+  "id64": 358462100138,
+  "stationCount": 8,
+  "stations": [
+    {
+      "marketId": 4365722115,
+      "name": "Camp Helix",
+      "updated": "2026-06-04 14:14:50+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4367118595,
+      "name": "Pelagic Search And Rescue Dispatch Station",
+      "updated": "2026-06-04 15:40:43+00",
+      "economies": {
+        "military": 100
+      }
+    },
+    {
+      "marketId": 4365358339,
+      "name": "Pelagic Holdfast Hyggekrog",
+      "updated": "2026-06-04 14:42:41+00",
+      "economies": {
+        "agriculture": 145,
+        "hightech": 10,
+        "military": 20,
+        "refinery": 260,
+        "terraforming": 100
+      }
+    },
+    {
+      "marketId": 4366019331,
+      "name": "Whelk Industrial Labs And Science Llc",
+      "updated": "2026-06-04 14:59:11+00",
+      "economies": {
+        "agriculture": 5,
+        "hightech": 85,
+        "industrial": 140,
+        "military": 20,
+        "refinery": 5
+      }
+    },
+    {
+      "marketId": 4366414339,
+      "name": "Osphradrium Research Station",
+      "updated": "2026-06-04 15:07:54+00",
+      "economies": {
+        "hightech": 100
+      }
+    },
+    {
+      "marketId": 3962027778,
+      "name": "Orbital Construction Site: Snail's Kelp Farm",
+      "updated": "2026-06-01 03:31:36+00",
+      "economies": {}
+    },
+    {
+      "marketId": 4364514051,
+      "name": "Snail's Safe Harbor",
+      "updated": "2026-06-04 15:59:28+00",
+      "economies": {
+        "agriculture": 225,
+        "hightech": 10,
+        "military": 20,
+        "refinery": 340,
+        "terraforming": 140
+      }
+    },
+    {
+      "marketId": 4364923907,
+      "name": "Fort Snailing",
+      "updated": "2026-06-04 14:00:21+00",
+      "economies": {
+        "agriculture": 5,
+        "hightech": 10,
+        "military": 195,
+        "refinery": 5
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "apiBase": "https://ravencolonial100-awcbdvabgze4c5cq.canadacentral-01.azurewebsites.net/api/v2",
+  "galaxyDumpPath": "C:\\Users\\Drew\\Downloads\\galaxy_stations.json",
+  "maxAgeDays": 90,
+  "preferNameMatch": true,
+  "systems": [
+    {
+      "slug": "synuefai-cxv-c18-6",
+      "name": "Synuefai CX-V c18-6",
+      "id64": 1732784263842
+    },
+    {
+      "slug": "col285-bwu-c3-1",
+      "name": "Col 285 Sector BW-U c3-1",
+      "id64": 358462100138
+    }
+  ]
+}

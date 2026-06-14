@@ -1,0 +1,335 @@
+{
+  "generatedAt": "2026-06-13T19:08:19.612Z",
+  "systemName": "Synuefai CX-V c18-6",
+  "id64": 1732784263842,
+  "matchedFresh": 8,
+  "modelCompared": 8,
+  "modelFullMatch": 8,
+  "modelFullMatchDockable": 6,
+  "modelComparedDockable": 6,
+  "informationalMismatchRows": 0,
+  "noSpansh": 2,
+  "staleSkipped": 0,
+  "spanshOnlyFresh": 2,
+  "rows": [
+    {
+      "name": "Gold Enterprise",
+      "marketId": 4310842115,
+      "spanshMarketId": 4310842115,
+      "matchKind": "name",
+      "buildType": "dec_truss",
+      "buildClass": "starport",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 6 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming"
+      ]
+    },
+    {
+      "name": "Grover's Claim",
+      "marketId": 4310855427,
+      "spanshMarketId": 4310855427,
+      "matchKind": "name",
+      "buildType": "orcus",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 6 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "extraction"
+      ]
+    },
+    {
+      "name": "Emem Munitions Hub",
+      "marketId": 4311544579,
+      "spanshMarketId": 4311544579,
+      "matchKind": "name",
+      "buildType": "polemos",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 9 a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "military"
+      ]
+    },
+    {
+      "name": "Stafford Town",
+      "marketId": 4356990467,
+      "spanshMarketId": 4356990467,
+      "matchKind": "name",
+      "buildType": "plutus",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 6 f",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery",
+        "terraforming"
+      ]
+    },
+    {
+      "name": "Aristotle's Folly",
+      "marketId": 0,
+      "spanshMarketId": 4357021699,
+      "matchKind": "name",
+      "buildType": "silenus",
+      "buildClass": "hub",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 6 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": true,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "refinery"
+      ]
+    },
+    {
+      "name": "Saez Synthetics Facility",
+      "marketId": 4357024259,
+      "spanshMarketId": 4357024259,
+      "matchKind": "name",
+      "buildType": "gaea",
+      "buildClass": "settlement",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 6 e",
+        "bodyType": "rocky",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": false
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "industrial"
+      ]
+    },
+    {
+      "name": "Scobee Platform",
+      "marketId": 4365252099,
+      "spanshMarketId": 4365252099,
+      "matchKind": "name",
+      "buildType": "nemesis",
+      "buildClass": "outpost",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 9 a",
+        "bodyType": "icy",
+        "features": [
+          "landable",
+          "bio",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": false,
+      "fresh": true,
+      "mismatches": [],
+      "matches": [
+        "agriculture",
+        "extraction",
+        "hightech",
+        "industrial",
+        "military",
+        "refinery"
+      ]
+    },
+    {
+      "name": "Dampier Gateway",
+      "marketId": 3963024386,
+      "spanshMarketId": 3963024386,
+      "matchKind": "marketId",
+      "matchNote": "marketId row has no Spansh economies",
+      "buildType": "enodia",
+      "buildClass": "installation",
+      "body": {
+        "bodyName": "Synuefai CX-V c18-6 9 c",
+        "bodyType": "icy",
+        "features": [
+          "volcanism",
+          "tidal",
+          "atmosphere"
+        ],
+        "orbital": true
+      },
+      "modelSkipped": false,
+      "undockableFacility": true,
+      "fresh": true,
+      "mismatches": [],
+      "matches": []
+    }
+  ],
+  "byEconomy": {
+    "agriculture": {
+      "match": 3,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "extraction": {
+      "match": 4,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "hightech": {
+      "match": 2,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "industrial": {
+      "match": 4,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "military": {
+      "match": 4,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "refinery": {
+      "match": 4,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "terraforming": {
+      "match": 2,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "tourism": {
+      "match": 0,
+      "mismatch": 0,
+      "sumDiff": 0
+    },
+    "service": {
+      "match": 0,
+      "mismatch": 0,
+      "sumDiff": 0
+    }
+  },
+  "byBuildType": {
+    "dec_truss": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "orcus": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "polemos": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "plutus": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "silenus": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "gaea": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "nemesis": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    },
+    "enodia": {
+      "ports": 1,
+      "fullMatch": 1,
+      "mismatchRows": 0,
+      "modelSkipped": 0
+    }
+  }
+}

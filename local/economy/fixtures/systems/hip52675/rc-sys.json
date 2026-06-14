@@ -1,0 +1,3205 @@
+{
+  "v": 6,
+  "rev": 180,
+  "cmdr": "Liquidor",
+  "name": "HIP 52675",
+  "id64": 319731861851,
+  "architect": "Liquidor",
+  "pos": [
+    20.8125,
+    299.71875,
+    -153.28125
+  ],
+  "reserveLevel": "pristine",
+  "bodies": [
+    {
+      "name": "HIP 52675",
+      "num": 0,
+      "distLS": 0,
+      "parents": [],
+      "type": "st",
+      "subType": "F (White) Star",
+      "features": [],
+      "radius": -1,
+      "temp": 7238,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 A Belt",
+      "num": 100000,
+      "distLS": 7.187472341282182,
+      "parents": [
+        0
+      ],
+      "type": "ac",
+      "subType": "Metallic",
+      "features": [],
+      "radius": -1,
+      "temp": 7238,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 1",
+      "num": 14,
+      "distLS": 250.141696,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "rings",
+        "volcanism",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 461.182098,
+      "gravity": 1.82936739063934
+    },
+    {
+      "name": "HIP 52675 1 a",
+      "num": 16,
+      "distLS": 250.51889,
+      "parents": [
+        14,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 416.064392,
+      "gravity": 0.0508260426226165
+    },
+    {
+      "name": "HIP 52675 2",
+      "num": 30,
+      "distLS": 357.663166,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "rings",
+        "volcanism",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 1190.612915,
+      "gravity": 1.67485275823391
+    },
+    {
+      "name": "HIP 52675 2 a",
+      "num": 33,
+      "distLS": 357.317156,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 347.960419,
+      "gravity": 0.0506732945855001
+    },
+    {
+      "name": "HIP 52675 2 b",
+      "num": 34,
+      "distLS": 358.25674,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 347.960419,
+      "gravity": 0.0485610278372591
+    },
+    {
+      "name": "HIP 52675 3",
+      "num": 35,
+      "distLS": 475.790381,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "rings",
+        "volcanism",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 1067.398315,
+      "gravity": 1.91681125726522
+    },
+    {
+      "name": "HIP 52675 3 a",
+      "num": 37,
+      "distLS": 475.40171,
+      "parents": [
+        35,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 301.672485,
+      "gravity": 0.045847863770776
+    },
+    {
+      "name": "HIP 52675 3 b",
+      "num": 38,
+      "distLS": 475.587884,
+      "parents": [
+        35,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 301.672485,
+      "gravity": 0.0551622310594473
+    },
+    {
+      "name": "HIP 52675 3 c",
+      "num": 39,
+      "distLS": 477.162091,
+      "parents": [
+        35,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 301.672485,
+      "gravity": 0.0522199449372897
+    },
+    {
+      "name": "HIP 52675 4",
+      "num": 52,
+      "distLS": 573.901825,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "volcanism",
+        "terraformable",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 924.810242,
+      "gravity": 1.56606444376466
+    },
+    {
+      "name": "HIP 52675 barycentre 53",
+      "num": 53,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 5",
+      "num": 54,
+      "distLS": 707.765212,
+      "parents": [
+        53,
+        0
+      ],
+      "type": "gg",
+      "subType": "Gas giant with water-based life",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 244.857239,
+      "gravity": 1.44120515957989
+    },
+    {
+      "name": "HIP 52675 5 a",
+      "num": 56,
+      "distLS": 707.397078,
+      "parents": [
+        54,
+        53,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 247.974228,
+      "gravity": 0.0874547771999592
+    },
+    {
+      "name": "HIP 52675 5 b",
+      "num": 57,
+      "distLS": 708.471069,
+      "parents": [
+        54,
+        53,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 247.916794,
+      "gravity": 0.0915183032527786
+    },
+    {
+      "name": "HIP 52675 6",
+      "num": 58,
+      "distLS": 716.928439,
+      "parents": [
+        53,
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "volcanism",
+        "terraformable",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 791.011169,
+      "gravity": 1.27179606403589
+    },
+    {
+      "name": "HIP 52675 7",
+      "num": 59,
+      "distLS": 941.018894,
+      "parents": [
+        0
+      ],
+      "type": "ww",
+      "subType": "Water world",
+      "features": [
+        "volcanism",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 411.235779,
+      "gravity": 2.35955919241358
+    },
+    {
+      "name": "HIP 52675 barycentre 60",
+      "num": 60,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 8",
+      "num": 61,
+      "distLS": 1409.9235,
+      "parents": [
+        60,
+        0
+      ],
+      "type": "gg",
+      "subType": "Helium-rich gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 454.145569,
+      "gravity": 11.9130860609769
+    },
+    {
+      "name": "HIP 52675 8 a",
+      "num": 64,
+      "distLS": 1409.552882,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 248.634506,
+      "gravity": 0.211963699398389
+    },
+    {
+      "name": "HIP 52675 8 b",
+      "num": 65,
+      "distLS": 1407.946866,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 234.336472,
+      "gravity": 0.156400734169471
+    },
+    {
+      "name": "HIP 52675 8 c",
+      "num": 66,
+      "distLS": 1411.939102,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 227.236343,
+      "gravity": 0.15975272764352
+    },
+    {
+      "name": "HIP 52675 8 d",
+      "num": 67,
+      "distLS": 1406.318642,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 217.789551,
+      "gravity": 0.199500356887937
+    },
+    {
+      "name": "HIP 52675 8 e",
+      "num": 68,
+      "distLS": 1407.827127,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 214.705276,
+      "gravity": 0.215336392372795
+    },
+    {
+      "name": "HIP 52675 8 f",
+      "num": 69,
+      "distLS": 1409.501414,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 214.555557,
+      "gravity": 0.191908840624044
+    },
+    {
+      "name": "HIP 52675 8 g",
+      "num": 70,
+      "distLS": 1408.744941,
+      "parents": [
+        61,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 210.760361,
+      "gravity": 0.29811869073111
+    },
+    {
+      "name": "HIP 52675 9",
+      "num": 71,
+      "distLS": 1399.914185,
+      "parents": [
+        60,
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "rings",
+        "volcanism",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 240.66951,
+      "gravity": 1.68389293361884
+    },
+    {
+      "name": "HIP 52675 9 a",
+      "num": 73,
+      "distLS": 1400.381741,
+      "parents": [
+        71,
+        60,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 186.536499,
+      "gravity": 0.0535829509534006
+    },
+    {
+      "name": "HIP 52675 10",
+      "num": 74,
+      "distLS": 1967.375664,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Helium-rich gas giant",
+      "features": [],
+      "radius": -1,
+      "temp": 270.792816,
+      "gravity": 6.04391383705516
+    },
+    {
+      "name": "HIP 52675 10 a",
+      "num": 75,
+      "distLS": 1969.432448,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 169.149475,
+      "gravity": 0.086188232894871
+    },
+    {
+      "name": "HIP 52675 10 b",
+      "num": 76,
+      "distLS": 1963.156775,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 167.581039,
+      "gravity": 0.0924577342714388
+    },
+    {
+      "name": "HIP 52675 10 c",
+      "num": 77,
+      "distLS": 1963.437472,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 167.43309,
+      "gravity": 0.0975365555215662
+    },
+    {
+      "name": "HIP 52675 10 d",
+      "num": 78,
+      "distLS": 1968.606765,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 165.617157,
+      "gravity": 0.0806478025899867
+    },
+    {
+      "name": "HIP 52675 10 e",
+      "num": 79,
+      "distLS": 1961.020931,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 163.100586,
+      "gravity": 0.123061690629142
+    },
+    {
+      "name": "HIP 52675 10 f",
+      "num": 80,
+      "distLS": 1976.449193,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 161.904465,
+      "gravity": 0.107314163352707
+    },
+    {
+      "name": "HIP 52675 10 g",
+      "num": 81,
+      "distLS": 1966.294983,
+      "parents": [
+        74,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 160.095047,
+      "gravity": 0.172121851738554
+    },
+    {
+      "name": "HIP 52675 11",
+      "num": 84,
+      "distLS": 2703.021387,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Helium-rich gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 286.785431,
+      "gravity": 7.25458937493627
+    },
+    {
+      "name": "HIP 52675 11 a",
+      "num": 87,
+      "distLS": 2705.372016,
+      "parents": [
+        84,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 175.603958,
+      "gravity": 0.102214642602223
+    },
+    {
+      "name": "HIP 52675 11 b",
+      "num": 88,
+      "distLS": 2697.804193,
+      "parents": [
+        84,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 170.235306,
+      "gravity": 0.088193841133884
+    },
+    {
+      "name": "HIP 52675 11 c",
+      "num": 89,
+      "distLS": 2692.495538,
+      "parents": [
+        84,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 170.282349,
+      "gravity": 0.118432242275925
+    },
+    {
+      "name": "HIP 52675 11 d",
+      "num": 90,
+      "distLS": 2693.161361,
+      "parents": [
+        84,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 169.290466,
+      "gravity": 0.120849189354543
+    },
+    {
+      "name": "HIP 52675 11 e",
+      "num": 91,
+      "distLS": 2686.460308,
+      "parents": [
+        84,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 166.529877,
+      "gravity": 0.111607423269093
+    },
+    {
+      "name": "HIP 52675 11 f",
+      "num": 92,
+      "distLS": 2714.486067,
+      "parents": [
+        84,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 166.398071,
+      "gravity": 0.11554817987152
+    },
+    {
+      "name": "HIP 52675 12",
+      "num": 97,
+      "distLS": 3456.362133,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Helium-rich gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 381.222015,
+      "gravity": 11.4643496482105
+    },
+    {
+      "name": "HIP 52675 12 a",
+      "num": 100,
+      "distLS": 3460.772425,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 151.166534,
+      "gravity": 0.0749519730804527
+    },
+    {
+      "name": "HIP 52675 12 b",
+      "num": 101,
+      "distLS": 3451.353666,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 173.129486,
+      "gravity": 0.0910915672478842
+    },
+    {
+      "name": "HIP 52675 12 c",
+      "num": 102,
+      "distLS": 3450.974679,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 166.223846,
+      "gravity": 0.0774313245640869
+    },
+    {
+      "name": "HIP 52675 12 d",
+      "num": 103,
+      "distLS": 3463.561446,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 162.712784,
+      "gravity": 0.0767108188028959
+    },
+    {
+      "name": "HIP 52675 12 e",
+      "num": 104,
+      "distLS": 3442.923615,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 133.698318,
+      "gravity": 0.10504619149587
+    },
+    {
+      "name": "HIP 52675 12 f",
+      "num": 105,
+      "distLS": 3443.651623,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 133.494568,
+      "gravity": 0.119090955439992
+    },
+    {
+      "name": "HIP 52675 12 g",
+      "num": 106,
+      "distLS": 3453.89302,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 132.636292,
+      "gravity": 0.107612521668196
+    },
+    {
+      "name": "HIP 52675 12 h",
+      "num": 107,
+      "distLS": 3449.48437,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 115.534554,
+      "gravity": 0.138385337004181
+    },
+    {
+      "name": "HIP 52675 12 i",
+      "num": 108,
+      "distLS": 3436.109302,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 113.814308,
+      "gravity": 0.134357193841134
+    },
+    {
+      "name": "HIP 52675 12 j",
+      "num": 110,
+      "distLS": 3488.794734,
+      "parents": [
+        97,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 111.523888,
+      "gravity": 0.144259406546344
+    },
+    {
+      "name": "HIP 52675 13",
+      "num": 111,
+      "distLS": 4956.672231,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Helium-rich gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 941.940063,
+      "gravity": 42.0043085551137
+    },
+    {
+      "name": "HIP 52675 13 a",
+      "num": 114,
+      "distLS": 4961.556947,
+      "parents": [
+        111,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 165.28981,
+      "gravity": 0.216144794534516
+    },
+    {
+      "name": "HIP 52675 13 b",
+      "num": 115,
+      "distLS": 4974.016307,
+      "parents": [
+        111,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 189.094894,
+      "gravity": 0.271489650249822
+    },
+    {
+      "name": "HIP 52675 barycentre 116",
+      "num": 116,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 13 c",
+      "num": 117,
+      "distLS": 4989.67574,
+      "parents": [
+        116,
+        111,
+        0
+      ],
+      "type": "ri",
+      "subType": "Rocky Ice world",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 117.847496,
+      "gravity": 0.235598348118691
+    },
+    {
+      "name": "HIP 52675 13 d",
+      "num": 118,
+      "distLS": 4989.718586,
+      "parents": [
+        116,
+        111,
+        0
+      ],
+      "type": "ri",
+      "subType": "Rocky Ice world",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 117.847496,
+      "gravity": 0.225300091771184
+    },
+    {
+      "name": "HIP 52675 13 e",
+      "num": 119,
+      "distLS": 5022.686731,
+      "parents": [
+        111,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 104.663094,
+      "gravity": 0.228501376567758
+    },
+    {
+      "name": "HIP 52675 13 f",
+      "num": 120,
+      "distLS": 4833.797903,
+      "parents": [
+        111,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 101.560593,
+      "gravity": 0.240791679412664
+    },
+    {
+      "name": "HIP 52675 14",
+      "num": 121,
+      "distLS": 6461.96777,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Helium-rich gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 588.570557,
+      "gravity": 26.7944679310696
+    },
+    {
+      "name": "HIP 52675 14 a",
+      "num": 124,
+      "distLS": 6454.413259,
+      "parents": [
+        121,
+        0
+      ],
+      "type": "ri",
+      "subType": "Rocky Ice world",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 118.852402,
+      "gravity": 0.133423065157541
+    },
+    {
+      "name": "HIP 52675 14 a a",
+      "num": 125,
+      "distLS": 6454.405138,
+      "parents": [
+        124,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 118.852402,
+      "gravity": 0.0413809523809524
+    },
+    {
+      "name": "HIP 52675 14 b",
+      "num": 126,
+      "distLS": 6445.351653,
+      "parents": [
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 102.131966,
+      "gravity": 0.194017946364841
+    },
+    {
+      "name": "HIP 52675 14 b a",
+      "num": 127,
+      "distLS": 6445.316451,
+      "parents": [
+        126,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 102.131966,
+      "gravity": 0.0777008259406546
+    },
+    {
+      "name": "HIP 52675 14 c",
+      "num": 128,
+      "distLS": 6452.343701,
+      "parents": [
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 99.674416,
+      "gravity": 0.214280208014683
+    },
+    {
+      "name": "HIP 52675 14 c a",
+      "num": 129,
+      "distLS": 6452.387127,
+      "parents": [
+        128,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 99.55883,
+      "gravity": 0.0542941776282247
+    },
+    {
+      "name": "HIP 52675 barycentre 130",
+      "num": 130,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 14 d",
+      "num": 131,
+      "distLS": 6483.842398,
+      "parents": [
+        130,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 93.358521,
+      "gravity": 0.196583562761293
+    },
+    {
+      "name": "HIP 52675 14 e",
+      "num": 132,
+      "distLS": 6483.842453,
+      "parents": [
+        130,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 93.326332,
+      "gravity": 0.190068216579994
+    },
+    {
+      "name": "HIP 52675 barycentre 133",
+      "num": 133,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "HIP 52675 14 f",
+      "num": 134,
+      "distLS": 6508.669457,
+      "parents": [
+        133,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 90.222488,
+      "gravity": 0.194414295911084
+    },
+    {
+      "name": "HIP 52675 14 g",
+      "num": 135,
+      "distLS": 6508.12439,
+      "parents": [
+        133,
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 90.189461,
+      "gravity": 0.162321097175487
+    },
+    {
+      "name": "HIP 52675 14 h",
+      "num": 136,
+      "distLS": 6472.301706,
+      "parents": [
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 86.32283,
+      "gravity": 0.192563169164882
+    },
+    {
+      "name": "HIP 52675 14 i",
+      "num": 138,
+      "distLS": 6407.050434,
+      "parents": [
+        121,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable"
+      ],
+      "radius": -1,
+      "temp": 83.902542,
+      "gravity": 0.188904048128888
+    }
+  ],
+  "sites": [
+    {
+      "id": "&4254538755",
+      "name": "Escobar Gateway",
+      "bodyNum": 81,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4254538755
+    },
+    {
+      "id": "x1761563011423",
+      "name": "Maruyama Biological Expedition",
+      "bodyNum": 119,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4217822979
+    },
+    {
+      "id": "x1764537760577",
+      "name": "GottlobFrege's Folly",
+      "bodyNum": 61,
+      "buildType": "soter",
+      "status": "complete"
+    },
+    {
+      "id": "x1764537911349",
+      "name": "Wallis Depot",
+      "bodyNum": 88,
+      "buildType": "aletheia",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050355937",
+      "name": "Cowan Relay",
+      "bodyNum": 37,
+      "buildType": "hermes",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050478364",
+      "name": "Montanari Enterprise",
+      "bodyNum": 38,
+      "buildType": "enodia",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050498865",
+      "name": "Hines City",
+      "bodyNum": 52,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050511055",
+      "name": "Ikeya's Pride",
+      "bodyNum": 52,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050574459",
+      "name": "Pelt Relay",
+      "bodyNum": 58,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050589287",
+      "name": "Mechain Landing",
+      "bodyNum": 58,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050650221",
+      "name": "Lewis Prospect",
+      "bodyNum": 81,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050666674",
+      "name": "Nowak's Pride",
+      "bodyNum": 81,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050700972",
+      "name": "Naim's Progress",
+      "bodyNum": 39,
+      "buildType": "harmonia",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050717835",
+      "name": "Vian's Inheritance",
+      "bodyNum": 39,
+      "buildType": "harmonia",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050726308",
+      "name": "Babcock Gateway",
+      "bodyNum": 39,
+      "buildType": "dicaeosyne",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050837706",
+      "name": "Hausdorff Horizons",
+      "bodyNum": 88,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050854298",
+      "name": "Dickson's Progress",
+      "bodyNum": 88,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756050957158",
+      "name": "Markey Complex",
+      "bodyNum": 120,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4260276739
+    },
+    {
+      "id": "x1756051002111",
+      "name": "[FRHT] - Refinery/agri 13a",
+      "bodyNum": 114,
+      "buildType": "artemis",
+      "status": "complete",
+      "marketId": 4273588739
+    },
+    {
+      "id": "x1756051298630",
+      "name": "Rousseau Sanctuary",
+      "bodyNum": 124,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4270273539
+    },
+    {
+      "id": "x1756051267523",
+      "name": "[FRHT] - Emergency Power Cells",
+      "bodyNum": 119,
+      "buildType": "zeus",
+      "status": "complete",
+      "marketId": 4273435139
+    },
+    {
+      "id": "x1756051352451",
+      "name": "Ritchey's Folly",
+      "bodyNum": 124,
+      "buildType": "hermes",
+      "status": "complete"
+    },
+    {
+      "id": "x1756051496588",
+      "name": "Kennan Depot",
+      "bodyNum": 135,
+      "buildType": "hermes",
+      "status": "complete"
+    },
+    {
+      "id": "&4258585347",
+      "name": "Brunt Constructions",
+      "bodyNum": 81,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4258585347
+    },
+    {
+      "id": "x1756052628293",
+      "name": "Oyekan Mineralogic Base",
+      "bodyNum": 37,
+      "buildType": "erebus",
+      "status": "complete",
+      "marketId": 4263039235
+    },
+    {
+      "id": "x1756051436183",
+      "name": "Diesel Sanctuary",
+      "bodyNum": 57,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4274701827
+    },
+    {
+      "id": "x1756051454918",
+      "name": "Bunche Point",
+      "bodyNum": 57,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4274735875
+    },
+    {
+      "id": "x1756051472748",
+      "name": "Buckland's Progress",
+      "bodyNum": 134,
+      "buildType": "hermes",
+      "status": "complete"
+    },
+    {
+      "id": "&4258586883",
+      "name": "[frht] - Alpha Ground Port",
+      "bodyNum": 88,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4258586883
+    },
+    {
+      "id": "x1756051516252",
+      "name": "Bahcall Vista",
+      "bodyNum": 132,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4276331011
+    },
+    {
+      "id": "x1756051642294",
+      "name": "Beethoven's Progress",
+      "bodyNum": 136,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4277714179
+    },
+    {
+      "id": "x1756051645058",
+      "name": "Ramaty Sanctuary",
+      "bodyNum": 136,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4277801219
+    },
+    {
+      "id": "x1756053344363",
+      "name": "Cartier Landing",
+      "bodyNum": 134,
+      "buildType": "hermes",
+      "status": "complete"
+    },
+    {
+      "id": "x1756053919258",
+      "name": "Marshall Enterprise",
+      "bodyNum": 89,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756053951279",
+      "name": "Schachner Relay",
+      "bodyNum": 89,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756053965623",
+      "name": "[FRHT] - Kappa Colony",
+      "bodyNum": 89,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4278952451
+    },
+    {
+      "id": "x1756053989671",
+      "name": "Matheson Legacy",
+      "bodyNum": 91,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756053988805",
+      "name": "Vavrova Sanctuary",
+      "bodyNum": 91,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1756053990570",
+      "name": "[FRHT] - Epsilon Beaujolais Base",
+      "bodyNum": 91,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4279550467
+    },
+    {
+      "id": "x1765748430539",
+      "name": "Gabrielli Depot",
+      "bodyNum": 88,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748447159",
+      "name": "Boswell's Pride",
+      "bodyNum": 100,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748452551",
+      "name": "Boole Reach",
+      "bodyNum": 100,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748457648",
+      "name": "Stefanyshyn-Piper Horizons",
+      "bodyNum": 100,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1761562875206",
+      "name": "Hottot Platform",
+      "bodyNum": 114,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761562903946",
+      "name": "Pribylov Sanctuary",
+      "bodyNum": 114,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761562923251",
+      "name": "Chaskin Hub",
+      "bodyNum": 114,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761562940516",
+      "name": "[FRHT] - Ceramics And Cmm's",
+      "bodyNum": 114,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4215725315
+    },
+    {
+      "id": "x1761563033023",
+      "name": "Kotsuba Astrophysics Enterprise",
+      "bodyNum": 119,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4303050243
+    },
+    {
+      "id": "x1761563055748",
+      "name": "Tutunnyk Genetics Enterprise",
+      "bodyNum": 119,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4303048963
+    },
+    {
+      "id": "x1761566257583",
+      "name": "Carrasco's Liberty",
+      "bodyNum": 138,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4302230019
+    },
+    {
+      "id": "x1761566340759",
+      "name": "Guo Manufacturing Exchange",
+      "bodyNum": 120,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4303052035
+    },
+    {
+      "id": "x1761566339003",
+      "name": "Myeni Analytics Site",
+      "bodyNum": 120,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4303271427
+    },
+    {
+      "id": "x1761566292028",
+      "name": "[FRHT] - AGRI/TOURISM/MIL 7",
+      "bodyNum": 59,
+      "buildType": "artemis",
+      "status": "complete",
+      "marketId": 4303959555
+    },
+    {
+      "id": "x1761566337817",
+      "name": "Dawes Analytics Laboratory",
+      "bodyNum": 120,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4303269635
+    },
+    {
+      "id": "x1761566341711",
+      "name": "Morelli Industrial Hub",
+      "bodyNum": 120,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4303052547
+    },
+    {
+      "id": "x1761566450770",
+      "name": "Corner Defence Site",
+      "bodyNum": 138,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4302231299
+    },
+    {
+      "id": "x1761566486972",
+      "name": "Cousin's Folly",
+      "bodyNum": 138,
+      "buildType": "alastor",
+      "status": "complete"
+    },
+    {
+      "id": "x1761566520708",
+      "name": "Bernard Sanctuary",
+      "bodyNum": 136,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4302722051
+    },
+    {
+      "id": "x1761566743410",
+      "name": "Kulkarni Munitions Enterprise",
+      "bodyNum": 136,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4302232579
+    },
+    {
+      "id": "x1761566770358",
+      "name": "Berger Military Camp",
+      "bodyNum": 136,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4303993859
+    },
+    {
+      "id": "x1761566796173",
+      "name": "Kovalenko Command Base",
+      "bodyNum": 135,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4303274499
+    },
+    {
+      "id": "x1761566800906",
+      "name": "Walachnia's Fort",
+      "bodyNum": 135,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4303273731
+    },
+    {
+      "id": "x1761566828551",
+      "name": "Naudiyal Fortification",
+      "bodyNum": 134,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4303887363
+    },
+    {
+      "id": "x1761566831641",
+      "name": "Zadzisai Resolve",
+      "bodyNum": 134,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4303885827
+    },
+    {
+      "id": "x1761566862175",
+      "name": "Winter Agricultural",
+      "bodyNum": 132,
+      "buildType": "picumnus",
+      "status": "complete",
+      "marketId": 4303888899
+    },
+    {
+      "id": "x1761566871445",
+      "name": "Soh Agricultural Exchange",
+      "bodyNum": 132,
+      "buildType": "picumnus",
+      "status": "complete",
+      "marketId": 4303890691
+    },
+    {
+      "id": "x1761566931137",
+      "name": "Theofelus Visitor Hostel",
+      "bodyNum": 131,
+      "buildType": "fufluns",
+      "status": "complete",
+      "marketId": 4304359171
+    },
+    {
+      "id": "x1761566980142",
+      "name": "Matsuda Visitor Lodge",
+      "bodyNum": 131,
+      "buildType": "fufluns",
+      "status": "complete",
+      "marketId": 4304363011
+    },
+    {
+      "id": "x1761567052550",
+      "name": "[FRHT] - HITECH/INDUSTRIAL 13E",
+      "bodyNum": 119,
+      "buildType": "apollo",
+      "status": "complete",
+      "marketId": 4305197059
+    },
+    {
+      "id": "x1761568765679",
+      "name": "Savchenko Vista",
+      "bodyNum": 129,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4304379395
+    },
+    {
+      "id": "x1761568770620",
+      "name": "Duan Industries",
+      "bodyNum": 129,
+      "buildType": "clotho",
+      "status": "complete",
+      "marketId": 4304380675
+    },
+    {
+      "id": "x1761568789094",
+      "name": "Reynolds Point",
+      "bodyNum": 128,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1761568796646",
+      "name": "Saccone Cultivation Collection",
+      "bodyNum": 128,
+      "buildType": "fornax",
+      "status": "complete",
+      "marketId": 4304659203
+    },
+    {
+      "id": "x1761568801341",
+      "name": "Ferreira Botanical Collection",
+      "bodyNum": 128,
+      "buildType": "ceres",
+      "status": "complete",
+      "marketId": 4304658179
+    },
+    {
+      "id": "x1761568805332",
+      "name": "Neumann Nutrition Complex",
+      "bodyNum": 128,
+      "buildType": "fornax",
+      "status": "complete",
+      "marketId": 4305294339
+    },
+    {
+      "id": "x1761568883362",
+      "name": "Lange Botanical Market",
+      "bodyNum": 128,
+      "buildType": "ceres",
+      "status": "complete",
+      "marketId": 4305295363
+    },
+    {
+      "id": "x1761568949011",
+      "name": "Frimout Legacy",
+      "bodyNum": 128,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4305127683
+    },
+    {
+      "id": "x1761569100678",
+      "name": "Joshi's Dock",
+      "bodyNum": 127,
+      "buildType": "bellona",
+      "status": "complete",
+      "marketId": 4305296899
+    },
+    {
+      "id": "x1761569101848",
+      "name": "Okada Arms Installation",
+      "bodyNum": 127,
+      "buildType": "enyo",
+      "status": "complete",
+      "marketId": 4305298179
+    },
+    {
+      "id": "x1761569102621",
+      "name": "Espinoza Honour",
+      "bodyNum": 126,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4305300227
+    },
+    {
+      "id": "x1761569103469",
+      "name": "Faucher Munitions Base",
+      "bodyNum": 126,
+      "buildType": "bellona",
+      "status": "complete",
+      "marketId": 4305553667
+    },
+    {
+      "id": "x1761569213787",
+      "name": "Pianzola Mineralogic Exploration",
+      "bodyNum": 125,
+      "buildType": "erebus",
+      "status": "complete",
+      "marketId": 4305554947
+    },
+    {
+      "id": "x1761569215167",
+      "name": "Rutten Mining Exploration",
+      "bodyNum": 125,
+      "buildType": "aerecura",
+      "status": "complete",
+      "marketId": 4305555971
+    },
+    {
+      "id": "x1761569215970",
+      "name": "Zivai's Prospect",
+      "bodyNum": 124,
+      "buildType": "erebus",
+      "status": "complete",
+      "marketId": 4305557507
+    },
+    {
+      "id": "x1761569300031",
+      "name": "Sharpe Chemical Works",
+      "bodyNum": 117,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4305559043
+    },
+    {
+      "id": "x1761569427052",
+      "name": "Bedi Excavation Hub",
+      "bodyNum": 33,
+      "buildType": "mantus",
+      "status": "complete",
+      "marketId": 4305740035
+    },
+    {
+      "id": "x1761570299492",
+      "name": "Buhle Territories",
+      "bodyNum": 64,
+      "buildType": "atropos",
+      "status": "complete",
+      "marketId": 4306472195
+    },
+    {
+      "id": "x1761569301201",
+      "name": "Ricci Industrial Enterprise",
+      "bodyNum": 117,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4306860035
+    },
+    {
+      "id": "x1761569301868",
+      "name": "Alarie's Garden",
+      "bodyNum": 118,
+      "buildType": "annona",
+      "status": "complete",
+      "marketId": 4305732867
+    },
+    {
+      "id": "x1761569302476",
+      "name": "Kohler Botanical Holding",
+      "bodyNum": 118,
+      "buildType": "picumnus",
+      "status": "complete",
+      "marketId": 4305734659
+    },
+    {
+      "id": "x1761569405025",
+      "name": "Dhawan Prospecting",
+      "bodyNum": 16,
+      "buildType": "aerecura",
+      "status": "complete",
+      "marketId": 4303933955
+    },
+    {
+      "id": "x1761569410793",
+      "name": "Borrelly Beacon",
+      "bodyNum": 33,
+      "buildType": "harmonia",
+      "status": "complete"
+    },
+    {
+      "id": "x1761569470300",
+      "name": "Aloisio Drilling Station",
+      "bodyNum": 34,
+      "buildType": "erebus",
+      "status": "complete",
+      "marketId": 4304005635
+    },
+    {
+      "id": "x1761570297009",
+      "name": "Zuniga Platform",
+      "bodyNum": 64,
+      "buildType": "decima",
+      "status": "complete",
+      "marketId": 4304072195
+    },
+    {
+      "id": "x1761570298224",
+      "name": "Theofelus Plant",
+      "bodyNum": 64,
+      "buildType": "lachesis",
+      "status": "complete",
+      "marketId": 4306469635
+    },
+    {
+      "id": "x1761570300279",
+      "name": "Leder Gateway",
+      "bodyNum": 64,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1761570409288",
+      "name": "Patel Platform",
+      "bodyNum": 65,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4306473475
+    },
+    {
+      "id": "x1761571299756",
+      "name": "Nakano Station",
+      "bodyNum": 66,
+      "buildType": "nona",
+      "status": "complete",
+      "marketId": 4306474755
+    },
+    {
+      "id": "x1761571300941",
+      "name": "Barjavel Vision",
+      "bodyNum": 66,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1761571339124",
+      "name": "Prohasko Depot",
+      "bodyNum": 67,
+      "buildType": "clotho",
+      "status": "complete",
+      "marketId": 4306476803
+    },
+    {
+      "id": "x1761571340241",
+      "name": "Richelieu Consulting",
+      "bodyNum": 67,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4306863619
+    },
+    {
+      "id": "x1761571341036",
+      "name": "Kuhn Reach",
+      "bodyNum": 67,
+      "buildType": "soter",
+      "status": "complete"
+    },
+    {
+      "id": "x1761571368914",
+      "name": "Otanez Collection",
+      "bodyNum": 68,
+      "buildType": "atropos",
+      "status": "complete",
+      "marketId": 4306866435
+    },
+    {
+      "id": "x1761571369641",
+      "name": "Zhou Resolve",
+      "bodyNum": 68,
+      "buildType": "clotho",
+      "status": "complete",
+      "marketId": 4306867971
+    },
+    {
+      "id": "x1761571370370",
+      "name": "Arfstrom Sanctuary",
+      "bodyNum": 68,
+      "buildType": "aletheia",
+      "status": "complete"
+    },
+    {
+      "id": "x1761571371201",
+      "name": "Caxton Platform",
+      "bodyNum": 68,
+      "buildType": "soter",
+      "status": "complete"
+    },
+    {
+      "id": "x1761571407181",
+      "name": "Dara Garden",
+      "bodyNum": 69,
+      "buildType": "decima",
+      "status": "complete",
+      "marketId": 4307416835
+    },
+    {
+      "id": "x1761571408649",
+      "name": "Biswas Horizon",
+      "bodyNum": 69,
+      "buildType": "lachesis",
+      "status": "complete",
+      "marketId": 4307418115
+    },
+    {
+      "id": "x1761569490196",
+      "name": "[FRHT] - Omega HQ",
+      "bodyNum": 87,
+      "buildType": "apollo",
+      "status": "complete",
+      "marketId": 4314925571
+    },
+    {
+      "id": "x1761571409273",
+      "name": "Hertz's Pride",
+      "bodyNum": 69,
+      "buildType": "aletheia",
+      "status": "complete"
+    },
+    {
+      "id": "x1761571578849",
+      "name": "Tracy Hub",
+      "bodyNum": 70,
+      "buildType": "nona",
+      "status": "complete",
+      "marketId": 4307419651
+    },
+    {
+      "id": "x1761571579772",
+      "name": "Krisjanis Territories",
+      "bodyNum": 70,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4307420675
+    },
+    {
+      "id": "x1761571580657",
+      "name": "Forrester Terminal",
+      "bodyNum": 70,
+      "buildType": "soter",
+      "status": "complete"
+    },
+    {
+      "id": "x1761571628118",
+      "name": "Ramis Horizons",
+      "bodyNum": 61,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4311112195
+    },
+    {
+      "id": "x1761571628890",
+      "name": "Deprez Terminal",
+      "bodyNum": 61,
+      "buildType": "vesta",
+      "status": "complete",
+      "marketId": 4311333891
+    },
+    {
+      "id": "x1761571700007",
+      "name": "Rodriguez Jurisdiction",
+      "bodyNum": 73,
+      "buildType": "ioke",
+      "status": "complete",
+      "marketId": 4307421955
+    },
+    {
+      "id": "x1761571701837",
+      "name": "Amis's Folly",
+      "bodyNum": 73,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311217923
+    },
+    {
+      "id": "x1761572246250",
+      "name": "Heinrich Military Hub",
+      "bodyNum": 75,
+      "buildType": "enyo",
+      "status": "complete",
+      "marketId": 4307787267
+    },
+    {
+      "id": "x1761572246902",
+      "name": "Laumer Platform",
+      "bodyNum": 75,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311445251
+    },
+    {
+      "id": "x1761572247503",
+      "name": "Preuss Platform",
+      "bodyNum": 75,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311172867
+    },
+    {
+      "id": "x1761572299373",
+      "name": "Lockett Keep",
+      "bodyNum": 76,
+      "buildType": "bellona",
+      "status": "complete",
+      "marketId": 4307791363
+    },
+    {
+      "id": "x1761572300100",
+      "name": "Trier Relay",
+      "bodyNum": 76,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311418883
+    },
+    {
+      "id": "x1761572300731",
+      "name": "Meucci's Pride",
+      "bodyNum": 76,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4312197123
+    },
+    {
+      "id": "x1761572346008",
+      "name": "Nguesso's Fortress",
+      "bodyNum": 77,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4307792899
+    },
+    {
+      "id": "x1761572346653",
+      "name": "Champollion Relay",
+      "bodyNum": 77,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311777027
+    },
+    {
+      "id": "x1761572372236",
+      "name": "Stott Command Point",
+      "bodyNum": 78,
+      "buildType": "enyo",
+      "status": "complete",
+      "marketId": 4307982083
+    },
+    {
+      "id": "x1761572386269",
+      "name": "Kozak Munitions Installation",
+      "bodyNum": 79,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4307982595
+    },
+    {
+      "id": "x1761572387168",
+      "name": "Kachanov City",
+      "bodyNum": 79,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4312028675
+    },
+    {
+      "id": "x1761572440196",
+      "name": "Watson's Liberty",
+      "bodyNum": 80,
+      "buildType": "bellona",
+      "status": "complete",
+      "marketId": 4308685059
+    },
+    {
+      "id": "x1761572458647",
+      "name": "MacCurdy Sanctuary",
+      "bodyNum": 81,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311917571
+    },
+    {
+      "id": "x1761572459357",
+      "name": "Kamiyama Prospect",
+      "bodyNum": 81,
+      "buildType": "nemesis",
+      "status": "complete",
+      "marketId": 4311734787
+    },
+    {
+      "id": "x1761578105987",
+      "name": "Vittori Horizons",
+      "bodyNum": 87,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578106894",
+      "name": "Lehtonen Towm",
+      "bodyNum": 87,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578107741",
+      "name": "[FRHT] - Omega Ground Port",
+      "bodyNum": 87,
+      "buildType": "nona",
+      "status": "complete",
+      "marketId": 4305738755
+    },
+    {
+      "id": "x1761578362010",
+      "name": "Heinlein Town",
+      "bodyNum": 120,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578362925",
+      "name": "Spring Vista",
+      "bodyNum": 101,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578414736",
+      "name": "Xiang Military Camp",
+      "bodyNum": 110,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4308687107
+    },
+    {
+      "id": "x1761578423257",
+      "name": "Mori's Armoury",
+      "bodyNum": 110,
+      "buildType": "enyo",
+      "status": "complete",
+      "marketId": 4308689667
+    },
+    {
+      "id": "x1761578485222",
+      "name": "Suarez Metallurgic Territory",
+      "bodyNum": 108,
+      "buildType": "mantus",
+      "status": "complete",
+      "marketId": 4308692995
+    },
+    {
+      "id": "x1761578493584",
+      "name": "Navarrete Prospecting Complex",
+      "bodyNum": 108,
+      "buildType": "orcus",
+      "status": "complete",
+      "marketId": 4308694531
+    },
+    {
+      "id": "x1761578500807",
+      "name": "Si-myung Legacy",
+      "bodyNum": 108,
+      "buildType": "plutus",
+      "status": "complete",
+      "marketId": 4312122371
+    },
+    {
+      "id": "x1761578618994",
+      "name": "Quinn's Nursery",
+      "bodyNum": 107,
+      "buildType": "picumnus",
+      "status": "complete",
+      "marketId": 4309025539
+    },
+    {
+      "id": "x1761578619773",
+      "name": "Chung Horticultural Base",
+      "bodyNum": 107,
+      "buildType": "annona",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578620525",
+      "name": "Christy Beacon",
+      "bodyNum": 107,
+      "buildType": "plutus",
+      "status": "complete",
+      "marketId": 4312115459
+    },
+    {
+      "id": "x1761578670196",
+      "name": "Benedetti Extraction Complex",
+      "bodyNum": 106,
+      "buildType": "mantus",
+      "status": "complete",
+      "marketId": 4309027587
+    },
+    {
+      "id": "x1761578746233",
+      "name": "Naidu Prospecting Station",
+      "bodyNum": 105,
+      "buildType": "orcus",
+      "status": "complete",
+      "marketId": 4309028355
+    },
+    {
+      "id": "x1761578747043",
+      "name": "Marvin Landing",
+      "bodyNum": 105,
+      "buildType": "plutus",
+      "status": "complete",
+      "marketId": 4312825859
+    },
+    {
+      "id": "x1761578747889",
+      "name": "Barron Town",
+      "bodyNum": 105,
+      "buildType": "plutus",
+      "status": "complete",
+      "marketId": 4312432387
+    },
+    {
+      "id": "x1761578855623",
+      "name": "Downey Point",
+      "bodyNum": 92,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578856334",
+      "name": "Chaffee Legacy",
+      "bodyNum": 92,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1761578857398",
+      "name": "[FRHT] Tau Settlement",
+      "bodyNum": 92,
+      "buildType": "hestia",
+      "status": "complete",
+      "marketId": 4309030147
+    },
+    {
+      "id": "x1762161370658",
+      "name": "Andreas Point",
+      "bodyNum": 117,
+      "buildType": "soter",
+      "status": "complete"
+    },
+    {
+      "id": "x1762161404861",
+      "name": "Kaiser Beacon",
+      "bodyNum": 118,
+      "buildType": "hermes",
+      "status": "complete"
+    },
+    {
+      "id": "x1762161439589",
+      "name": "Hottot's Progress",
+      "bodyNum": 119,
+      "buildType": "pistis",
+      "status": "complete"
+    },
+    {
+      "id": "x1762161519165",
+      "name": "Braun Depot",
+      "bodyNum": 120,
+      "buildType": "vulcan",
+      "status": "complete",
+      "marketId": 4211674627
+    },
+    {
+      "id": "x1763031698578",
+      "name": "Chaffee Relay",
+      "bodyNum": 35,
+      "buildType": "angelia",
+      "status": "complete"
+    },
+    {
+      "id": "x1763031863415",
+      "name": "WernervonSiemens Gateway",
+      "bodyNum": 54,
+      "buildType": "eirene",
+      "status": "complete"
+    },
+    {
+      "id": "x1763031895284",
+      "name": "Rao Town",
+      "bodyNum": 56,
+      "buildType": "soter",
+      "status": "complete"
+    },
+    {
+      "id": "x1763031907125",
+      "name": "Hawkins Depot",
+      "bodyNum": 56,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4305524483
+    },
+    {
+      "id": "x1763031908116",
+      "name": "Bennett Industrial Forge",
+      "bodyNum": 56,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4305916931
+    },
+    {
+      "id": "x1763031984100",
+      "name": "Malenchenko's Inheritance",
+      "bodyNum": 102,
+      "buildType": "aletheia",
+      "status": "complete"
+    },
+    {
+      "id": "x1763032062888",
+      "name": "Newberry Military Camp",
+      "bodyNum": 104,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4306140163
+    },
+    {
+      "id": "x1763032094118",
+      "name": "Banyard Service",
+      "bodyNum": 103,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4310088707
+    },
+    {
+      "id": "x1763032095424",
+      "name": "Rudenko Nutrition Facility",
+      "bodyNum": 103,
+      "buildType": "fornax",
+      "status": "complete",
+      "marketId": 4310090243
+    },
+    {
+      "id": "x1763032096255",
+      "name": "Harland Watch",
+      "bodyNum": 103,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4310092035
+    },
+    {
+      "id": "x1763032138159",
+      "name": "Mannan Arms Installation",
+      "bodyNum": 102,
+      "buildType": "minerva",
+      "status": "complete",
+      "marketId": 4310093827
+    },
+    {
+      "id": "x1763032172330",
+      "name": "Dzsejt Horticultural Biome",
+      "bodyNum": 102,
+      "buildType": "ceres",
+      "status": "complete",
+      "marketId": 4310095619
+    },
+    {
+      "id": "x1763032183401",
+      "name": "Valenzuela Astrophysics Facility",
+      "bodyNum": 101,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4310410499
+    },
+    {
+      "id": "x1763032243303",
+      "name": "Aubert Analysis Forum",
+      "bodyNum": 101,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4310411267
+    },
+    {
+      "id": "x1763032247675",
+      "name": "Golub Biochemical Laboratory",
+      "bodyNum": 101,
+      "buildType": "chronos",
+      "status": "complete",
+      "marketId": 4310412035
+    },
+    {
+      "id": "x1763032290223",
+      "name": "[FRHT] - Tau Command",
+      "bodyNum": 92,
+      "buildType": "apollo",
+      "status": "complete",
+      "marketId": 4318047491
+    },
+    {
+      "id": "x1763031834884",
+      "name": "Shore Chemical Site",
+      "bodyNum": 38,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4289041411
+    },
+    {
+      "id": "x1763031835762",
+      "name": "Indongo Chemical Workshop",
+      "bodyNum": 39,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4305272067
+    },
+    {
+      "id": "x1762161519890",
+      "name": "Shoujing Terminal",
+      "bodyNum": 120,
+      "buildType": "vulcan",
+      "status": "complete",
+      "marketId": 4312884995
+    },
+    {
+      "id": "x1763032315626",
+      "name": "[FRHT] - Kappa Command",
+      "bodyNum": 89,
+      "buildType": "no_truss",
+      "status": "complete",
+      "marketId": 4314117379
+    },
+    {
+      "id": "x1763032354326",
+      "name": "[FRHT] - Alpha HQ",
+      "bodyNum": 88,
+      "buildType": "no_truss",
+      "status": "complete",
+      "marketId": 4314431747
+    },
+    {
+      "id": "x1763032331338",
+      "name": "[FRHT] - Epsilon Barrelhouse Terminal",
+      "bodyNum": 91,
+      "buildType": "no_truss",
+      "status": "complete",
+      "marketId": 4315719171
+    },
+    {
+      "id": "x1765748482505",
+      "name": "Brooks Point",
+      "bodyNum": 101,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748550226",
+      "name": "Darwin Beacon",
+      "bodyNum": 125,
+      "buildType": "alastor",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748577049",
+      "name": "Clervoy Vision",
+      "bodyNum": 125,
+      "buildType": "vacuna",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748610750",
+      "name": "Velho Reach",
+      "bodyNum": 127,
+      "buildType": "alastor",
+      "status": "complete",
+      "buildId": "fbc01270-f1ae-4156-859b-26b4f58c2034",
+      "marketId": 3955601410
+    },
+    {
+      "id": "x1765748621464",
+      "name": "Chalker Gateway",
+      "bodyNum": 129,
+      "buildType": "vacuna",
+      "status": "complete",
+      "buildId": "44314f71-bcdc-4762-9e9c-e4939e5ab703",
+      "marketId": 3955606274
+    },
+    {
+      "id": "x1765748490698",
+      "name": "Braun Command Garrison",
+      "bodyNum": 100,
+      "buildType": "polemos",
+      "status": "complete",
+      "buildId": "c5164fbd-83c2-4ced-92bd-b6857b040d9a",
+      "marketId": 4332102147
+    },
+    {
+      "id": "x1765748688837",
+      "name": "Petrenko Hydroponics Estate",
+      "bodyNum": 90,
+      "buildType": "picumnus",
+      "status": "complete",
+      "buildId": "52fd3600-d51e-4d7a-8547-804697d72785",
+      "marketId": 4332105731
+    },
+    {
+      "id": "x1765748525931",
+      "name": "Hind's Progress",
+      "bodyNum": 102,
+      "buildType": "ares",
+      "status": "complete"
+    },
+    {
+      "id": "x1765748697548",
+      "name": "Fahnbulleh Horticultural Garden",
+      "bodyNum": 90,
+      "buildType": "ceres",
+      "status": "complete",
+      "buildId": "b578cff9-4698-4c60-94b0-e993e13ac5da",
+      "marketId": 4332146691
+    },
+    {
+      "id": "x1765748693028",
+      "name": "Burrows Agricultural",
+      "bodyNum": 90,
+      "buildType": "fornax",
+      "status": "complete",
+      "buildId": "2be120d0-32ae-451d-ab95-bfb15bd13857",
+      "marketId": 4332146435
+    }
+  ],
+  "deleteIDs": [],
+  "updateIDs": [],
+  "revs": [
+    {
+      "rev": 180,
+      "cmdr": "Liquidor",
+      "time": "2026-06-07T19:12:16.6053671+00:00"
+    },
+    {
+      "rev": 179,
+      "cmdr": "Gromowladny",
+      "time": "2026-02-10T14:41:40.4801975+00:00"
+    },
+    {
+      "rev": 178,
+      "cmdr": "Liquidor",
+      "time": "2026-02-07T13:22:33.7739696+00:00"
+    },
+    {
+      "rev": 177,
+      "cmdr": "Liquidor",
+      "time": "2026-01-19T04:41:58.6787474+00:00"
+    },
+    {
+      "rev": 176,
+      "cmdr": "Liquidor",
+      "time": "2026-01-19T01:16:00.9335502+00:00"
+    }
+  ],
+  "slots": {
+    "0": [
+      0,
+      -1
+    ],
+    "14": [
+      0,
+      -1
+    ],
+    "16": [
+      0,
+      1
+    ],
+    "30": [
+      0,
+      -1
+    ],
+    "33": [
+      1,
+      1
+    ],
+    "34": [
+      0,
+      1
+    ],
+    "35": [
+      1,
+      -1
+    ],
+    "37": [
+      1,
+      1
+    ],
+    "38": [
+      1,
+      1
+    ],
+    "39": [
+      3,
+      1
+    ],
+    "52": [
+      2,
+      -1
+    ],
+    "54": [
+      1,
+      -1
+    ],
+    "56": [
+      1,
+      2
+    ],
+    "57": [
+      2,
+      -1
+    ],
+    "58": [
+      2,
+      -1
+    ],
+    "59": [
+      1,
+      -1
+    ],
+    "61": [
+      3,
+      -1
+    ],
+    "64": [
+      1,
+      3
+    ],
+    "65": [
+      0,
+      1
+    ],
+    "66": [
+      1,
+      1
+    ],
+    "67": [
+      1,
+      2
+    ],
+    "68": [
+      2,
+      2
+    ],
+    "69": [
+      1,
+      2
+    ],
+    "70": [
+      1,
+      2
+    ],
+    "71": [
+      0,
+      -1
+    ],
+    "73": [
+      1,
+      1
+    ],
+    "74": [
+      0,
+      -1
+    ],
+    "75": [
+      2,
+      1
+    ],
+    "76": [
+      2,
+      1
+    ],
+    "77": [
+      1,
+      1
+    ],
+    "78": [
+      0,
+      1
+    ],
+    "79": [
+      1,
+      1
+    ],
+    "80": [
+      0,
+      1
+    ],
+    "81": [
+      3,
+      3
+    ],
+    "84": [
+      0,
+      -1
+    ],
+    "87": [
+      1,
+      3
+    ],
+    "88": [
+      3,
+      3
+    ],
+    "89": [
+      1,
+      3
+    ],
+    "90": [
+      0,
+      3
+    ],
+    "91": [
+      1,
+      3
+    ],
+    "92": [
+      1,
+      3
+    ],
+    "97": [
+      0,
+      -1
+    ],
+    "100": [
+      3,
+      1
+    ],
+    "101": [
+      2,
+      3
+    ],
+    "102": [
+      1,
+      3
+    ],
+    "103": [
+      0,
+      3
+    ],
+    "104": [
+      0,
+      1
+    ],
+    "105": [
+      2,
+      1
+    ],
+    "106": [
+      0,
+      1
+    ],
+    "107": [
+      1,
+      2
+    ],
+    "108": [
+      1,
+      2
+    ],
+    "110": [
+      0,
+      2
+    ],
+    "111": [
+      0,
+      -1
+    ],
+    "114": [
+      1,
+      4
+    ],
+    "115": [
+      0,
+      -1
+    ],
+    "117": [
+      1,
+      2
+    ],
+    "118": [
+      1,
+      2
+    ],
+    "119": [
+      2,
+      4
+    ],
+    "120": [
+      3,
+      5
+    ],
+    "121": [
+      0,
+      -1
+    ],
+    "124": [
+      2,
+      1
+    ],
+    "125": [
+      2,
+      2
+    ],
+    "126": [
+      0,
+      2
+    ],
+    "127": [
+      1,
+      2
+    ],
+    "128": [
+      2,
+      4
+    ],
+    "129": [
+      1,
+      2
+    ],
+    "131": [
+      0,
+      2
+    ],
+    "132": [
+      1,
+      2
+    ],
+    "134": [
+      2,
+      2
+    ],
+    "135": [
+      1,
+      2
+    ],
+    "136": [
+      3,
+      2
+    ],
+    "138": [
+      1,
+      2
+    ],
+    "100000": [
+      1,
+      -1
+    ]
+  },
+  "pop": {
+    "pop": 2920089702,
+    "timeSpansh": "2026-06-07T18:45:07+00:00",
+    "timeSaved": "2026-06-07T19:12:16.5639957+00:00"
+  },
+  "open": false,
+  "savedNames": [
+    {
+      "name": "Copy of #162",
+      "cmdr": "Fallen Ash",
+      "time": "2025-12-05T14:28:52.1811025+00:00"
+    },
+    {
+      "name": "Dodecplan",
+      "cmdr": "Liquidor",
+      "time": "2026-05-07T19:23:03.9493887+00:00"
+    },
+    {
+      "name": "FRHT72 remix",
+      "cmdr": "THORFINN KARLSEFNI",
+      "time": "2026-05-06T02:05:42.2379413+00:00"
+    },
+    {
+      "name": "FRHT72 remix 2",
+      "cmdr": "THORFINN KARLSEFNI",
+      "time": "2026-05-06T23:04:21.8472489+00:00"
+    }
+  ],
+  "idxCalcLimit": 187
+}

@@ -1,0 +1,960 @@
+{
+  "v": 6,
+  "rev": 22,
+  "cmdr": "Fenris Nihilus",
+  "name": "Synuefai CX-V c18-6",
+  "id64": 1732784263842,
+  "architect": "Fenris Nihilus",
+  "pos": [
+    -220.3125,
+    -197.28125,
+    -260.125
+  ],
+  "reserveLevel": "pristine",
+  "bodies": [
+    {
+      "name": "Synuefai CX-V c18-6",
+      "num": 0,
+      "distLS": 0,
+      "parents": [],
+      "type": "st",
+      "subType": "G (White-Yellow) Star",
+      "features": [],
+      "radius": -1,
+      "temp": 5477,
+      "gravity": -1
+    },
+    {
+      "name": "Synuefai CX-V c18-6 A Belt",
+      "num": 100000,
+      "distLS": 3.2048171138448054,
+      "parents": [
+        0
+      ],
+      "type": "ac",
+      "subType": "Metal Rich",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Synuefai CX-V c18-6 1",
+      "num": 13,
+      "distLS": 23.229134,
+      "parents": [
+        0
+      ],
+      "type": "mrb",
+      "subType": "Metal-rich body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 1022.369812,
+      "gravity": 0.794244417252983
+    },
+    {
+      "name": "Synuefai CX-V c18-6 2",
+      "num": 14,
+      "distLS": 40.554708,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 773.786194,
+      "gravity": 1.827528398083
+    },
+    {
+      "name": "Synuefai CX-V c18-6 3",
+      "num": 15,
+      "distLS": 69.243959,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 592.150208,
+      "gravity": 1.43447221372489
+    },
+    {
+      "name": "Synuefai CX-V c18-6 4",
+      "num": 16,
+      "distLS": 121.781822,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 446.511871,
+      "gravity": 1.15778148261446
+    },
+    {
+      "name": "Synuefai CX-V c18-6 5",
+      "num": 17,
+      "distLS": 215.832302,
+      "parents": [
+        0
+      ],
+      "type": "hmc",
+      "subType": "High metal content world",
+      "features": [
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 1040.259155,
+      "gravity": 1.12936300601611
+    },
+    {
+      "name": "Synuefai CX-V c18-6 B Belt",
+      "num": 100001,
+      "distLS": 370.45628412706765,
+      "parents": [
+        0
+      ],
+      "type": "ac",
+      "subType": "Rocky",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6",
+      "num": 30,
+      "distLS": 1481.627893,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Class III gas giant",
+      "features": [],
+      "radius": -1,
+      "temp": 293.827637,
+      "gravity": 6.85361119608443
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 a",
+      "num": 31,
+      "distLS": 1478.713296,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 159.192703,
+      "gravity": 0.0935293157948404
+    },
+    {
+      "name": "Synuefai CX-V c18-6 barycentre 32",
+      "num": 32,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 b",
+      "num": 33,
+      "distLS": 1478.28849,
+      "parents": [
+        32,
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism"
+      ],
+      "radius": -1,
+      "temp": 154.359924,
+      "gravity": 0.0865698990516978
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 c",
+      "num": 34,
+      "distLS": 1478.281716,
+      "parents": [
+        32,
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism"
+      ],
+      "radius": -1,
+      "temp": 154.359924,
+      "gravity": 0.0864065463444478
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 d",
+      "num": 35,
+      "distLS": 1479.974141,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 151.034027,
+      "gravity": 0.0921201182828592
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 e",
+      "num": 36,
+      "distLS": 1479.295915,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 172.419327,
+      "gravity": 0.0911251147139798
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 f",
+      "num": 37,
+      "distLS": 1486.478976,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 170.562805,
+      "gravity": 0.0987308045273784
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 g",
+      "num": 38,
+      "distLS": 1470.235895,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 169.921509,
+      "gravity": 0.109894972978485
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 h",
+      "num": 39,
+      "distLS": 1496.10939,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 174.214233,
+      "gravity": 0.141893851330682
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 h a",
+      "num": 40,
+      "distLS": 1496.0449,
+      "parents": [
+        39,
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 191.521881,
+      "gravity": 0.0523887019475885
+    },
+    {
+      "name": "Synuefai CX-V c18-6 6 i",
+      "num": 41,
+      "distLS": 1459.735258,
+      "parents": [
+        30,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 168.663055,
+      "gravity": 0.126290302844907
+    },
+    {
+      "name": "Synuefai CX-V c18-6 barycentre 43",
+      "num": 43,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Synuefai CX-V c18-6 7",
+      "num": 44,
+      "distLS": 2026.513747,
+      "parents": [
+        43,
+        0
+      ],
+      "type": "gg",
+      "subType": "Class III gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 281.116547,
+      "gravity": 6.78443336392373
+    },
+    {
+      "name": "Synuefai CX-V c18-6 7 a",
+      "num": 46,
+      "distLS": 2027.556488,
+      "parents": [
+        44,
+        43,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 158.465057,
+      "gravity": 0.0990215152442133
+    },
+    {
+      "name": "Synuefai CX-V c18-6 7 b",
+      "num": 47,
+      "distLS": 2027.402037,
+      "parents": [
+        44,
+        43,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 272.963135,
+      "gravity": 0.109471499949016
+    },
+    {
+      "name": "Synuefai CX-V c18-6 7 c",
+      "num": 48,
+      "distLS": 2030.319529,
+      "parents": [
+        44,
+        43,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 212.020981,
+      "gravity": 0.109975527684307
+    },
+    {
+      "name": "Synuefai CX-V c18-6 8",
+      "num": 49,
+      "distLS": 2064.980667,
+      "parents": [
+        43,
+        0
+      ],
+      "type": "gg",
+      "subType": "Class III gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 274.690948,
+      "gravity": 6.56686264912817
+    },
+    {
+      "name": "Synuefai CX-V c18-6 8 a",
+      "num": 51,
+      "distLS": 2065.722463,
+      "parents": [
+        49,
+        43,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 154.599213,
+      "gravity": 0.132942286122158
+    },
+    {
+      "name": "Synuefai CX-V c18-6 8 b",
+      "num": 52,
+      "distLS": 2065.439609,
+      "parents": [
+        49,
+        43,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 149.793228,
+      "gravity": 0.217811461201183
+    },
+    {
+      "name": "Synuefai CX-V c18-6 8 b a",
+      "num": 53,
+      "distLS": 2065.433679,
+      "parents": [
+        52,
+        49,
+        43,
+        0
+      ],
+      "type": "rb",
+      "subType": "Rocky body",
+      "features": [
+        "landable",
+        "geo",
+        "volcanism",
+        "tidal"
+      ],
+      "radius": -1,
+      "temp": 149.793228,
+      "gravity": 0.0711324564086877
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9",
+      "num": 54,
+      "distLS": 3778.13699,
+      "parents": [
+        0
+      ],
+      "type": "gg",
+      "subType": "Class I gas giant",
+      "features": [
+        "rings"
+      ],
+      "radius": -1,
+      "temp": 81.711861,
+      "gravity": 1.28894972978485
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9 a",
+      "num": 57,
+      "distLS": 3775.861983,
+      "parents": [
+        54,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 101.953499,
+      "gravity": 0.0355853981849699
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9 b",
+      "num": 58,
+      "distLS": 3779.023491,
+      "parents": [
+        54,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "bio",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 100.460945,
+      "gravity": 0.0330136637095952
+    },
+    {
+      "name": "Synuefai CX-V c18-6 barycentre 59",
+      "num": 59,
+      "distLS": 0,
+      "parents": [],
+      "type": "bc",
+      "features": [],
+      "radius": -1,
+      "temp": -1,
+      "gravity": -1
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9 c",
+      "num": 60,
+      "distLS": 3778.357376,
+      "parents": [
+        59,
+        54,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "volcanism",
+        "tidal",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 181.675659,
+      "gravity": 0.0468416437238707
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9 d",
+      "num": 61,
+      "distLS": 3778.331405,
+      "parents": [
+        59,
+        54,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 181.733215,
+      "gravity": 0.0545408381768125
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9 e",
+      "num": 62,
+      "distLS": 3786.309091,
+      "parents": [
+        54,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "landable",
+        "bio",
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 104.964012,
+      "gravity": 0.0418548995615377
+    },
+    {
+      "name": "Synuefai CX-V c18-6 9 f",
+      "num": 63,
+      "distLS": 3769.067012,
+      "parents": [
+        54,
+        0
+      ],
+      "type": "ib",
+      "subType": "Icy body",
+      "features": [
+        "atmosphere"
+      ],
+      "radius": -1,
+      "temp": 109.58007,
+      "gravity": 0.0520237585398185
+    }
+  ],
+  "sites": [
+    {
+      "id": "&4310842115",
+      "name": "Gold Enterprise",
+      "bodyNum": 36,
+      "buildType": "dec_truss",
+      "status": "complete",
+      "marketId": 4310842115
+    },
+    {
+      "id": "&4310855427",
+      "name": "Grover's Claim",
+      "bodyNum": 36,
+      "buildType": "orcus",
+      "status": "complete",
+      "marketId": 4310855427
+    },
+    {
+      "id": "x1777342770941",
+      "name": "Emem Munitions Hub",
+      "bodyNum": 57,
+      "buildType": "polemos",
+      "status": "complete",
+      "marketId": 4311544579
+    },
+    {
+      "id": "x1777343000138",
+      "name": "Linteris's Pride",
+      "bodyNum": 57,
+      "buildType": "alastor",
+      "status": "complete"
+    },
+    {
+      "id": "x1777343772399",
+      "name": "Derrickson's Folly",
+      "bodyNum": 37,
+      "buildType": "demeter",
+      "status": "complete"
+    },
+    {
+      "id": "x1777343827185",
+      "name": "Stafford Town",
+      "bodyNum": 37,
+      "buildType": "plutus",
+      "status": "complete",
+      "marketId": 4356990467
+    },
+    {
+      "id": "x1777344410147",
+      "name": "Aristotle's Folly",
+      "bodyNum": 36,
+      "buildType": "silenus",
+      "status": "complete"
+    },
+    {
+      "id": "x1777344555521",
+      "name": "Saez Synthetics Facility",
+      "bodyNum": 36,
+      "buildType": "gaea",
+      "status": "complete",
+      "marketId": 4357024259
+    },
+    {
+      "id": "x1779674635343",
+      "name": "Scobee Platform",
+      "bodyNum": 57,
+      "buildType": "nemesis",
+      "status": "complete",
+      "buildId": "eb6eddbb-e9df-453c-a931-9677eb65c86a",
+      "marketId": 4365252099
+    },
+    {
+      "id": "x1779674929762",
+      "name": "Dampier Gateway",
+      "bodyNum": 60,
+      "buildType": "enodia",
+      "status": "complete",
+      "buildId": "2a61c682-f789-4e6a-b0cc-1b67779c24f3",
+      "marketId": 3963024386
+    },
+    {
+      "id": "x1779637400233",
+      "name": "Oscar Hotel",
+      "bodyNum": 57,
+      "buildType": "minerva",
+      "status": "plan"
+    },
+    {
+      "id": "x1779638732673",
+      "name": "Golf Papa",
+      "bodyNum": 57,
+      "buildType": "ares",
+      "status": "plan"
+    }
+  ],
+  "deleteIDs": [],
+  "updateIDs": [],
+  "revs": [
+    {
+      "rev": 22,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-06-01T03:28:46.6410117+00:00"
+    },
+    {
+      "rev": 21,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-06-01T03:23:38.9208297+00:00"
+    },
+    {
+      "rev": 20,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-06-01T02:41:55.1953792+00:00"
+    },
+    {
+      "rev": 19,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-06-01T02:34:40.6450549+00:00"
+    },
+    {
+      "rev": 18,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-05-31T22:02:14.9225536+00:00"
+    },
+    {
+      "rev": 17,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-05-28T00:33:16.0274981+00:00"
+    },
+    {
+      "rev": 16,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-05-25T02:44:33.8877015+00:00"
+    },
+    {
+      "rev": 15,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-05-25T02:10:11.4939086+00:00"
+    },
+    {
+      "rev": 14,
+      "cmdr": "Fenris Nihilus",
+      "time": "2026-05-24T16:23:14.5255453+00:00"
+    }
+  ],
+  "slots": {
+    "0": [
+      1,
+      -1
+    ],
+    "13": [
+      1,
+      0
+    ],
+    "14": [
+      1,
+      0
+    ],
+    "15": [
+      2,
+      6
+    ],
+    "16": [
+      1,
+      6
+    ],
+    "17": [
+      3,
+      -1
+    ],
+    "30": [
+      1,
+      -1
+    ],
+    "31": [
+      0,
+      1
+    ],
+    "33": [
+      1,
+      2
+    ],
+    "34": [
+      1,
+      2
+    ],
+    "35": [
+      0,
+      1
+    ],
+    "36": [
+      2,
+      3
+    ],
+    "37": [
+      2,
+      3
+    ],
+    "38": [
+      2,
+      3
+    ],
+    "39": [
+      2,
+      3
+    ],
+    "40": [
+      1,
+      -1
+    ],
+    "41": [
+      2,
+      3
+    ],
+    "44": [
+      0,
+      -1
+    ],
+    "46": [
+      1,
+      2
+    ],
+    "47": [
+      1,
+      -1
+    ],
+    "48": [
+      1,
+      -1
+    ],
+    "49": [
+      1,
+      -1
+    ],
+    "51": [
+      1,
+      2
+    ],
+    "52": [
+      2,
+      -1
+    ],
+    "53": [
+      2,
+      2
+    ],
+    "54": [
+      2,
+      -1
+    ],
+    "57": [
+      2,
+      3
+    ],
+    "58": [
+      1,
+      3
+    ],
+    "60": [
+      1,
+      -1
+    ],
+    "61": [
+      2,
+      -1
+    ],
+    "62": [
+      2,
+      3
+    ],
+    "63": [
+      2,
+      -1
+    ],
+    "100000": [
+      1,
+      -1
+    ],
+    "100001": [
+      1,
+      -1
+    ]
+  },
+  "pop": {
+    "pop": 110340493,
+    "timeSpansh": "2026-04-28T02:31:05+00:00",
+    "timeSaved": "2026-04-28T02:58:22.5065221+00:00"
+  },
+  "open": false,
+  "savedNames": [],
+  "idxCalcLimit": 12
+}
