@@ -264,7 +264,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
           {i === 0 && <ActionButton
             className={cn.bBox2}
             text='Change Primary Port?'
-            title='Select a different orbital port as the system primary'
+            title='Correct the system primary port if Raven Colonial has the wrong first port'
             style={{
               height: 20,
               padding: '0 4px',
@@ -418,7 +418,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
         <div style={{ marginBottom: 8, color: appTheme.palette.themeDark }}>
           Calculations are performed using the following order until the cut line. The primary port should be the first row.
           <br />
-          Use the controls below to regroup the informational view or change the primary port.
+          Use the controls below to regroup the informational view or correct the primary port if Raven Colonial has the wrong first port.
         </div>
 
         <Stack horizontal tokens={{ childrenGap: 8 }} style={{ marginBottom: 8 }}>
@@ -571,7 +571,7 @@ export class BuildOrder extends Component<BuildOrderProps, BuildOrderState> {
           >
             <h3 className={cn.h3} style={{ marginTop: 0, overflowWrap: 'break-word' }}>Change Primary Port?</h3>
             <div style={{ marginBottom: 12, color: appTheme.palette.themeDark, overflowWrap: 'break-word' }}>
-              Choose the orbital port that should lead the saved site order.
+              Select the port the game had you build first when this system was colonized.
             </div>
 
             <div
