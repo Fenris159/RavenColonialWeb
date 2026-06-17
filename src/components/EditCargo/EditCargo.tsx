@@ -206,22 +206,6 @@ export class EditCargo extends Component<EditCargoProps, EditCargoState> {
 
       {!!textEditing && <div>
 
-        <IconButton
-          className={cn.bBox}
-          title='Copy to clipboard'
-          iconProps={{ iconName: 'Copy' }}
-          style={{ width: 24, height: 24, margin: '8px 0' }}
-          onClick={() => navigator.clipboard.writeText(textEditing)}
-        />
-
-        <IconButton
-          className={cn.bBox}
-          title='Paste from clipboard'
-          iconProps={{ iconName: 'Paste' }}
-          style={{ width: 24, height: 24, margin: '8px 0' }}
-          onClick={() => navigator.clipboard.readText().then(txt => this.setState({ textEditing: txt }))}
-        />
-
         <ActionButton
           className={cn.bBox}
           text='Edit as table'
