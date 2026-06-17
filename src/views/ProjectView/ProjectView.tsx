@@ -709,7 +709,7 @@ export class ProjectView extends Component<ProjectViewProps, ProjectViewState> {
       </MessageBar>}
 
       <EditCargo
-        noAdd={!isPrep} noDelete={!isPrep} showTotalsRow
+        addButtonAbove={isPrep ? true : undefined} noAdd={!isPrep} noDelete={!isPrep} showTotalsRow
         cargo={editCommodities!}
         sort={sort}
         onChange={cargo => this.setState({ editCommodities: cargo })}

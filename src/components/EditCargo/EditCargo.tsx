@@ -1,12 +1,12 @@
 import './EditCargo.css';
 
-import { ActionButton, Dropdown, Icon, IDropdownOption, Label, SelectableOptionMenuItemType, Stack } from '@fluentui/react';
+import { ActionButton, Dropdown, Icon, IconButton, IDropdownOption, Label, SelectableOptionMenuItemType, Stack } from '@fluentui/react';
 import { Component, CSSProperties } from 'react';
 import { CommodityIcon } from '..';
 import { store } from '../../local-storage';
-import { appTheme } from '../../theme';
+import { appTheme, cn } from '../../theme';
 import { Cargo, mapCommodityNames, SortMode } from '../../types';
-import { delayFocus, flattenObj, getGroupedCommodities, iconForSort, nextSort, sumCargo } from '../../util';
+import { delayFocus, flattenObj, getGroupedCommodities, iconForSort, nextSort, parseIntLocale, sumCargo } from '../../util';
 import { EconomyBlock } from '../EconomyBlock';
 import { mapName } from '../../site-data';
 
@@ -39,6 +39,7 @@ interface EditCargoState {
   canAddMore: boolean;
   sort: SortMode;
   newCargo?: string;
+  textEditing?: string;
 }
 
 export class EditCargo extends Component<EditCargoProps, EditCargoState> {
@@ -109,7 +110,7 @@ export class EditCargo extends Component<EditCargoProps, EditCargoState> {
   }
 
   render() {
-    const { cargo, sort, canAddMore, newCargo } = this.state;
+    const { cargo, sort, canAddMore, newCargo, textEditing } = this.state;
     const { addButtonBelow, addButtonAbove, showTotalsRow: totalsRow } = this.props;
 
     const hasCargoRows = Object.values(cargo).length > 0;
@@ -117,69 +118,82 @@ export class EditCargo extends Component<EditCargoProps, EditCargoState> {
     const showAddNew = newCargo !== undefined;
 
     return <div className='edit-cargo'>
-      {!showAddNew && canAddMore && addButtonAbove && <ActionButton
-        text='Add commodity?'
-        iconProps={{ iconName: 'Add' }}
-        onClick={() => {
-          this.setState({ newCargo: '' });
-          delayFocus('new-cargo');
-        }}
-      />}
+      {!showAddNew && canAddMore && addButtonAbove && !textEditing && <>
+        <ActionButton
+          text='Add commodity?'
+          iconProps={{ iconName: 'Add' }}
+          onClick={() => {
+            this.setState({ newCargo: '' });
+            delayFocus('new-cargo');
+          }}
+        />
 
-      {!hasCargoRows && <Label>No known cargo. Please add ...</Label>}
+        <IconButton
+          className={cn.bBox}
+          title='Edit all as text'
+          iconProps={{ iconName: 'NumberField' }}
+          onClick={() => {
+            const txt = Object.keys(cargo).sort().map(k => `${mapCommodityNames[k] ?? k} ${cargo[k]}`).join(`\n`);
+            this.setState({ textEditing: txt })
+          }}
+        />
+      </>}
 
-      {showAddNew && this.renderAddNew()}
+      {!textEditing && <>
+        {!hasCargoRows && <Label>No known cargo. Please add ...</Label>}
 
-      {hasCargoRows && <table cellSpacing={0}>
-        <thead>
-          <tr>
+        {showAddNew && this.renderAddNew()}
 
-            <th className='name'>
-              <Stack horizontal tokens={{ childrenGap: 4, padding: 0, }} >
+        {hasCargoRows && <table cellSpacing={0}>
+          <thead>
+            <tr>
 
-                <span>Commodity:</span>
+              <th className='name'>
+                <Stack horizontal tokens={{ childrenGap: 4, padding: 0, }} >
 
-                {/* Toggle sort order button */}
-                <ActionButton
-                  className='icon-btn'
-                  title={sort}
-                  text={sort}
-                  iconProps={{ iconName: iconForSort(sort) }}
-                  tabIndex={0}
-                  style={{ color: appTheme.palette.themePrimary }}
-                  onClick={() => {
-                    const newSort = nextSort(sort);
-                    this.setState({ sort: newSort });
-                    store.commoditySort = newSort;
-                  }}
-                />
+                  <span>Commodity:</span>
 
-                {/* Add new items button */}
-                {canAddMore && !addButtonBelow && !addButtonAbove && <ActionButton
-                  className='icon-btn'
-                  title='Add a new cargo item'
-                  text='Add'
-                  iconProps={{ iconName: 'Add' }}
-                  style={{ color: appTheme.palette.themePrimary }}
-                  onClick={() => {
-                    this.setState({ newCargo: '' });
-                    delayFocus('new-cargo');
-                  }}
-                />}
-              </Stack>
-            </th>
+                  {/* Toggle sort order button */}
+                  <ActionButton
+                    className='icon-btn'
+                    title={sort}
+                    text={sort}
+                    iconProps={{ iconName: iconForSort(sort) }}
+                    tabIndex={0}
+                    style={{ color: appTheme.palette.themePrimary }}
+                    onClick={() => {
+                      const newSort = nextSort(sort);
+                      this.setState({ sort: newSort });
+                      store.commoditySort = newSort;
+                    }}
+                  />
 
-            <th className='amount'>Amount:</th>
-          </tr>
-        </thead>
+                  {/* Add new items button */}
+                  {canAddMore && !addButtonBelow && !addButtonAbove && <ActionButton
+                    className='icon-btn'
+                    title='Add a new cargo item'
+                    text='Add'
+                    iconProps={{ iconName: 'Add' }}
+                    style={{ color: appTheme.palette.themePrimary }}
+                    onClick={() => {
+                      this.setState({ newCargo: '' });
+                      delayFocus('new-cargo');
+                    }}
+                  />}
+                </Stack>
+              </th>
 
-        <tbody>
-          {this.renderRows()}
-        </tbody>
+              <th className='amount'>Amount:</th>
+            </tr>
+          </thead>
 
-        {totalsRow && this.renderTotalsRow()}
-      </table>}
+          <tbody>
+            {this.renderRows()}
+          </tbody>
 
+          {totalsRow && this.renderTotalsRow()}
+        </table>}
+      </>}
 
       {!showAddNew && canAddMore && (addButtonBelow || !hasCargoRows) && <ActionButton
         text='Add commodity?'
@@ -190,7 +204,89 @@ export class EditCargo extends Component<EditCargoProps, EditCargoState> {
         }}
       />}
 
+      {!!textEditing && <div>
+
+        <IconButton
+          className={cn.bBox}
+          title='Copy to clipboard'
+          iconProps={{ iconName: 'Copy' }}
+          style={{ width: 24, height: 24, margin: '8px 0' }}
+          onClick={() => navigator.clipboard.writeText(textEditing)}
+        />
+
+        <IconButton
+          className={cn.bBox}
+          title='Paste from clipboard'
+          iconProps={{ iconName: 'Paste' }}
+          style={{ width: 24, height: 24, margin: '8px 0' }}
+          onClick={() => navigator.clipboard.readText().then(txt => this.setState({ textEditing: txt }))}
+        />
+
+        <ActionButton
+          className={cn.bBox}
+          text='Edit as table'
+          iconProps={{ iconName: 'BulletedList2Mirrored' }}
+          style={{ height: 24, margin: '8px 0' }}
+          onClick={() => this.setState({ textEditing: undefined })}
+        />
+
+        <textarea
+          value={textEditing}
+          onChange={(ev) => {
+            this.parseEdittedText(ev.target.value);
+          }}
+          style={{
+            width: 325,
+            height: 425,
+            backgroundColor: appTheme.palette.white,
+            color: appTheme.palette.black,
+            border: '1px solid ' + appTheme.palette.black,
+          }}
+        />
+      </div>}
+
     </div>;
+  }
+
+  parseEdittedText(txt: string) {
+    if (txt === this.state.textEditing) { return; }
+
+    let newCargo: Cargo | undefined = {};
+    try {
+      const lines = txt.split(`\n`);
+      for (const line of lines) {
+        let idx = line.lastIndexOf(' ');
+        if (idx <= 0) {
+          newCargo = undefined;
+          break;
+        }
+        let key = line.slice(0, idx).trim();
+        if (!(key in mapCommodityNames)) {
+          const match = Object.keys(mapCommodityNames).find(k => mapCommodityNames[k].toLowerCase() === key.toLowerCase());
+          if (match) {
+            key = match;
+          } else {
+            // skip it
+            console.warn(`Unexpected: ${key}`);
+            continue;
+          }
+        }
+        const v = parseIntLocale(line.slice(idx + 1).trim() || '0');
+        if (isNaN(v)) {
+          newCargo = undefined;
+          break;
+        }
+        newCargo[key] = v;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    if (newCargo) {
+      this.setState({ cargo: newCargo, textEditing: txt });
+    } else {
+      this.setState({ textEditing: txt });
+    }
   }
 
   renderRows() {
