@@ -154,9 +154,9 @@ export function applyAgricultureBodyBuffs(
 
   if (
     (!options?.isSettlement || positiveBuffApplied) &&
-    (matches([BT.ib], site.body?.type) || bodyIsTidalToStar(site.sys, site.body))
+    (matches([BT.ib, BT.ri], site.body?.type) || bodyIsTidalToStar(site.sys, site.body))
   ) {
-    adjustFn('agriculture', -0.4, 'Buff: body is ICY or has TIDAL', map, site, 'body');
+    adjustFn('agriculture', -0.4, 'Buff: body is ICY/ROCKY-ICE or has TIDAL', map, site, 'body');
   }
 
   if (matches([BT.elw, BT.ww], site.body?.type) && map.agriculture < 1) {

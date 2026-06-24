@@ -527,9 +527,16 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
         adjust('hightech', +0.4, 'Buff: body is ELW or AW', map, site, 'body');
       }
     } else {
-      if (matches([BodyFeature.bio, BodyFeature.geo], site.body?.features)) {
-        adjust('hightech', +0.4, 'Buff: body has BIO or GEO', map, site, 'body');
-      } else if (matches([BT.elw, BT.aw], site.body?.type)) {
+      let hightechBodyBuffApplied = false;
+      if (matches([BodyFeature.bio], site.body?.features)) {
+        adjust('hightech', +0.4, 'Buff: body has BIO', map, site, 'body');
+        hightechBodyBuffApplied = true;
+      }
+      if (matches([BodyFeature.geo], site.body?.features)) {
+        adjust('hightech', +0.4, 'Buff: body has GEO', map, site, 'body');
+        hightechBodyBuffApplied = true;
+      }
+      if (!hightechBodyBuffApplied && matches([BT.elw, BT.aw], site.body?.type)) {
         adjust('hightech', +0.4, 'Buff: body is ELW or AW', map, site, 'body');
       }
     }
