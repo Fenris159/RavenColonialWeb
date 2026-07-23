@@ -511,8 +511,10 @@ export class App extends Component<AppProps, AppState> {
       case TopPivot.home: return <Home />;
       case TopPivot.find:
       case TopPivot.sys: {
-        if (pivotArg?.includes('/')) {
-          const [systemName, savedName] = pivotArg.split('/');
+        const idx = pivotArg?.indexOf('/') ?? -1;
+        if (idx >= 0) {
+          const systemName = pivotArg?.substring(0, idx) ?? '';
+          const savedName = pivotArg?.substring(idx + 1) ?? '';
           return <SystemView2 systemName={systemName} savedName={savedName} />;
         } else {
           return <SystemView2 systemName={pivotArg!} />;

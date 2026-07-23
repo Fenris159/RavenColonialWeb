@@ -39,7 +39,7 @@ export const systemV2 = {
         const result = await callAPI<Sys>(`/api/v2/system/${encodeURIComponent(nameOrNum)}/.${rev}`);
         return result;
       } else {
-        const result = await callAPI<Sys>(`/api/v2/system/${encodeURIComponent(nameOrNum)}/!${encodeURIComponent(revOrSaveName)}`);
+        const result = await callAPI<Sys>(`/api/v2/system/${encodeURIComponent(nameOrNum)}/!`,'POST', JSON.stringify(revOrSaveName));
         return result;
       }
     }
