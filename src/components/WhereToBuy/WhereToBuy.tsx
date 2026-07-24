@@ -322,7 +322,7 @@ export class WhereToBuy extends Component<WhereToBuyProps, WhereToBuyState> {
     const r = wl / large;
     const med = store.cmdr?.medMax ?? 400;
     const xMedLine = r * med;
-    const xMedTxt = xMedLine < 20 ? xMedLine : xMedLine - 20;
+    const xMedTxt = Math.max(120, xMedLine < 20 ? xMedLine : xMedLine - 20);
 
     let used = 0;
     const pills = Array.from(highlights).map(cargo => {
@@ -367,25 +367,29 @@ export class WhereToBuy extends Component<WhereToBuyProps, WhereToBuyState> {
         <div style={{ width: wl, height: 20, backgroundColor: appTheme.palette.neutralTertiaryAlt }} />
         <div style={{ position: 'absolute', bottom: 0, left: 4 }}>Required capacity: {used?.toLocaleString() ?? '?'}</div>
 
-        <div style={{
-          position: 'absolute',
-          left: xMedTxt,
-          top: 0,
-          bottom: 0,
-          alignContent: 'end',
-          paddingRight: 8,
-          color: used === 0 ? undefined : used > med ? appTheme.palette.yellow : appTheme.palette.greenLight,
-        }}>
-          <Stack horizontal><span>Medium: {med} </span><Icon iconName={used > med ? 'StatusCircleErrorX' : 'StatusCircleCheckmark'} style={{ lineHeight: '12px', fontSize: 18 }} /></Stack>
-        </div>
+        {!!med && <>
+          <div style={{
+            position: 'absolute',
+            left: xMedTxt,
+            top: 0,
+            bottom: 0,
+            alignContent: 'end',
+            paddingRight: 8,
+            color: used === 0 ? undefined : used > med ? appTheme.palette.yellow : appTheme.palette.greenLight,
+          }}>
+            <Stack horizontal title={`Remaining: ${med - used}`}>
+              <span>Medium: {med} </span><Icon iconName={used > med ? 'StatusCircleErrorX' : 'StatusCircleCheckmark'} style={{ lineHeight: '12px', fontSize: 18 }} />
+            </Stack>
+          </div>
 
-        <div style={{
-          position: 'absolute',
-          borderRight: '4px solid ' + appTheme.palette.accent,
-          left: xMedLine,
-          top: 0,
-          bottom: 14,
-        }} />
+          <div style={{
+            position: 'absolute',
+            borderRight: '4px solid ' + appTheme.palette.accent,
+            left: xMedLine,
+            top: 0,
+            bottom: 14,
+          }} />
+        </>}
 
         <div style={{
           position: 'absolute',
@@ -398,7 +402,9 @@ export class WhereToBuy extends Component<WhereToBuyProps, WhereToBuyState> {
           color: used === 0 ? undefined : used > large ? appTheme.palette.yellow : appTheme.palette.greenLight,
         }}
         >
-          <Stack horizontal><span>Large: {large} </span><Icon iconName={used > large ? 'StatusCircleErrorX' : 'StatusCircleCheckmark'} style={{ lineHeight: '12px', fontSize: 18 }} /></Stack>
+          <Stack horizontal title={`Remaining: ${large - used}`}>
+            <span>Large: {large} </span><Icon iconName={used > large ? 'StatusCircleErrorX' : 'StatusCircleCheckmark'} style={{ lineHeight: '12px', fontSize: 18 }} />
+          </Stack>
         </div>
 
         <div style={{
