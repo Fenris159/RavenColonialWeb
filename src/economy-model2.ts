@@ -528,7 +528,7 @@ export const applyBuffs = (map: EconomyMap, site: SiteMap2, isSettlement: boolea
     if (site.sys.bodies.some(b => b.type === BT.bh)) {
       adjust('tourism', +0.4, 'Buff: system has a Black Hole', map, site, 'sys');
     }
-    if (site.sys.bodies.some(b => b.type === BT.bh)) {
+    if (site.sys.bodies.some(b => b.type === BT.ns)) {
       adjust('tourism', +0.4, 'Buff: system has a Neutron Star', map, site, 'sys');
     }
     if (site.sys.bodies.some(b => b.type === BT.wd)) {
