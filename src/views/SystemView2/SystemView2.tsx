@@ -1604,7 +1604,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
 
     const validations = [];
 
-    // archiect is unknown and there are some non-planning sites
+    // architect is unknown and there are some non-planning sites
     if (!architect && sites.some(s => s.status !== 'plan')) {
       validations.push(<div key={`valNoArchitect`}>
         » System architect unknown - <Link onClick={() => this.setState({ showEditSys: true })}>Fix it</Link>

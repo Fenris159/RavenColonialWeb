@@ -22,6 +22,7 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
 
   const hasArchitect = !!props.sysView.state.sysOriginal.architect;
   const isArchitect = hasArchitect && isMatchingCmdr(props.sysView.state.sysOriginal.architect, store.cmdrName);
+  const hasCompleteSite = sysMap.sites.some(s => s.status === 'complete' && s.marketId);
   // const couldEditAsArchitect = props.sysView.state.sysOriginal.open || !props.sysView.state.sysOriginal.architect || isArchitect;
   // const aboutToLock = couldEditAsArchitect && !props.sysView.state.sysMap.open && !!props.sysView.state.sysMap?.architect && !isMatchingCmdr(props.sysView.state.sysMap?.architect, store.cmdrName);
   return <div>
@@ -93,6 +94,7 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
             {canEditAsArchitect && <ViewEditName
               name={sysMap.architect || '?'}
               prefix='Cmdr '
+              disabled={!hasCompleteSite}
               onChange={newName => {
                 sysMap.architect = newName;
                 props.sysView.setState({ sysMap: sysMap });
@@ -103,15 +105,23 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
               className={cn.bBox}
               iconProps={{ iconName: 'AddFriend', style: { fontSize: 12 } }}
               text={'I am the architect'}
-              title='Claim this system for yourself'
-              disabled={!canEditAsArchitect}
+              title={hasCompleteSite ? 'Claim this system for yourself' : 'Complete your 1st site to claim Architect'}
+              disabled={!canEditAsArchitect || !hasCompleteSite}
               onClick={() => {
                 sysMap.architect = store.cmdrName;
                 props.sysView.setState({ sysMap: sysMap });
               }}
             />}
+          </Stack>
 
-            {/* {isArchitect && <IconButton
+          {!hasCompleteSite && !sysMap.architect && <>
+            <div />
+            <div style={{ color: appTheme.palette.themeTertiary, fontSize: 12, gridColumn: '2' }}>
+              Complete your 1st site to claim Architect
+            </div>
+          </>}
+
+          {/* {isArchitect && <IconButton
               className={cn.bBox}
               iconProps={{ iconName: 'AddFriend', style: { fontSize: 12 } }}
               text={'Add someone?'}
@@ -120,7 +130,6 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
               style={{ textDecoration: !hasArchitect ? 'line-through 2px' : undefined, float: 'right' }}
               onClick={() => setNewEditor(" ")}
             />} */}
-          </Stack>
 
           {/* {(!!newEditor || editors.size > 0) && <>
             <div style={{ alignContent: 'start' }}>Editors:</div>
