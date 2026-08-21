@@ -190,7 +190,7 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
               className={cn.bBox}
               iconProps={{ iconName: isOpen ? 'Unlock' : 'LockSolid', style: { fontSize: 12 } }}
               text={isOpen ? 'Open' : 'Secured'}
-              title={!hasCompleteSite ? 'Complete your 1st site to secure this system' : 'Only architects can edit a secured system'}
+              title='Only architects with a completed, linked site can Secure exclusive edit access'
               disabled={!canEditAsArchitect || !hasCompleteSite}
               style={{ textDecoration: !hasArchitect && !isOpen ? 'line-through 1px' : undefined }}
               onClick={() => {
