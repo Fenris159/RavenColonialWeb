@@ -19,7 +19,7 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
   // const [editors, setEditors] = useState<Set<string>>(new Set<string>(sysMap.editors));
 
   const hasCompleteSite = sysMap.sites.some(s => s.status === 'complete' && s.marketId);
-  const isOpen = !hasCompleteSite || sysMap.open;
+  const isOpen = hasCompleteSite && sysMap.open;
 
   const hasArchitect = !!props.sysView.state.sysOriginal.architect;
   const isArchitect = hasArchitect && isMatchingCmdr(props.sysView.state.sysOriginal.architect, store.cmdrName);
@@ -192,7 +192,7 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
               text={isOpen ? 'Open' : 'Secured'}
               title='Only architects with a completed, linked site can Secure exclusive edit access'
               disabled={!canEditAsArchitect || !hasCompleteSite}
-              style={{ textDecoration: !hasArchitect && !isOpen ? 'line-through 1px' : undefined }}
+              style={{ textDecoration: (!hasCompleteSite || !hasArchitect) && !isOpen ? 'line-through 1px' : undefined }}
               onClick={() => {
                 props.sysView.updateOpen(!sysMap.open);
               }}

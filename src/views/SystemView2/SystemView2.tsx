@@ -264,7 +264,8 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     }
 
     const isArchitect = !!newSys.architect && isMatchingCmdr(newSys.architect, store.cmdrName);
-    const canEditAsArchitect = newSys.open || !newSys.architect || isArchitect; // || !!newSys.editors?.includes(store.cmdrName);
+    const hasCompleteSite = newSys.sites.some(s => s.status === 'complete' && s.marketId);
+    const canEditAsArchitect = newSys.open || !newSys.architect || isArchitect || !hasCompleteSite; // || !!newSys.editors?.includes(store.cmdrName);
     const lastRev = newSys.revs.reduce((m, r) => Math.max(r.rev, m), 0);
 
     this.setState({
@@ -458,9 +459,7 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     if (this.state.sysOriginal.reserveLevel !== this.state.sysMap.reserveLevel) {
       payload.reserveLevel = this.state.sysMap.reserveLevel;
     }
-    if (!hasCompleteSite) {
-      payload.open = true;
-    } else if (this.state.sysOriginal.open !== this.state.sysMap.open) {
+    if (hasCompleteSite && this.state.sysOriginal.open !== this.state.sysMap.open) {
       payload.open = this.state.sysMap.open;
     }
     if (this.state.sysOriginal.nickname !== this.state.sysMap.nickname) {
