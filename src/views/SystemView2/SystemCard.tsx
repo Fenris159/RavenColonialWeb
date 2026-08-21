@@ -18,11 +18,11 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
   // const [newEditor, setNewEditor] = useState<string | undefined>();
   // const [editors, setEditors] = useState<Set<string>>(new Set<string>(sysMap.editors));
 
-  const isOpen = sysMap.open;
+  const hasCompleteSite = sysMap.sites.some(s => s.status === 'complete' && s.marketId);
+  const isOpen = !hasCompleteSite || sysMap.open;
 
   const hasArchitect = !!props.sysView.state.sysOriginal.architect;
   const isArchitect = hasArchitect && isMatchingCmdr(props.sysView.state.sysOriginal.architect, store.cmdrName);
-  const hasCompleteSite = sysMap.sites.some(s => s.status === 'complete' && s.marketId);
   // const couldEditAsArchitect = props.sysView.state.sysOriginal.open || !props.sysView.state.sysOriginal.architect || isArchitect;
   // const aboutToLock = couldEditAsArchitect && !props.sysView.state.sysMap.open && !!props.sysView.state.sysMap?.architect && !isMatchingCmdr(props.sysView.state.sysMap?.architect, store.cmdrName);
   return <div>
@@ -94,7 +94,6 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
             {canEditAsArchitect && <ViewEditName
               name={sysMap.architect || '?'}
               prefix='Cmdr '
-              disabled={!hasCompleteSite}
               onChange={newName => {
                 sysMap.architect = newName;
                 props.sysView.setState({ sysMap: sysMap });
@@ -105,21 +104,14 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
               className={cn.bBox}
               iconProps={{ iconName: 'AddFriend', style: { fontSize: 12 } }}
               text={'I am the architect'}
-              title={hasCompleteSite ? 'Claim this system for yourself' : 'Complete your 1st site to claim Architect'}
-              disabled={!canEditAsArchitect || !hasCompleteSite}
+              title='Claim this system for yourself'
+              disabled={!canEditAsArchitect}
               onClick={() => {
                 sysMap.architect = store.cmdrName;
                 props.sysView.setState({ sysMap: sysMap });
               }}
             />}
           </Stack>
-
-          {!hasCompleteSite && !sysMap.architect && <>
-            <div />
-            <div style={{ color: appTheme.palette.themeTertiary, fontSize: 12, gridColumn: '2' }}>
-              Complete your 1st site to claim Architect
-            </div>
-          </>}
 
           {/* {isArchitect && <IconButton
               className={cn.bBox}
@@ -198,13 +190,16 @@ export const SystemCard: FunctionComponent<{ targetId: string, sysView: SystemVi
               className={cn.bBox}
               iconProps={{ iconName: isOpen ? 'Unlock' : 'LockSolid', style: { fontSize: 12 } }}
               text={isOpen ? 'Open' : 'Secured'}
-              title='Only architects can edit a secured system'
-              disabled={!canEditAsArchitect}
+              title={!hasCompleteSite ? 'Complete your 1st site to secure this system' : 'Only architects can edit a secured system'}
+              disabled={!canEditAsArchitect || !hasCompleteSite}
               style={{ textDecoration: !hasArchitect && !isOpen ? 'line-through 1px' : undefined }}
               onClick={() => {
-                props.sysView.updateOpen(!isOpen);
+                props.sysView.updateOpen(!sysMap.open);
               }}
             />
+            {!hasCompleteSite && <div style={{ color: appTheme.palette.themeTertiary, fontSize: 12 }}>
+              Complete your 1st site to secure this system
+            </div>}
           </div>
 
           <div />

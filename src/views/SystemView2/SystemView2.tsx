@@ -420,8 +420,10 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
       return;
     }
 
+    const hasCompleteSite = this.state.sysMap.sites.some(s => s.status === 'complete' && s.marketId);
+
     // warn before lockout
-    const aboutToLock = !this.state.sysMap.open && !!this.state.sysMap?.architect && !isMatchingCmdr(this.state.sysMap?.architect, store.cmdrName);
+    const aboutToLock = hasCompleteSite && !this.state.sysMap.open && !!this.state.sysMap?.architect && !isMatchingCmdr(this.state.sysMap?.architect, store.cmdrName);
     if (aboutToLock && !saveName) {
       if (this.state.showConfirmAction !== this.confirmDoSaveData) {
         this.setState({
@@ -456,7 +458,9 @@ export class SystemView2 extends Component<SystemView2Props, SystemView2State> {
     if (this.state.sysOriginal.reserveLevel !== this.state.sysMap.reserveLevel) {
       payload.reserveLevel = this.state.sysMap.reserveLevel;
     }
-    if (this.state.sysOriginal.open !== this.state.sysMap.open) {
+    if (!hasCompleteSite) {
+      payload.open = true;
+    } else if (this.state.sysOriginal.open !== this.state.sysMap.open) {
       payload.open = this.state.sysMap.open;
     }
     if (this.state.sysOriginal.nickname !== this.state.sysMap.nickname) {
